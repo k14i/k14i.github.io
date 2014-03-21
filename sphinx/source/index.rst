@@ -1,6 +1,13 @@
 keithseahus.github.io
 =====================
 
+Knowledge:
+
+.. toctree::
+  :maxdepth: 1
+
+  knowledge/personal_data_protection/index
+
 Reports:
 
 .. toctree::
