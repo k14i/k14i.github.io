@@ -6,6 +6,7 @@ Knowledge:
 .. toctree::
   :maxdepth: 1
 
+  knowledge/elixir/index
   knowledge/personal_data_protection/index
 
 Reports:
