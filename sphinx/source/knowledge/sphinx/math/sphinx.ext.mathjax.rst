@@ -22,7 +22,7 @@ Usage
 
 ::
 
-  ..math::`{mathematical expression}`
+  ..math:: {mathematical expression}
 
 ::
 
@@ -50,13 +50,9 @@ Examples
 
 ::
 
-  .. math::
-  
-    E = mc^2
+  .. math:: E = mc^2
 
-.. math::
-
-  E = mc^2
+.. math:: E = mc^2
 
 ::
 
