@@ -16,7 +16,7 @@ Data Science
 .. toctree::
   :maxdepth: 1
 
-  data_science/bayesian_statistics/bayes_theorem
+  data_science/bayesian_statistics/bayes_theorem/index
   data_science/personal_data_protection/index
 
 

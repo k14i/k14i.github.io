@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Examples &mdash; keithseahus.github.io 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="keithseahus.github.io 1.0.0 documentation" href="../../../index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="frequentist-example">
+<h2>Frequentist example<a class="headerlink" href="#frequentist-example" title="Permalink to this headline">¶</a></h2>
+<div class="math">
+<p><img src="../../../images/math/6a69264d9ffe9e8480d2f831c4db7fbad0bf792f.png" alt="P(\text{Rare}|\text{Pattern}) &amp;=
+\frac{P(\text{Pattern}|\text{Rare})P(\text{Rare})} {P(\text{Pattern}|\text{Rare})P(\text{Rare}) \, + \, P(\text{Pattern}|\text{Common})P(\text{Common})} \\
+&amp;= \frac{0.98 \times 0.001} {0.98 \times 0.001 + 0.05 \times 0.999} \\
+&amp;\approx 1.9\%."/></p>
+</div></div>
+<div class="section" id="coin-flip-example">
+<h2>Coin flip example<a class="headerlink" href="#coin-flip-example" title="Permalink to this headline">¶</a></h2>
+<div class="math">
+<p><img src="../../../images/math/fc8c121679cced0a7eb41da5d6cf12be690964ba.png" alt="P(\text{Biased coin}) &amp;= \frac{1}{3} \\
+P(\text{Fair coin}) &amp;= \frac{2}{3} \\
+P(\text{H}|\text{Fair coin}) &amp;= \frac{1}{2} \\
+P(\text{HHH}|\text{Fair coin}) &amp;= \frac{1}{8} \\
+P(\text{HHH}|\text{Biased coin}) &amp;= 1 \\
+P(\text{Biased coin}|\text{HHH}) &amp;= \frac{P(\text{HHH}|\text{Biased coin})P(\text{Biased coin})}{P(\text{HHH}|\text{Biased coin})P(\text{Biased coin}) + P(\text{HHH}|\text{Fair coin})P(\text{Fair coin})} \\
+&amp;= \frac{1 \times \frac{1}{3}}{1 \times \frac{1}{3} + \frac{1}{8} \times \frac{2}{3}} \quad = \quad \frac{\frac{1}{3}}{\frac{10}{24}} \quad = \quad \frac{4}{5}"/></p>
+</div></div>
+<div class="section" id="drug-testing">
+<h2>Drug testing<a class="headerlink" href="#drug-testing" title="Permalink to this headline">¶</a></h2>
+<div class="math">
+<p><img src="../../../images/math/d62715114ff1b2479a24dc31853a96e16ae0b7b5.png" alt="P(\text{User}|\text{+}) &amp;= \frac{P(\text{+}|\text{User}) P(\text{User})}{P(\text{+}|\text{User}) P(\text{User}) + P(\text{+}|\text{Non-user}) P(\text{Non-user})} \\
+&amp;= \frac{0.99 \times 0.005}{0.99 \times 0.005 + 0.01 \times 0.995} \\
+&amp;\approx 33.2\%"/></p>
+</div></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/keithseahus">My repository</a></h3>
+
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/elixir/index.html">Elixir</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Bayes&#8217; theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../others/sphinx/index.html">Sphinx</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../sources/data_science/bayesian_statistics/bayes_theorem/examples.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

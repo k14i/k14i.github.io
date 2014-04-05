@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Forms &mdash; keithseahus.github.io 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="keithseahus.github.io 1.0.0 documentation" href="../../../index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="forms">
+<h1>Forms<a class="headerlink" href="#forms" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="events">
+<h2>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="simple-form">
+<h3>Simple form<a class="headerlink" href="#simple-form" title="Permalink to this headline">¶</a></h3>
+<div class="math">
+<p><img src="../../../images/math/0023f9f0f8d93e2fba5b6978a0d99ba7d10242d7.png" alt="P(A|B) = \frac{P(B | A)\, P(A)}{P(B)}\cdot"/></p>
+</div><div class="math">
+<p><img src="../../../images/math/f6f4eb03c09f8f00030402cd45b8fcc6c9f63114.png" alt="P(A|B) \propto  P(A) \cdot P(B|A)."/></p>
+</div><div class="math">
+<p><img src="../../../images/math/df489f7fae1311bb6251c93907afd97d518ea93a.png" alt="P(A|B) = c \cdot P(A) \cdot P(B|A) \
+and \
+P(\neg A|B) = c \cdot P(\neg A) \cdot P(B|\neg A)\cdot"/></p>
+</div><div class="math">
+<p><img src="../../../images/math/fd142d4d852a8035d3943d3083f3ac9f7cf690a3.png" alt="c = \frac{1}{P(A) \cdot P(B|A) +  P(\neg A) \cdot P(B|\neg A) }."/></p>
+</div></div>
+<div class="section" id="extended-form">
+<h3>Extended form<a class="headerlink" href="#extended-form" title="Permalink to this headline">¶</a></h3>
+<div class="math">
+<p><img src="../../../images/math/002047f2a4ee276d50ce0087df8c9ea7bd6b21e6.png" alt="P(B) = {\sum_j P(B|A_j) P(A_j)},
+
+\implies P(A_i|B) = \frac{P(B|A_i)\,P(A_i)}{\sum\limits_j P(B|A_j)\,P(A_j)}\cdot"/></p>
+</div><div class="math">
+<p><img src="../../../images/math/973a36e6ad07f4263efe51cc535a7e85310dffa9.png" alt="P(A|B) = \frac{P(B|A)\,P(A)}{ P(B|A) P(A) + P(B|\neg A) P(\neg A)}\cdot"/></p>
+</div></div>
+</div>
+<div class="section" id="random-variables">
+<h2>Random variables<a class="headerlink" href="#random-variables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Simple form<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="math">
+<p><img src="../../../images/math/c565aa974468a73ae45c109eb0b0455414933ee8.png" alt="f_X(x|Y=y) = \frac{P(Y=y|X=x)\,f_X(x)}{P(Y=y)}."/></p>
+</div><div class="math">
+<p><img src="../../../images/math/c2895d21d7f8f0db3098fee464ffbb90ef2087c4.png" alt="P(X=x|Y=y) = \frac{f_Y(y|X=x)\,P(X=x)}{f_Y(y)}."/></p>
+</div><div class="math">
+<p><img src="../../../images/math/ba0fe1682e11001cca67a3ac57a5fb83bbd33197.png" alt="f_X(x|Y=y) = \frac{f_Y(y|X=x)\,f_X(x)}{f_Y(y)}."/></p>
+</div></div>
+<div class="section" id="id2">
+<h3>Extended form<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="math">
+<p><img src="../../../images/math/24a3eda05011c7831dc7d6e7825fa0d515e33eda.png" alt="f_Y(y) = \int_{-\infty}^\infty f_Y(y|X=\xi )\,f_X(\xi)\,d\xi ."/></p>
+</div></div>
+</div>
+<div class="section" id="bayes-rule">
+<h2>Bayes&#8217; rule<a class="headerlink" href="#bayes-rule" title="Permalink to this headline">¶</a></h2>
+<div class="math">
+<p><img src="../../../images/math/ead690e2c4049b861f5c55ef46c90d2c94c647d0.png" alt="O(A_1:A_2|B) =  O(A_1:A_2) \cdot \Lambda(A_1:A_2|B)"/></p>
+</div><div class="math">
+<p><img src="../../../images/math/7f1513ad30f8dfe2d0f65960b8520823217ed17c.png" alt="\Lambda(A_1:A_2|B) = \frac{P(B|A_1)}{P(B|A_2)}"/></p>
+</div><div class="math">
+<p><img src="../../../images/math/604e59d60572b0c2190855aa36350f26e1a4adfd.png" alt="O(A_1:A_2) =  \frac{P(A_1)}{P(A_2)}"/></p>
+</div><div class="math">
+<p><img src="../../../images/math/35970b34ec143e78f8a617853114a136226d0c61.png" alt="O(A_1:A_2|B) =  \frac{P(A_1|B)}{P(A_2|B)}"/></p>
+</div></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/keithseahus">My repository</a></h3>
+
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/elixir/index.html">Elixir</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Bayes&#8217; theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../others/sphinx/index.html">Sphinx</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../sources/data_science/bayesian_statistics/bayes_theorem/forms.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>
