@@ -23,6 +23,10 @@ Data Science
 Technology
 ==========
 
+.. toctree::
+  :maxdepth: 1
+
+  technology/glusterfs/index
 
 Others
 ======
