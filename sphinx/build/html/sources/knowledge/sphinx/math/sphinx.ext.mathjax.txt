@@ -108,6 +108,12 @@ Examples
 
   \frac{1}{1^0} + \log{\exp{1}} = \sum_{i=0}^{9} 0.1
 
+::
+
+  .. math:: E = mc^2
+
+.. math:: E = mc^2
+
 
 References
 ==========

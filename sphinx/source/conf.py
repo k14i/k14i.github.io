@@ -50,7 +50,8 @@ extensions.append('sphinxtogithub')
 
 # sphinx.ext.mathjax
 extensions.append('sphinx.ext.mathjax')
-mathjax_path = 'http://mathjax.connectmv.com/MathJax.js?config=default'
+#mathjax_path = 'http://mathjax.connectmv.com/MathJax.js?config=default'
+mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
