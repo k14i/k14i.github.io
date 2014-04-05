@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Elixir’s new continuable enumerators &mdash; keithseahus.github.io 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../../../static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../../../static/doctools.js"></script>
+    <link rel="top" title="keithseahus.github.io 1.0.0 documentation" href="../../../../../../../index.html" />
+    <link rel="up" title="Elixir" href="../../../../../index.html" />
+    <link rel="next" title="Personal Data Protection" href="../../../../../../../data_science/personal_data_protection/index.html" />
+    <link rel="prev" title="Elixir" href="../../../../../index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../../../../static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../../../data_science/personal_data_protection/index.html" title="Personal Data Protection"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../../../../index.html" title="Elixir"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../../../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../../index.html" accesskey="U">Elixir</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="elixir-s-new-continuable-enumerators">
+<h1>Elixir&#8217;s new continuable enumerators<a class="headerlink" href="#elixir-s-new-continuable-enumerators" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="a-recap-of-enumerators-and-some-terminology">
+<h2>A recap of enumerators, and some terminology<a class="headerlink" href="#a-recap-of-enumerators-and-some-terminology" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ex-how-you-can-count-the-total-length-of-strings-in-a-list">
+<h3>ex. How you can count the total length of strings in a list<a class="headerlink" href="#ex-how-you-can-count-the-total-length-of-strings-in-a-list" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-elixir"><div class="highlight"><pre><span class="no">Enumerable</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="k">fn</span> <span class="n">x</span><span class="p">,</span> <span class="n">acc</span> <span class="o">-&gt;</span> <span class="no">String</span><span class="o">.</span><span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">acc</span> <span class="k">end</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ex-define-a-sum-function-using-enumerable-reduce-3-which-is-hidden-inside-another-function">
+<h3>ex. Define a &#8220;sum&#8221; function using &#8220;Enumerable.reduce/3&#8221;, which is hidden inside another function.<a class="headerlink" href="#ex-define-a-sum-function-using-enumerable-reduce-3-which-is-hidden-inside-another-function" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-elixir"><div class="highlight"><pre><span class="k">def</span> <span class="n">sum</span><span class="p">(</span><span class="n">coll</span><span class="p">)</span> <span class="k">do</span>
+<span class="k">  </span><span class="no">Enumerable</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="k">fn</span> <span class="n">x</span><span class="p">,</span> <span class="n">acc</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">acc</span> <span class="k">end</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>This means:</p>
+<div class="highlight-elixir"><pre>Enum.map(1..10, &amp;(&amp;1 * &amp;1)) |&gt; sum()</pre>
+</div>
+<p>or</p>
+<div class="highlight-elixir"><pre>sum(Enum.map(1..10, &amp;(&amp;1 * &amp;1)))</pre>
+</div>
+<p>The general pattern is this:</p>
+<div class="highlight-elixir"><div class="highlight"><pre><span class="k">def</span> <span class="n">outer_function</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="k">do</span>
+<span class="k">  </span><span class="o">...</span>
+  <span class="no">Enumerable</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="n">initial_consumer_acc</span><span class="p">,</span> <span class="n">consumer</span><span class="p">)</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+
+<span class="n">something_that_returns_an_enumerable</span><span class="p">(</span><span class="o">...</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">outer_function</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="slightly-uncommon-terminology">
+<h4>Slightly uncommon terminology<a class="headerlink" href="#slightly-uncommon-terminology" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>outer function<ul>
+<li>The function to which the enumerable is passed.</li>
+</ul>
+</li>
+<li>consumer (&#8220;iteratee&#8221;)<ul>
+<li>&#8220;An iteratee consumes values.&#8221;</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="two-issues-with-classic-elixir-enumerators">
+<h2>Two issues with classic Elixir enumerators<a class="headerlink" href="#two-issues-with-classic-elixir-enumerators" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="enumrators-limitations">
+<h3>Enumrators&#8217; limitations<a class="headerlink" href="#enumrators-limitations" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>It&#8217;s not possible to define a function
+that only returns at most 3 elements
+without traversing all elements
+or using ugly tricks
+such as &#8220;throw&#8221;</li>
+<li>There&#8217;s no way to interleave two enumerables.</li>
+</ul>
+</div>
+<div class="section" id="the-underlying-problem">
+<h3>The underlying problem<a class="headerlink" href="#the-underlying-problem" title="Permalink to this headline">¶</a></h3>
+<p>The producer is fully in control.</p>
+<p>There&#8217;s no way aside from &#8220;throw&#8221;/&#8221;raise&#8221; for a consumer to tell a producer &#8220;stop producing&#8221;.</p>
+<p>There&#8217;s definitely no way to tell a producer &#8220;stop for now but be prepared to continue where you left off later&#8221;.</p>
+</div>
+</div>
+<div class="section" id="power-to-the-consumer">
+<h2>Power to the consumer!<a class="headerlink" href="#power-to-the-consumer" title="Permalink to this headline">¶</a></h2>
+<p>Instead of returning only an accumulator at every step (for every produced value)
+the consumer returns a combination of an accumulator and an instruction to the producer.</p>
+<p>Three instructions are available:</p>
+<ul class="simple">
+<li>:cont<ul>
+<li>Keep producing</li>
+<li>A consumer that always returns :cont makes the producer behave
+exactly the same as in the old system.</li>
+</ul>
+</li>
+<li>:halt<ul>
+<li>Stop producing</li>
+<li>A consumer may return :halt to have the producer terminate
+earlier than it normally would.</li>
+</ul>
+</li>
+<li>:suspend<ul>
+<li>Temporarily stop producing.</li>
+<li>tells a producer to return the accumulator and a continuation function.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-elixir"><div class="highlight"><pre><span class="p">{</span> <span class="ss">:suspended</span><span class="p">,</span> <span class="n">n_</span><span class="p">,</span> <span class="n">cont</span> <span class="p">}</span> <span class="o">=</span> <span class="no">Enumerable</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="m">1</span><span class="o">..</span><span class="m">5</span><span class="p">,</span> <span class="p">{</span> <span class="ss">:cont</span><span class="p">,</span> <span class="m">0</span> <span class="p">},</span> <span class="k">fn</span> <span class="n">x</span><span class="p">,</span> <span class="n">n</span> <span class="o">-&gt;</span>
+  <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="m">3</span> <span class="k">do</span>
+<span class="k">    </span><span class="p">{</span> <span class="ss">:suspend</span><span class="p">,</span> <span class="n">n</span> <span class="p">}</span>
+  <span class="k">else</span>
+    <span class="p">{</span> <span class="ss">:cont</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="n">x</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="implementing-interleave">
+<h2>Implementing &#8220;interleave&#8221;<a class="headerlink" href="#implementing-interleave" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-elixir"><pre>defmodule Interleave do
+  def interleave(a, b) do
+    step = fn x, acc -&gt; { :suspend, [x|acc] } end
+    af = &amp;Enumerable.reduce(a, &amp;1, step)
+    bf = &amp;Enumerable.reduce(b, &amp;1, step)
+    do_interleave(af, bf, []) |&gt; :lists.reverse()
+  end
+
+  defp do_interleave(a, b, acc) do
+    case a.({ :cont, acc }) do
+      { :suspended, acc, a } -&gt;
+        case b.({ :cont, acc }) do
+          { :suspended, acc, b } -&gt;
+            do_interleave(a, b, acc)
+          { :halted, acc } -&gt;
+            acc
+          { :done, acc } -&gt;
+            finish_interleave(a, acc)
+        end
+      { :halted, acc } -&gt;
+        acc
+      { :done, acc } -&gt;
+        finish_interleave(b, acc)
+    end
+  end
+
+  defp finish_interleave(a_or_b, acc) do
+    case a_or_b.({ :cont, acc }) do
+      { :suspended, acc, a_or_b } -&gt;
+        finish_interleave(a_or_b, acc)
+      { _, acc } -&gt;
+        acc
+    end
+  end
+end
+
+Interleave.interleave([1,2], [:a, :b, :c, :d])
+#=&gt; [1, :a, 2, :b, :c, :d]</pre>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/keithseahus">My repository</a></h3>
+
+  <h3><a href="../../../../../../../index.html">Table Of Contents</a></h3>
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../sphinx/index.html">Sphinx</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">Elixir</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../data_science/personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../../../../../index.html"
+                        title="previous chapter">Elixir</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../../../../../../data_science/personal_data_protection/index.html"
+                        title="next chapter">Personal Data Protection</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../../../../../sources/development/elixir/elixir-lang.org/blog/2013/12/11/elixir-s-new-continuable-enumerators.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../../../data_science/personal_data_protection/index.html" title="Personal Data Protection"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../../../../index.html" title="Elixir"
+             >previous</a> |</li>
+        <li><a href="../../../../../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../../index.html" >Elixir</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

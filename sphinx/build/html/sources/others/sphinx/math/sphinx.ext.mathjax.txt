@@ -1,0 +1,30 @@
+==================
+sphinx.ext.mathjax
+==================
+
+Setup
+=====
+
+::
+
+  wget https://bitbucket.org/kevindunn/sphinx-extension-mathjax/raw/812aa178b29e22ee0b09a4e2d0a6052538c4590b/mathjax.py
+
+conf.py
+
+::
+
+  extensions.append('sphinx.ext.mathjax')
+  mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+
+
+.. include:: _commons/usage.rst
+
+.. include:: _commons/examples.rst
+
+References
+==========
+
+* `Sphinx extension: mathjax <https://bitbucket.org/kevindunn/sphinx-extension-mathjax/wiki/Home>`_
+* `Loading and Configuring MathJax <http://docs.mathjax.org/en/latest/configuration.html>`_
+.. include:: _commons/references.rst
+
