@@ -14,7 +14,7 @@ conf.py
 ::
 
   extensions.append('sphinx.ext.mathjax')
-  mathjax_path = 'http://mathjax.connectmv.com/MathJax.js?config=default'
+  mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 
 
 Usage
@@ -107,12 +107,6 @@ Examples
 .. math::
 
   \frac{1}{1^0} + \log{\exp{1}} = \sum_{i=0}^{9} 0.1
-
-::
-
-  .. math:: E = mc^2
-
-.. math:: E = mc^2
 
 
 References
