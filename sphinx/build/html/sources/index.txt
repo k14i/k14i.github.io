@@ -6,6 +6,7 @@ Knowledge:
 .. toctree::
   :maxdepth: 1
 
+  knowledge/sphinx/index
   knowledge/elixir/index
   knowledge/personal_data_protection/index
 
