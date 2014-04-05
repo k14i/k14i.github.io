@@ -113,5 +113,6 @@ References
 ==========
 
 * `Sphinx extension: mathjax <https://bitbucket.org/kevindunn/sphinx-extension-mathjax/wiki/Home>`_
+* `Loading and Configuring MathJax <http://docs.mathjax.org/en/latest/configuration.html>`_
 * `Math support in Sphinx <http://sphinx-doc.org/latest/ext/math.html>`_
 
