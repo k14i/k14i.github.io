@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sphinx.ext.mathjax &mdash; keithseahus.github.io 1.0.0 documentation</title>
+    <title>sphinx.ext.pngmath &mdash; keithseahus.github.io 1.0.0 documentation</title>
     
     <link rel="stylesheet" href="../../../static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../../static/doctools.js"></script>
     <link rel="top" title="keithseahus.github.io 1.0.0 documentation" href="../../../index.html" />
     <link rel="up" title="Sphinx" href="../index.html" />
-    <link rel="next" title="Elixir" href="../../elixir/index.html" />
+    <link rel="next" title="sphinx.ext.mathjax" href="sphinx.ext.mathjax.html" />
     <link rel="prev" title="Sphinx" href="../index.html" />
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
@@ -43,7 +43,7 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../elixir/index.html" title="Elixir"
+          <a href="sphinx.ext.mathjax.html" title="sphinx.ext.mathjax"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="Sphinx"
@@ -58,15 +58,13 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="sphinx-ext-mathjax">
-<h1>sphinx.ext.mathjax<a class="headerlink" href="#sphinx-ext-mathjax" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="sphinx-ext-pngmath">
+<h1>sphinx.ext.pngmath<a class="headerlink" href="#sphinx-ext-pngmath" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><pre>wget https://bitbucket.org/kevindunn/sphinx-extension-mathjax/raw/812aa178b29e22ee0b09a4e2d0a6052538c4590b/mathjax.py</pre>
-</div>
 <p>conf.py</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">extensions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;sphinx.ext.mathjax&#39;</span><span class="p">)</span>
-<span class="n">mathjax_path</span> <span class="o">=</span> <span class="s">&#39;http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&#39;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">extensions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;sphinx.ext.pngmath&#39;</span><span class="p">)</span>
+<span class="n">pngmath_latex</span><span class="o">=</span><span class="s">&#39;platex&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -138,10 +136,6 @@
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="https://bitbucket.org/kevindunn/sphinx-extension-mathjax/wiki/Home">Sphinx extension: mathjax</a></li>
-<li><a class="reference external" href="http://docs.mathjax.org/en/latest/configuration.html">Loading and Configuring MathJax</a></li>
-</ul>
-<ul class="simple">
 <li><a class="reference external" href="http://sphinx-doc.org/latest/ext/math.html">Math support in Sphinx</a></li>
 </ul>
 </div>
@@ -175,11 +169,11 @@
   <p class="topless"><a href="../index.html"
                         title="previous chapter">Sphinx</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../../elixir/index.html"
-                        title="next chapter">Elixir</a></p>
+  <p class="topless"><a href="sphinx.ext.mathjax.html"
+                        title="next chapter">sphinx.ext.mathjax</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../../../sources/knowledge/sphinx/math/sphinx.ext.mathjax.txt"
+    <li><a href="../../../sources/knowledge/sphinx/math/sphinx.ext.pngmath.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -206,7 +200,7 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../elixir/index.html" title="Elixir"
+          <a href="sphinx.ext.mathjax.html" title="sphinx.ext.mathjax"
              >next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="Sphinx"
