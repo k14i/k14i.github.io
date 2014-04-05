@@ -111,19 +111,6 @@ Examples
 
   \frac{1}{1^0} + \log{\exp{1}} = \sum_{i=0}^{9} 0.1
 
-GitHub Pages
-------------
-
-::
-
-  .. math::
-  
-    \\[ \frac{1}{n^{2}} \\]
-
-.. math::
-
-  \\[ \frac{1}{n^{2}} \\]
-
 
 References
 ==========
