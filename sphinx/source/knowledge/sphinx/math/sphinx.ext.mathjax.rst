@@ -22,7 +22,7 @@ Usage
 
 ::
 
-  ..math:: {mathematical expression}
+  .. math:: {mathematical expression}
 
 ::
 
