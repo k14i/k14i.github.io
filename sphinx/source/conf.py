@@ -45,12 +45,12 @@ extensions = [
 extensions.append('sphinxtogithub')
 
 # sphinx.ext.pngmath
-extensions.append('sphinx.ext.pngmath')
-pngmath_latex='platex'
+#extensions.append('sphinx.ext.pngmath')
+#pngmath_latex='platex'
 
 # sphinx.ext.mathjax
-#extensions.append('sphinx.ext.mathjax')
-#mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+extensions.append('sphinx.ext.mathjax')
+mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

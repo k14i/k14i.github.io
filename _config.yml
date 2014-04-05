@@ -1,1 +1,3 @@
+source: sphinx
+safe: false
 markdown: kramdown
