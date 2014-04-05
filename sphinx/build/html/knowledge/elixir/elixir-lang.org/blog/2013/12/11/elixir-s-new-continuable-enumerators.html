@@ -129,9 +129,79 @@ such as &#8220;throw&#8221;</li>
 </div>
 <div class="section" id="power-to-the-consumer">
 <h2>Power to the consumer!<a class="headerlink" href="#power-to-the-consumer" title="Permalink to this headline">¶</a></h2>
+<p>Instead of returning only an accumulator at every step (for every produced value)
+the consumer returns a combination of an accumulator and an instruction to the producer.</p>
+<p>Three instructions are available:</p>
+<ul class="simple">
+<li>:cont<ul>
+<li>Keep producing</li>
+<li>A consumer that always returns :cont makes the producer behave
+exactly the same as in the old system.</li>
+</ul>
+</li>
+<li>:halt<ul>
+<li>Stop producing</li>
+<li>A consumer may return :halt to have the producer terminate
+earlier than it normally would.</li>
+</ul>
+</li>
+<li>:suspend<ul>
+<li>Temporarily stop producing.</li>
+<li>tells a producer to return the accumulator and a continuation function.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-elixir"><div class="highlight"><pre><span class="p">{</span> <span class="ss">:suspended</span><span class="p">,</span> <span class="n">n_</span><span class="p">,</span> <span class="n">cont</span> <span class="p">}</span> <span class="o">=</span> <span class="no">Enumerable</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="m">1</span><span class="o">..</span><span class="m">5</span><span class="p">,</span> <span class="p">{</span> <span class="ss">:cont</span><span class="p">,</span> <span class="m">0</span> <span class="p">},</span> <span class="k">fn</span> <span class="n">x</span><span class="p">,</span> <span class="n">n</span> <span class="o">-&gt;</span>
+  <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="m">3</span> <span class="k">do</span>
+<span class="k">    </span><span class="p">{</span> <span class="ss">:suspend</span><span class="p">,</span> <span class="n">n</span> <span class="p">}</span>
+  <span class="k">else</span>
+    <span class="p">{</span> <span class="ss">:cont</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="n">x</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="implementing-interleave">
 <h2>Implementing &#8220;interleave&#8221;<a class="headerlink" href="#implementing-interleave" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-elixir"><pre>defmodule Interleave do
+  def interleave(a, b) do
+    step = fn x, acc -&gt; { :suspend, [x|acc] } end
+    af = &amp;Enumerable.reduce(a, &amp;1, step)
+    bf = &amp;Enumerable.reduce(b, &amp;1, step)
+    do_interleave(af, bf, []) |&gt; :lists.reverse()
+  end
+
+  defp do_interleave(a, b, acc) do
+    case a.({ :cont, acc }) do
+      { :suspended, acc, a } -&gt;
+        case b.({ :cont, acc }) do
+          { :suspended, acc, b } -&gt;
+            do_interleave(a, b, acc)
+          { :halted, acc } -&gt;
+            acc
+          { :done, acc } -&gt;
+            finish_interleave(a, acc)
+        end
+      { :halted, acc } -&gt;
+        acc
+      { :done, acc } -&gt;
+        finish_interleave(b, acc)
+    end
+  end
+
+  defp finish_interleave(a_or_b, acc) do
+    case a_or_b.({ :cont, acc }) do
+      { :suspended, acc, a_or_b } -&gt;
+        finish_interleave(a_or_b, acc)
+      { _, acc } -&gt;
+        acc
+    end
+  end
+end
+
+Interleave.interleave([1,2], [:a, :b, :c, :d])
+#=&gt; [1, :a, 2, :b, :c, :d]</pre>
+</div>
 </div>
 <div class="section" id="conclusion">
 <h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
