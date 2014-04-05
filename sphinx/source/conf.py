@@ -44,6 +44,10 @@ extensions = [
 # sphinxtogithub
 extensions.append('sphinxtogithub')
 
+# sphinx.ext.pngmath
+#extensions.append('sphinx.ext.pngmath')
+#pngmath_latex='platex'
+
 # sphinx.ext.mathjax
 extensions.append('sphinx.ext.mathjax')
 mathjax_path = 'http://mathjax.connectmv.com/MathJax.js?config=default'
