@@ -2,16 +2,16 @@
 Bayes' theorem
 ==============
 
-.. .. toctree::
-..   :maxdepth: 1
-.. 
-..   statement.rst
-..   introductory_example.rst
-..   interpretations.rst
-..   forms.rst
-..   derivation.rst
-..   examples.rst
-..   references.rst
+.. toctree::
+  :maxdepth: 1
+
+  statement.rst
+  introductory_example.rst
+  interpretations.rst
+  forms.rst
+  derivation.rst
+  examples.rst
+  references.rst
 
 .. include:: statement.rst
 .. include:: introductory_example.rst

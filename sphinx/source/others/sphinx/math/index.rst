@@ -8,9 +8,9 @@ Commons
 .. toctree::
   :maxdepth: 1
 
-  _commons/usage
-  _commons/examples
-  _commons/references
+  commons/usage
+  commons/examples
+  commons/references
 
 
 Extentions

@@ -11,6 +11,15 @@ Development
   development/elixir/index
 
 
+Technology
+==========
+
+.. toctree::
+  :maxdepth: 1
+
+  technology/glusterfs/index
+
+
 Data Science
 ============
 
@@ -20,14 +29,6 @@ Data Science
   data_science/bayesian_statistics/bayes_theorem/index
   data_science/personal_data_protection/index
 
-
-Technology
-==========
-
-.. toctree::
-  :maxdepth: 1
-
-  technology/glusterfs/index
 
 Others
 ======
