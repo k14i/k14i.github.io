@@ -113,15 +113,78 @@ Cを使う以上、あなたが前述のエントリをあるプログラマの�
 </div>
 <div class="section" id="id3">
 <h3>メタデータ<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>メタデータ・オブジェクトを設計するための方法はたくさんあります。しかし、私たちは注意深くならなければなりません。
+すでに私たちには一つの制約があるのです。
+メタデータは <em>リッチな</em> オブジェクトであるべきなのです。
+第一のエントリは <em>その</em> 型へのポインタでなければならないという意味です。
+しかし、Typeオブジェクトの型とは何でしょう？
+そう、その型はまさしく <em>Type</em> であり、その型もまた <em>Type</em> なのです。</p>
+<p>頭がこんがらがってしまいましたか？
+また別の問題が、定数のイニシャライザにあります。
+Cにおいて、多くのデータ型は、コンパイル時におけるメタデータ構造の初期化無しには利用することができません。
+しかし、ランタイム時に全てのデータ型を宣言しなければならないというのは、誰もやりたくありません。
+当該エントリは、定数リテラルでなければなりません。
+その第一のエントリはその型でなければなりません。
+そうであるにもかかわらず、その第一のエントリは、あるオブジェクトについて、私たちが必要とする全てを表現しなければならないのです。</p>
+<p>libCelloにおいて、私はNULL終端したペアのリストを使用しています。
+それぞれのペアは、何かへのポインタと、文字列の識別子によって構成されています。</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">var</span> <span class="n">MyType</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">{</span> <span class="n">Type</span><span class="p">,</span>       <span class="s">&quot;Type&quot;</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="n">MyTypeName</span><span class="p">,</span> <span class="s">&quot;Name&quot;</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="n">MyTypeNew</span><span class="p">,</span>  <span class="s">&quot;New&quot;</span>  <span class="p">},</span>
+  <span class="p">{</span> <span class="n">MyTypeOrd</span><span class="p">,</span>  <span class="s">&quot;Ord&quot;</span>  <span class="p">},</span>
+  <span class="p">{</span> <span class="nb">NULL</span><span class="p">,</span>       <span class="nb">NULL</span>   <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>より特別なこととしては、それぞれのエントリは、Typeclass (又は名前のような別の情報) へのポインタとなっていますが、詳しいことは後で述べます。</p>
+<p>定数イニシャライザの問題は、今でもあちこちで突然発生します。しかし、ワークアラウンドはあり得ます。
+より大きく、より良くなるにあたり、定数イニシャライザを実践的に使うようにしましょう！</p>
 </div>
 <div class="section" id="id4">
 <h3>ジェネリック関数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>もし、例えば、私たちが言語に対して <tt class="docutils literal"><span class="pre">print</span></tt> や <tt class="docutils literal"><span class="pre">hash</span></tt> のような関数を追加したいと望むとします。私たちはそれらに対して、それらが理解するあらゆる型について機能できることを望むでしょう。
+言い換えれば、それらは <em>ジェネリック</em> であるべきなのです。
+Cにおいて、このことはある問題提起となります。型チェッカがこの種の振る舞いを許容しません。
+どの事物がどの型の意味を成すかは、わかりません。
+しかしながら、私たちは、 <tt class="docutils literal"><span class="pre">void*</span></tt> を取る関数を宣言することが <em>できる</em> のです。
+これは型チェックを無視し、 <em>全ての</em> ポインタ型に対して、関数を機能させるものです。</p>
+<p>したがって、二番目に主要な推定を、私たちはすることになります。
+ジェネリック関数を許容するため、私たちはコンパイラの型チェック無しに済ませるのです。
+私たちは、ランタイムにおける型チェックを、新規に宣言したランタイム型を用いることでも、行うことが <em>できはします</em> 。
+これは、リッチなオブジェクトのメタデータへのアクセスによるものです。
+しかし、それは痛みを伴う妥協案です。</p>
+<p>これに対する現実的な解はありません。
+今もなお、です。
+動的言語が流行っています。
+<em>void*</em> を <em>var</em> にリネームし、私たちはモダンなスクリプト言語に似た何かを手に入れました。
+もし、ランタイム時の型チェックがモダンなスクリプト言語にとって十分に良いものなのであれば、それは私たちにとっても十分に良いものです。</p>
 </div>
 <div class="section" id="id5">
 <h3>型クラス<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>特定の操作 (順序付けのような) が特定の型に対して意味が通るかどうかを知るため、私たちはプログラマから教えてもらう必要があります。
+これが、型クラスの由来です。
+インタフェースとしても知られています。
+これらによって、プログラマはある型に対してある特定の操作の下における振る舞いを定義することになります。
+もしかしたら、驚くべきことに、それらはほぼ全て、より高次の概念として表現することが可能かもしれません。</p>
+<p>libCelloにおいて、型クラスは構造体にすぎません。これは大抵、一通りの関数ポインタを格納しています。
+型は、これらのインスタンスを生成します。そして、メタデータ・エントリにおいて、それらを指し示します。</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="n">var</span> <span class="p">(</span><span class="o">*</span><span class="n">iter_start</span><span class="p">)(</span><span class="n">var</span><span class="p">);</span>
+  <span class="n">var</span> <span class="p">(</span><span class="o">*</span><span class="n">iter_end</span><span class="p">)(</span><span class="n">var</span><span class="p">);</span>
+  <span class="n">var</span> <span class="p">(</span><span class="o">*</span><span class="n">iter_next</span><span class="p">)(</span><span class="n">var</span><span class="p">,</span> <span class="n">var</span><span class="p">);</span>
+<span class="p">}</span> <span class="n">Iter</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="n">Iter</span> <span class="n">ListIter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">List_Iter_Start</span><span class="p">,</span> <span class="n">List_Iter_End</span><span class="p">,</span> <span class="n">List_Iter_Next</span> <span class="p">};</span>
+</pre></div>
+</div>
+<p>初めの頃に私が決めたのですが、型クラスは型の内部に何があるかということについての中核となる予定でした。
+これにより、入り組んだメタデータ構造をもつ、Cにおける多くの <em>メッセージ・パッシング 又は オブジェクト指向の</em> 仕組みと比較して、例外的にも物事を簡素化することができました。</p>
 </div>
 <div class="section" id="id6">
 <h3>これですべて？<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>libCelloと多くの近しいプロジェクトの背景にあるグローバルなアイディアは、本当のところはこれでおしまいです。
+私たちがランタイム・システムに構築するリッチでパワフルな仕組み、そこから楽しさはやってくるのです。</p>
 </div>
 </div>
 <div class="section" id="id7">
