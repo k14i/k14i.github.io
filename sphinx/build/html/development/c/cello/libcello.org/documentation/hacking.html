@@ -191,6 +191,20 @@ Cにおいて、このことはある問題提起となります。型チェッ�
 <h2>トリック<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id8">
 <h3>ドル記号<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">$</span></tt> 、又は私が考えるところの音符記号は、プログラマがスタック上にシンプルで <em>リッチな</em> オブジェクトを宣言することを可能にするものです。
+これは、libCelloを使う上での精神的なオーバーヘッドを減らすために超重要なものです。それは、割り当てられた数百ものヒープ・オブジェクトを手作業で迅速に掃除するという作業を手放すためです。</p>
+<p>マクロはとてもシンプルで、Cプログラマが数十年にも渡って使ってきた構造体の初期化というトリックを使用します。
+それはまさに、リテラルな構造体の宣言を、単一要素の配列へとラッピングするものです。これは、そのポインタを取得するためのものです。</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#define $(T, ...) (T##Data[]){{T, __VA_ARGS__}}</span>
+</pre></div>
+</div>
+<p>デストラクタやコンストラクタは呼ばれません。そして、構造体の名前を得るために、型が <tt class="docutils literal"><span class="pre">IntData</span></tt> のような名前を付けられているという事実を、私たちは利用しなければなりません。しかし、単なる箱詰めされたオブジェクトにとっては、それは機能的という域を超えています。</p>
+<p>私が最初に <tt class="docutils literal"><span class="pre">$</span></tt> を選んだ時、私が探していたのは、変数を意味する傾向のある記号でした。
+私が <tt class="docutils literal"><span class="pre">&#64;</span></tt> を試した直後なのですが、 <tt class="docutils literal"><span class="pre">$</span></tt> がプリプロセッサのトークンとしては技術上不正なものであることに気がついたのです。
+全てのプリプロセッサのトークンは、変数と全く同じルールに従う正しい識別子でなければなりません。
+すると、GCCがドル記号を通す理由なんて、あるわけがないですよね？</p>
+<p>GCCが <tt class="docutils literal"><span class="pre">$</span></tt> をあるシステム、例えばVMSなどとの互換性のための文字として扱うということが分かり、そこでは <tt class="docutils literal"><span class="pre">$</span></tt> はシステムで定義された関数やオブジェクト名に共通して使われています。
+移植性の理由から、最高に賢明な決定というわけではないのですが、これは取り得る中では非常に素晴らしいハックなのです！</p>
 </div>
 <div class="section" id="foreach">
 <h3>Foreach<a class="headerlink" href="#foreach" title="Permalink to this headline">¶</a></h3>
