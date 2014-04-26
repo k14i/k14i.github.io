@@ -9,6 +9,7 @@ Development
   :maxdepth: 1
 
   development/elixir/index
+  development/c/index
 
 
 Technology
