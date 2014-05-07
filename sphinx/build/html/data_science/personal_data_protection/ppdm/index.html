@@ -276,10 +276,72 @@
 </ul>
 <p>以降</p>
 <div class="math">
-<p><img src="../../../images/math/926e26769de28679a8ec86d2a8158c24fe422f78.png" alt="\begin{eqnarray}
-  {\cal V} \equiv \prod_{\alpha \in {\cal A}} {\cal V} _\alpha
+<p><img src="../../../images/math/30fe1d9be29b61d2ae2576bbed02cb36922ad765.png" alt="\begin{eqnarray}
+  {\cal V} := \prod_{\alpha \in {\cal A}} {\cal V} _\alpha
 \end{eqnarray}"/></p>
 </div></div>
+<div class="section" id="id37">
+<h4>公開テーブル<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h4>
+<div class="math">
+<p><img src="../../../images/math/4a648a326cfb53975220918d9e44a171bed9a139.png" alt="\begin{eqnarray}
+  \tau^{\prime} : {\cal R}^{\prime} \longrightarrow \prod_{\alpha^{\prime} \in {\cal A^{\prime}}} {\cal V^{\prime}} _{\alpha^{\prime}}
+\end{eqnarray}"/></p>
+</div><ul class="simple">
+<li>R&#8217;, A&#8217;, V&#8217;_alpha&#8217; は、R, A, V_alpha と一致しているとは限らない。</li>
+</ul>
+<p>以降</p>
+<div class="math">
+<p><img src="../../../images/math/378c0cab42acc4fd3b06fad0324734e1d95236ea.png" alt="\begin{eqnarray}
+  {\cal V^{\prime}} := \prod_{\alpha^{\prime} \in {\cal A^{\prime}}} {\cal V^{\prime}} _{\alpha^{\prime}}
+\end{eqnarray}"/></p>
+</div></div>
+<div class="section" id="id38">
+<h4>その他の前提条件<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h4>
+<div class="math">
+<p><img src="../../../images/math/8aa8a6cd8471c6341bf843ce1077caaa61c8434b.png" alt="\begin{eqnarray}
+  \pi    &amp; : &amp; {\cal R} \longrightarrow {\cal R^{\prime}} \\
+  \delta &amp; : &amp; ({\cal R} \longrightarrow {\cal V}) \longrightarrow ({\cal R} \longrightarrow {\cal V^{\prime}}) \\
+  \delta(\tau) &amp; = &amp; \tau^{\prime} \circ \pi
+\end{eqnarray}"/></p>
+</div><ul class="simple">
+<li>それぞれ tau, tau&#8217;, pi, delta に対応する確率変数を TAU, TAU&#8217;, PI, DELTA と書き、</li>
+<li>そのうち TAU と PI 及び DELTA は互いに独立とする。</li>
+</ul>
+</div>
+<div class="section" id="id39">
+<h4>攻撃者<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h4>
+<div class="math">
+<p><img src="../../../images/math/aeeb4800dafe10ee65f89edd497b94cb44704bc0.png" alt="\begin{eqnarray}
+  {f}_{\cal T} : ({\cal R} \longrightarrow {\cal V}) \longrightarrow \mathbb{R}
+\end{eqnarray}"/></p>
+</div><ul class="simple">
+<li>{f}_{cal T} は T の確率分布</li>
+</ul>
+</div>
+<div class="section" id="id40">
+<h4>テーブル保護系<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h4>
+<div class="math">
+<p><img src="../../../images/math/e0b05c894fd9fc8b6dc0be0bb4ff3122b92c4040.png" alt="\begin{eqnarray}
+  {\cal P} := ({\cal R}, {\cal V}, {\cal R^{\prime}}, {\cal V^{\prime}}, \Pi, \Delta)
+\end{eqnarray}"/></p>
+</div></div>
+</div>
+<div class="section" id="id41">
+<h3>k-匿名性の形式的定義<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h3>
+<p>準識別子に関するデータのみを抽出した公開テーブルを tau&#8217; とする。</p>
+<p>自然数 k に対し tau&#8217; が以下を満たすとき、tau&#8217; は k-匿名性を満たすという。</p>
+<div class="highlight-python"><pre>任意の v' \in V' に対し、
+tau'(r') = v' を満たす r' が
+k 個以上存在する</pre>
+</div>
+<ul>
+<li><div class="first line-block">
+<div class="line">R | = | R&#8217; |</div>
+</div>
+</li>
+<li><p class="first">Pi は一様ランダム置換</p>
+</li>
+</ul>
 </div>
 </div>
 </div>

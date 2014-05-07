@@ -225,6 +225,11 @@ Pk-匿名化の定義
 秘密のテーブル
 ^^^^^^^^^^^^^^
 
+..
+  秘密のテーブルTauは、テーブルのレコードとしての有限集合Rの関数である。
+  この関数は、alpha が集合Aに属している/元である/要素であるという条件のもと、
+  属性値の集合V_aの総乗であることを導く。
+
 .. math::
   :nowrap:
 
@@ -243,9 +248,115 @@ Pk-匿名化の定義
   :nowrap:
   
   \begin{eqnarray}
-    {\cal V} \equiv \prod_{\alpha \in {\cal A}} {\cal V} _\alpha
+    {\cal V} := \prod_{\alpha \in {\cal A}} {\cal V} _\alpha
   \end{eqnarray}
 
 
+公開テーブル
+^^^^^^^^^^^^
+
+..
+  秘密のテーブルTau'は、テーブルのレコードとしての有限集合R'の関数である。
+  この関数は、alpha' が集合A'の元であるという条件のもと、
+  属性値の集合V'_a'の総乗であることを導く。
+
+.. math::
+  :nowrap:
+  
+  \begin{eqnarray}
+    \tau^{\prime} : {\cal R}^{\prime} \longrightarrow \prod_{\alpha^{\prime} \in {\cal A^{\prime}}} {\cal V^{\prime}} _{\alpha^{\prime}}
+  \end{eqnarray}
+
+* R', A', V'_alpha' は、R, A, V_alpha と一致しているとは限らない。
+
+以降
+
+.. math::
+  :nowrap:
+  
+  \begin{eqnarray}
+    {\cal V^{\prime}} := \prod_{\alpha^{\prime} \in {\cal A^{\prime}}} {\cal V^{\prime}} _{\alpha^{\prime}}
+  \end{eqnarray}
+
+
+その他の前提条件
+^^^^^^^^^^^^^^^^
+
+..
+  piはtauのレコード順がtau'では入れ替わることを示す関数。識別の定義のために必要。
+  秘密のテーブルと公開テーブルでレコード位置が決定的に決まっている場合、識別は自明であり、意味を持たなくなるため。
+  
+  deltaはデータ保護処理関数。RがVを導出するということは、RがV'を導出するということを導出する。
+  すなわち、ある秘密テーブルの秘密レコードRから秘密の属性値の集合Vが導き出されるならば、
+  ある秘密テーブルの秘密レコードRからは公開の属性値の集合V'も導き出される。
+  
+  deltaは秘密テーブルtauの関数であり、公開テーブルtau'と関数piとの合成写像である。
+  すなわち、2つの写像 pi : R -> R',
+  tau' : R' -> \prod_{\alpha^{\prime} \in {\cal A^{\prime}}} {\cal V^{\prime}} _{\alpha^{\prime}} が与えられているとき、
+  R の任意の元 alpha には pi による像 pi(alpha) が対応し、 pi(alpha) は R' の元であるので、
+  pi(alpha) には tau' による像 tau'(pi(alpha)) が対応し、
+  これは \prod_{\alpha^{\prime} \in {\cal A^{\prime}}} {\cal V^{\prime}} _{\alpha^{\prime}} の元である。
+  
+  従って、R の任意の元alpha には
+  \prod_{\alpha^{\prime} \in {\cal A^{\prime}}} {\cal V^{\prime}} _{\alpha^{\prime}} の1つの元 tau'(pi(alpha)) が対応することとなり、
+  R から \prod_{\alpha^{\prime} \in {\cal A^{\prime}}} {\cal V^{\prime}} _{\alpha^{\prime}} への写像が与えられたことになる。
+
+.. math::
+  :nowrap:
+  
+  \begin{eqnarray}
+    \pi    & : & {\cal R} \longrightarrow {\cal R^{\prime}} \\
+    \delta & : & ({\cal R} \longrightarrow {\cal V}) \longrightarrow ({\cal R} \longrightarrow {\cal V^{\prime}}) \\
+    \delta(\tau) & = & \tau^{\prime} \circ \pi
+  \end{eqnarray}
+
+* それぞれ tau, tau', pi, delta に対応する確率変数を TAU, TAU', PI, DELTA と書き、
+* そのうち TAU と PI 及び DELTA は互いに独立とする。
+
+
+攻撃者
+^^^^^^
+
+.. math::
+  :nowrap:
+  
+  \begin{eqnarray}
+    {f}_{\cal T} : ({\cal R} \longrightarrow {\cal V}) \longrightarrow \mathbb{R}
+  \end{eqnarray}
+
+* {f}_{\cal T} は T の確率分布
+
+
+テーブル保護系
+^^^^^^^^^^^^^^
+
+.. math::
+  :nowrap:
+  
+  \begin{eqnarray}
+    {\cal P} := ({\cal R}, {\cal V}, {\cal R^{\prime}}, {\cal V^{\prime}}, \Pi, \Delta)
+  \end{eqnarray}
+
+
+k-匿名性の形式的定義
+--------------------
+
+準識別子に関するデータのみを抽出した公開テーブルを tau' とする。
+
+自然数 k に対し tau' が以下を満たすとき、tau' は k-匿名性を満たすという。
+
+::
+  
+  任意の v' \in V' に対し、
+  tau'(r') = v' を満たす r' が
+  k 個以上存在する
+
+..
+  * 秘密のテーブルのレコードを全て k 倍に複製したテーブル
+  * Pi のような置換が介在しない場合
+  は、定義には沿うのにk-匿名性の目的を達成しない。
+
+* | R | = | R' |
+* Pi は一様ランダム置換
 
 
