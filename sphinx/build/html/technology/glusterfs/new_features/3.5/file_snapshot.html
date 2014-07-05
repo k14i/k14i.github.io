@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>File Snapshot &mdash; keithseahus.github.io 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../static/doctools.js"></script>
+    <link rel="top" title="keithseahus.github.io 1.0.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="GlusterFS 3.5の新機能" href="index.html" />
+    <link rel="next" title="GFID Access" href="gfid_access.html" />
+    <link rel="prev" title="Exposing Volume Capabilities" href="exposing_volume_capabilities.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="gfid_access.html" title="GFID Access"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="exposing_volume_capabilities.html" title="Exposing Volume Capabilities"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >GlusterFS</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">GlusterFS 3.5の新機能</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="file-snapshot">
+<h1>File Snapshot<a class="headerlink" href="#file-snapshot" title="Permalink to this headline">¶</a></h1>
+<p>Provides a mechanism for snapshotting individual files. One of the more anticipated features of the 3.5 release, this precedes the upcoming ability to snapshot entire volumes. The most prevalent use case for this feature will be to snapshot running VMs, allowing for point-in-time capture. This also allows a mechanism to revert VMs to a previous state directly from Gluster, without needing to use external tools.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/keithseahus">My repository</a></h3>
+
+  <h3><a href="../../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/elixir/index.html">Elixir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/c/index.html">C</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">GlusterFS</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/bayesian_statistics/bayes_theorem/index.html">Bayes&#8217; theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../others/sphinx/index.html">Sphinx</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="exposing_volume_capabilities.html"
+                        title="previous chapter">Exposing Volume Capabilities</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gfid_access.html"
+                        title="next chapter">GFID Access</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../../sources/technology/glusterfs/new_features/3.5/file_snapshot.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="gfid_access.html" title="GFID Access"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="exposing_volume_capabilities.html" title="Exposing Volume Capabilities"
+             >previous</a> |</li>
+        <li><a href="../../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >GlusterFS</a> &raquo;</li>
+          <li><a href="index.html" >GlusterFS 3.5の新機能</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

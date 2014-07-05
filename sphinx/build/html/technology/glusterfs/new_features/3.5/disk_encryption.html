@@ -1,0 +1,542 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Disk encryption &mdash; keithseahus.github.io 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../static/doctools.js"></script>
+    <link rel="top" title="keithseahus.github.io 1.0.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="GlusterFS 3.5の新機能" href="index.html" />
+    <link rel="next" title="Geo-Replication Enhancement" href="geo_replication_enhancement.html" />
+    <link rel="prev" title="Brick Failure Detection" href="brick_failure_detection.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="geo_replication_enhancement.html" title="Geo-Replication Enhancement"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="brick_failure_detection.html" title="Brick Failure Detection"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >GlusterFS</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">GlusterFS 3.5の新機能</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="disk-encryption">
+<h1>Disk encryption<a class="headerlink" href="#disk-encryption" title="Permalink to this headline">¶</a></h1>
+<p>Implement the previous work done in HekaFS into Gluster. This allows a volume (or per-tenant part of a volume) to be encrypted “at rest” on the server using keys only available on the client. [Note: We encrypt only content of regular files. File names are not encrypted! Also, encryption does not work in NFS mounts.]</p>
+<div class="section" id="setting">
+<h2>Setting<a class="headerlink" href="#setting" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre># gluster volume info
+Volume Name: vol2
+Type: Replicate
+Volume ID: e0332771-a3c2-4fe5-980c-b3860cfe3baf
+Status: Started
+Number of Bricks: 1 x 2 = 2
+Transport-type: tcp
+Bricks:
+Brick1: eins:/mnt/lv2/vol2
+Brick2: zwei:/mnt/lv2/vol2
+
+# gluster volume set vol2 encryption on
+volume set: success
+
+# gluster volume info
+Volume Name: vol2
+Type: Replicate
+Volume ID: e0332771-a3c2-4fe5-980c-b3860cfe3baf
+Status: Started
+Number of Bricks: 1 x 2 = 2
+Transport-type: tcp
+Bricks:
+Brick1: eins:/mnt/lv2/vol2
+Brick2: zwei:/mnt/lv2/vol2
+Options Reconfigured:
+features.encryption: on
+
+# for x in quick-read write-behind open-behind; do gluster volume set vol2 performance.$x off; done
+volume set: success
+volume set: success
+volume set: success
+
+# gluster volume set vol2 encryption.master-key /var/lib/glusterd/vols/vol2/encryption.master-key
+volume set: success
+
+# openssl rand -hex 32 &gt; /var/lib/glusterd/vols/vol2/encryption.master-key
+
+# gluster volume set vol2 encryption.data-key-size 512
+volume set: success
+
+# gluster volume info
+Volume Name: vol2
+Type: Replicate
+Volume ID: e0332771-a3c2-4fe5-980c-b3860cfe3baf
+Status: Started
+Number of Bricks: 1 x 2 = 2
+Transport-type: tcp
+Bricks:
+Brick1: eins:/mnt/lv2/vol2
+Brick2: zwei:/mnt/lv2/vol2
+Options Reconfigured:
+encryption.data-key-size: 512
+encryption.master-key: /var/lib/glusterd/vols/vol2/encryption.master-key
+performance.open-behind: off
+performance.write-behind: off
+performance.quick-read: off
+features.encryption: on
+
+# mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/var/lib/glusterd/vols/vol2/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol2</pre>
+</div>
+</div>
+<div class="section" id="encryption">
+<h2>Encryption<a class="headerlink" href="#encryption" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre># echo "test" &gt; /mnt/glusterfs/vol2/test.txt
+# cat /mnt/glusterfs/vol2/test.txt
+test
+
+[eins]# cat /mnt/lv2/vol2/test.txt
+Zd??]K!q??tuv
+[zwei]# cat /mnt/lv2/vol2/test.txt
+Zd??]K!q??tuv
+
+# dd if=/dev/zero of=/mnt/glusterfs/vol1/test.dat bs=1 count=32
+# dd if=/dev/zero of=/mnt/glusterfs/vol2/test.dat bs=1 count=32
+
+[eins]# dd if=/dev/zero of=/tmp/test.dat bs=1 count=32
+[eins]# diff /tmp/test.dat /mnt/lv2/vol2/test.dat
+Binary files /tmp/test.dat and /mnt/lv2/vol2/test.dat differ
+
+[eins]# diff /tmp/test.dat /mnt/lv1/vol1/test.dat
+#</pre>
+</div>
+</div>
+<div class="section" id="performance">
+<h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre># dd if=/dev/zero of=/mnt/glusterfs/vol1/1gb.dat bs=1M count=1024
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB) copied, 18.4542 s, 58.2 MB/s
+# dd if=/dev/zero of=/mnt/glusterfs/vol2/1gb.dat bs=1M count=1024
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB) copied, 263.633 s, 4.1 MB/s</pre>
+</div>
+</div>
+<div class="section" id="decryption">
+<h2>Decryption<a class="headerlink" href="#decryption" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre># dd if=/dev/zero of=/tmp/1gb.dat bs=1M count=1024
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB) copied, 3.61505 s, 297 MB/s
+
+# diff3 /tmp/1gb.dat /mnt/glusterfs/vol1/1gb.dat /mnt/glusterfs/vol2/1gb.dat
+#</pre>
+</div>
+</div>
+<div class="section" id="packet">
+<h2>Packet<a class="headerlink" href="#packet" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># tcpdump -i eth0 -XX</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="nfs">
+<h2>NFS<a class="headerlink" href="#nfs" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre># mount -t nfs -o vers=3,hard,intr,nosuid localhost:/vol2 /mnt/nfs/vol2
+mount.nfs: Connection timed out</pre>
+</div>
+</div>
+<div class="section" id="attack">
+<h2>Attack<a class="headerlink" href="#attack" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-same-master-key">
+<h3>the same master-key<a class="headerlink" href="#the-same-master-key" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># cp /var/lib/glusterd/vols/vol2/encryption.master-key /tmp</span>
+<span class="c"># mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/tmp/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol-crypt</span>
+<span class="c"># diff /mnt/glusterfs/vol-crypt/test.txt /tmp/test.txt</span>
+<span class="c">#</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="make-the-mk-invalid-when-mounting">
+<h3>make the MK invalid when mounting<a class="headerlink" href="#make-the-mk-invalid-when-mounting" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl rand -hex 32 &gt; /tmp/encryption.master-key</span>
+<span class="c"># diff /mnt/glusterfs/vol-crypt/test.txt /tmp/test.txt</span>
+<span class="c">#</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="invalid-master-key">
+<h3>invalid master-key<a class="headerlink" href="#invalid-master-key" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><pre># umount /mnt/glusterfs/vol-crypt
+# mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/tmp/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol-crypt
+# diff /mnt/glusterfs/vol-crypt/test.txt /tmp/test.txt
+diff: /mnt/glusterfs/vol-crypt/test.txt: Invalid argument
+
+# ls -lh /mnt/glusterfs/vol-crypt
+total 1.1G
+-rw-r--r-- 1 root root 1.0G May 18 23:31 1gb.dat
+-rw-r--r-- 1 root root   32 May 18 22:57 test.dat
+-rw-r--r-- 1 root root    5 May 18 22:55 test.txt
+
+# cp /mnt/glusterfs/vol-crypt/test.txt ~/
+cp: reading `/mnt/glusterfs/vol-crypt/test.txt': Invalid argument
+
+# ls -l ~/test.txt
+-rw-r--r-- 1 root root 0 May 19 00:38 /root/test.txt
+
+# echo "test2" &gt; /mnt/glusterfs/vol-crypt/test2.txt
+# cat /mnt/glusterfs/vol-crypt/test2.txt
+test2
+
+# diff /mnt/glusterfs/vol-crypt/test2.txt /tmp/test2.txt
+#
+
+
+# \rm /mnt/glusterfs/vol-crypt/test.txt
+mv: reading `/mnt/glusterfs/vol-crypt/test.txt': Invalid argument
+# ls -lh /mnt/glusterfs/vol-crypt
+total 1.1G
+-rw-r--r-- 1 root root 1.0G May 18 23:31 1gb.dat
+-rw-r--r-- 1 root root    6 May 19 00:39 test2.txt
+-rw-r--r-- 1 root root   32 May 18 22:57 test.dat
+-rw-r--r-- 1 root root    5 May 18 22:55 test.txt
+# \rm /mnt/glusterfs/vol-crypt/test2.txt
+# ls -lh /mnt/glusterfs/vol-crypt
+total 1.1G
+-rw-r--r-- 1 root root 1.0G May 18 23:31 1gb.dat
+-rw-r--r-- 1 root root   32 May 18 22:57 test.dat
+-rw-r--r-- 1 root root    5 May 18 22:55 test.txt
+
+
+# mv /mnt/glusterfs/vol-crypt/test.txt /mnt/glusterfs/vol-crypt/test2.txt
+mv: cannot move `/mnt/glusterfs/vol-crypt/test.txt' to a subdirectory of itself, `/mnt/glusterfs/vol-crypt/test2.txt'
+
+
+[2014-05-19 0:44:25]# umount /mnt/glusterfs/vol-crypt
+[2014-05-19 0:44:31]# mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/var/lib/glusterd/vols/vol2/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol-crypt
+[2014-05-19 0:44:58]# ls -lh /mnt/glusterfs/vol-crypt
+total 1.1G
+-rw-r--r-- 1 root root 1.0G May 18 23:31 1gb.dat
+-rw-r--r-- 1 root root    6 May 19 00:44 test2.txt
+-rw-r--r-- 1 root root   32 May 18 22:57 test.dat
+-rw-r--r-- 1 root root    5 May 18 22:55 test.txt
+[2014-05-19 0:45:12]# cat /mnt/glusterfs/vol-crypt/test2.txt
+cat: /mnt/glusterfs/vol-crypt/test2.txt: Invalid argument
+[2014-05-19 0:45:22]# rm /mnt/glusterfs/vol-crypt/test2.txt
+mv: reading `/mnt/glusterfs/vol-crypt/test2.txt': Invalid argument
+[2014-05-19 0:45:31]# \rm /mnt/glusterfs/vol-crypt/test2.txt
+rm: cannot remove `/mnt/glusterfs/vol-crypt/test2.txt': Invalid argument</pre>
+</div>
+</div>
+</div>
+<div class="section" id="volume-reset">
+<h2>volume reset<a class="headerlink" href="#volume-reset" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre># gluster volume info vol2
+
+Volume Name: vol2
+Type: Replicate
+Volume ID: e0332771-a3c2-4fe5-980c-b3860cfe3baf
+Status: Started
+Number of Bricks: 1 x 2 = 2
+Transport-type: tcp
+Bricks:
+Brick1: eins:/mnt/lv2/vol2
+Brick2: zwei:/mnt/lv2/vol2
+Options Reconfigured:
+encryption.data-key-size: 512
+encryption.master-key: /var/lib/glusterd/vols/vol2/encryption.master-key
+performance.open-behind: off
+performance.write-behind: off
+performance.quick-read: off
+features.encryption: on
+
+# gluster volume reset vol2
+volume reset: success: reset volume successful
+
+# gluster volume info vol2
+
+Volume Name: vol2
+Type: Replicate
+Volume ID: e0332771-a3c2-4fe5-980c-b3860cfe3baf
+Status: Started
+Number of Bricks: 1 x 2 = 2
+Transport-type: tcp
+Bricks:
+Brick1: eins:/mnt/lv2/vol2
+Brick2: zwei:/mnt/lv2/vol2
+
+# cat /mnt/glusterfs/vol-crypt/test2.txt
+U�%U?0��x^-�bO
+# cat /mnt/glusterfs/vol-crypt/test.txt
+Zd��]K!q�tuv</pre>
+</div>
+</div>
+<div class="section" id="reconfigure">
+<h2>reconfigure<a class="headerlink" href="#reconfigure" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre># gluster volume set vol2 encryption.master-key /var/lib/glusterd/vols/vol2/encryption.master-key
+volume set: success
+# gluster volume set vol2 encryption.data-key-size 512
+volume set: success
+# for x in quick-read write-behind open-behind; do gluster volume set vol2 performance.$x off; done
+volume set: success
+volume set: success
+volume set: success
+
+# cat /mnt/glusterfs/vol-crypt/test.txt
+Zd��]K!q�tuv
+# cat /mnt/glusterfs/vol-crypt/test2.txt
+U�%U?0��x^-�bO
+
+# umount /mnt/glusterfs/vol-crypt
+# mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/var/lib/glusterd/vols/vol2/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol-crypt
+
+# cat /mnt/glusterfs/vol-crypt/test2.txt
+U�%U?0��x^-�bO
+# cat /mnt/glusterfs/vol-crypt/test.txt
+Zd��]K!q�tuv
+
+# echo "test" &gt; /mnt/glusterfs/vol-crypt/test.txt
+# cat /mnt/glusterfs/vol-crypt/test.txt
+test
+[eins]# cat /mnt/lv2/vol2/test.txt
+test
+
+
+[2014-05-19 0:55:24]# gluster volume stop vol2
+Stopping volume will make its data inaccessible. Do you want to continue? (y/n) y
+volume stop: vol2: success
+[2014-05-19 0:56:30]# gluster volume start vol2
+volume start: vol2: success
+[2014-05-19 0:56:39]# gluster volume info vol2
+
+Volume Name: vol2
+Type: Replicate
+Volume ID: e0332771-a3c2-4fe5-980c-b3860cfe3baf
+Status: Started
+Number of Bricks: 1 x 2 = 2
+Transport-type: tcp
+Bricks:
+Brick1: eins:/mnt/lv2/vol2
+Brick2: zwei:/mnt/lv2/vol2
+[2014-05-19 0:56:42]# umount /mnt/glusterfs/vol-crypt
+[2014-05-19 0:56:54]# mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/var/lib/glusterd/vols/vol2/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol-crypt
+[2014-05-19 0:56:57]# cat /mnt/glusterfs/vol-crypt/test.txt
+test</pre>
+</div>
+</div>
+<div class="section" id="recreate">
+<h2>recreate<a class="headerlink" href="#recreate" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre>[2014-05-19 1:00:53]# gluster volume stop vol2
+Stopping volume will make its data inaccessible. Do you want to continue? (y/n) y
+volume stop: vol2: success
+[2014-05-19 1:01:07]# gluster volume delete vol2
+Deleting volume will erase all information about the volume. Do you want to continue? (y/n) y
+volume delete: vol2: success
+[2014-05-19 1:01:18]# brick="/mnt/lv2/vol2"; gluster volume create vol2 replica 2 eins:$brick zwei:$brick
+volume create: vol2: failed: Staging failed on zwei. Error: /mnt/lv2/vol2 is already part of a volume
+Staging failed on eins. Error: /mnt/lv2/vol2 is already part of a volume
+
+[eins]# \rm -rf /mnt/lv2/vol2
+[zwei]# \rm -rf /mnt/lv2/vol2
+# brick="/mnt/lv2/vol2"; gluster volume create vol2 replica 2 eins:$brick zwei:$brick root@sieben:/root
+volume create: vol2: success: please start the volume to access data
+
+
+[2014-05-19 1:07:27]# gluster volume stop vol2
+Stopping volume will make its data inaccessible. Do you want to continue? (y/n) y
+volume stop: vol2: success
+[2014-05-19 1:07:48]# gluster volume start vol2
+volume start: vol2: success
+[2014-05-19 1:07:56]# gluster volume info vol2
+
+[2014-05-19 1:10:19]# gluster volume info vol2
+
+Volume Name: vol2
+Type: Replicate
+Volume ID: a698e3bd-a9ea-46ff-9560-c9f91e84155d
+Status: Started
+Number of Bricks: 1 x 2 = 2
+Transport-type: tcp
+Bricks:
+Brick1: eins:/mnt/lv2/vol2
+Brick2: zwei:/mnt/lv2/vol2
+Options Reconfigured:
+features.encryption: on
+encryption.data-key-size: 512
+encryption.master-key: /var/lib/glusterd/vols/vol2/encryption.master-key
+performance.open-behind: off
+performance.write-behind: off
+performance.quick-read: off
+
+
+
+[2014-05-19 1:14:24]# gluster volume stop vol2
+Stopping volume will make its data inaccessible. Do you want to continue? (y/n) y
+volume stop: vol2: success
+[2014-05-19 1:15:37]# gluster volume delete vol2
+Deleting volume will erase all information about the volume. Do you want to continue? (y/n) y
+volume delete: vol2: success
+[2014-05-19 1:15:43]# brick="/mnt/lv2/vol2"; gluster volume create vol2 replica 2 eins:$brick zwei:$brick root@sieben:/root
+volume create: vol2: success: please start the volume to access data
+[2014-05-19 1:16:44]# gluster volume start vol2
+volume start: vol2: success
+[2014-05-19 1:17:04]# gluster volume set vol2 encryption on
+volume set: success
+[2014-05-19 1:17:12]# for x in quick-read write-behind open-behind; do gluster volume set vol2 performance.$x off; done
+volume set: success
+volume set: success
+volume set: success
+[2014-05-19 1:17:25]# gluster volume set vol2 encryption.master-key /var/lib/glusterd/vols/vol2/encryption.master-key
+volume set: success
+[2014-05-19 1:17:32]# gluster volume set vol2 encryption.data-key-size 512
+volume set: success
+[2014-05-19 1:17:47]# mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/var/lib/glusterd/vols/vol2/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol-crypt
+Mount failed. Please check the log file for more details.
+[2014-05-19 1:17:59]# gluster volume info vol2
+
+Volume Name: vol2
+Type: Replicate
+Volume ID: d0517697-5372-44a1-960f-6db0d988f3b2
+Status: Started
+Number of Bricks: 1 x 2 = 2
+Transport-type: tcp
+Bricks:
+Brick1: eins:/mnt/lv2/vol2
+Brick2: zwei:/mnt/lv2/vol2
+Options Reconfigured:
+encryption.data-key-size: 512
+encryption.master-key: /var/lib/glusterd/vols/vol2/encryption.master-key
+performance.open-behind: off
+performance.write-behind: off
+performance.quick-read: off
+features.encryption: on
+[2014-05-19 1:18:35]# openssl rand -hex 32 &gt; /var/lib/glusterd/vols/vol2/encryption.master-key
+[2014-05-19 1:19:17]# gluster volume stop vol2; gluster volume start vol2
+Stopping volume will make its data inaccessible. Do you want to continue? (y/n) y
+volume stop: vol2: success
+volume start: vol2: success
+[2014-05-19 1:19:35]# mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/var/lib/glusterd/vols/vol2/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol-crypt</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/keithseahus">My repository</a></h3>
+
+  <h3><a href="../../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/elixir/index.html">Elixir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/c/index.html">C</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">GlusterFS</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/bayesian_statistics/bayes_theorem/index.html">Bayes&#8217; theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../others/sphinx/index.html">Sphinx</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="brick_failure_detection.html"
+                        title="previous chapter">Brick Failure Detection</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="geo_replication_enhancement.html"
+                        title="next chapter">Geo-Replication Enhancement</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../../sources/technology/glusterfs/new_features/3.5/disk_encryption.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="geo_replication_enhancement.html" title="Geo-Replication Enhancement"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="brick_failure_detection.html" title="Brick Failure Detection"
+             >previous</a> |</li>
+        <li><a href="../../../../index.html">keithseahus.github.io 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >GlusterFS</a> &raquo;</li>
+          <li><a href="index.html" >GlusterFS 3.5の新機能</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>
