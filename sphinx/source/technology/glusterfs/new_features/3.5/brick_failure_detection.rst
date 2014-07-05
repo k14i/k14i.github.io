@@ -5,6 +5,7 @@ Brick Failure Detection
 Detecting failures on the filesystem that a brick uses makes it possible to handle errors that are caused from outside of the Gluster environment.
 
 ::
+
   [2014-05-19 3:39:53]# brick="/mnt/lv4/vol4";gluster volume create vol4 eins:$brick zwei:$brick drei:$brick vier:$brick fuenf:$brick sechs:$brick
   volume create: vol4: success: please start the volume to access data
   [2014-05-19 3:40:22]# gluster volume start vol4
@@ -62,6 +63,7 @@ brick
 -----
 
 ::
+
   [2014-05-18 18:49:53.720594] I [glusterfsd-mgmt.c:56:mgmt_cbk_spec] 0-mgmt: Volume file changed
   [2014-05-18 18:50:04.238239] W [posix-helpers.c:1294:posix_health_check_thread_proc] 0-vol4-posix: stat() on /mnt/lv4/vol4 returned: Input/output error
   [2014-05-18 18:50:04.238328] M [posix-helpers.c:1314:posix_health_check_thread_proc] 0-vol4-posix: health-check failed, going down
@@ -80,6 +82,7 @@ syslog
 ------
 
 ::
+
   May 19 03:49:55 sechs kernel: XFS (dm-7): metadata I/O error: block 0x0 ("xfs_buf_iodone_callbacks") error 5 buf count 4096
   May 19 03:49:57 sechs kernel: XFS (dm-7): metadata I/O error: block 0x6400108 ("xlog_iodone") error 5 buf count 4096
   May 19 03:49:57 sechs kernel: XFS (dm-7): xfs_do_force_shutdown(0x2) called from line 1062 of file fs/xfs/xfs_log.c.  Return address = 0xffffffffa04dd131
@@ -100,6 +103,7 @@ gluster volume status
 ---------------------
 
 ::
+
   [2014-05-19 3:52:41]# gluster volume status vol4
   Status of volume: vol4
   Gluster process						Port	Online	Pid
@@ -127,6 +131,7 @@ process
 -------
 
 ::
+
   # ps -ef | grep glusterfsd | grep -v grep | wc -l
   0
 
@@ -134,6 +139,7 @@ service glusterd restart
 ------------------------
 
 ::
+
   [2014-05-18 18:58:17.197872] I [glusterfsd.c:1959:main] 0-/usr/local/glusterfs-3.5.0/sbin/glusterfsd: Started running /usr/local/glusterfs-3.5.0/sbin/glusterfsd version 3.5git (/usr/local/glusterfs-3.5.0/sbin/glusterfsd -s sechs --volfile-id vol4.sechs.mnt-lv4-vol4 -p /var/lib/glusterd/vols/vol4/run/sechs-mnt-lv4-vol4.pid -S /var/run/23afc72b5ceddccd28b405b1cdf5b4df.socket --brick-name /mnt/lv4/vol4 -l /usr/local/glusterfs-3.5.0/var/log/glusterfs/bricks/mnt-lv4-vol4.log --xlator-option *-posix.glusterd-uuid=0765d288-a59b-4ccf-90ae-c3332c83dbf4 --brick-port 49152 --xlator-option vol4-server.listen-port=49152)
   [2014-05-18 18:58:17.205310] I [socket.c:3561:socket_init] 0-socket.glusterfsd: SSL support is NOT enabled
   [2014-05-18 18:58:17.205486] I [socket.c:3576:socket_init] 0-socket.glusterfsd: using system polling thread

@@ -5,6 +5,7 @@ GFID Access
 A new method for accessing data directly by GFID. With this method, we can consume the data in changelog translator, which is logging ‘gfid’ internally, very efficiently. This feature yet again extends the methods by which you can access Gluster, and should be well-received by members of the developer community, who will have a simple way to perform file operations programmatically within a Gluster volume.
 
 ::
+
   [2014-05-19 2:55:33]# brick="/mnt/lv3/vol-gfid-access";gluster volume create vol-gfid-access eins:$brick zwei:$brick
   volume create: vol-gfid-access: success: please start the volume to access data
   [2014-05-19 2:57:25]# gluster volume start vol-gfid-access

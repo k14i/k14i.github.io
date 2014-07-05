@@ -9,6 +9,7 @@ Setup
 =====
 
 ::
+
   # brick="/mnt/lv3/vol-comp"; gluster volume create vol-comp eins:$brick
   volume create: vol-comp: success: please start the volume to access data
   # gluster volume start vol-comp
@@ -42,6 +43,7 @@ Do
 ==
 
 ::
+
   # dd if=/dev/zero of=/mnt/glusterfs/vol-comp/1gb.dat bs=1M count=1024
   dd: writing `/mnt/glusterfs/vol-comp/1gb.dat': Input/output error
   dd: closing output file `/mnt/glusterfs/vol-comp/1gb.dat': Input/output error
@@ -143,6 +145,7 @@ Success
 =======
 
 ::
+
   # gluster volume info vol-comp
   
   Volume Name: vol-comp

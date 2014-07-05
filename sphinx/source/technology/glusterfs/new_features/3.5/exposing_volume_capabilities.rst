@@ -4,8 +4,8 @@ Exposing Volume Capabilities
 
 Provides client-side insight into whether a volume is using the BD translator and, if so, which capabilities are being utilized.
 
-
 ::
+
   GlusterFS configure summary
   ===========================
   FUSE client          : yes

@@ -8,6 +8,7 @@ Setting
 =======
 
 ::
+
   # gluster volume info
   Volume Name: vol2
   Type: Replicate
@@ -72,6 +73,7 @@ Encryption
 ==========
 
 ::
+
   # echo "test" > /mnt/glusterfs/vol2/test.txt
   # cat /mnt/glusterfs/vol2/test.txt
   test
@@ -95,6 +97,7 @@ Performance
 ===========
 
 ::
+
   # dd if=/dev/zero of=/mnt/glusterfs/vol1/1gb.dat bs=1M count=1024
   1024+0 records in
   1024+0 records out
@@ -108,6 +111,7 @@ Decryption
 ==========
 
 ::
+
   # dd if=/dev/zero of=/tmp/1gb.dat bs=1M count=1024
   1024+0 records in
   1024+0 records out
@@ -120,12 +124,14 @@ Packet
 ======
 
 ::
+
   # tcpdump -i eth0 -XX
 
 NFS
 ===
 
 ::
+
   # mount -t nfs -o vers=3,hard,intr,nosuid localhost:/vol2 /mnt/nfs/vol2
   mount.nfs: Connection timed out
 
@@ -137,6 +143,7 @@ the same master-key
 -------------------
 
 ::
+
   # cp /var/lib/glusterd/vols/vol2/encryption.master-key /tmp
   # mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/tmp/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol-crypt
   # diff /mnt/glusterfs/vol-crypt/test.txt /tmp/test.txt
@@ -146,6 +153,7 @@ make the MK invalid when mounting
 ---------------------------------
 
 ::
+
   # openssl rand -hex 32 > /tmp/encryption.master-key
   # diff /mnt/glusterfs/vol-crypt/test.txt /tmp/test.txt
   #
@@ -154,6 +162,7 @@ invalid master-key
 ------------------
 
 ::
+
   # umount /mnt/glusterfs/vol-crypt
   # mount -t glusterfs -o xlator-option=vol2-crypt.master-key=/tmp/encryption.master-key localhost:/vol2 /mnt/glusterfs/vol-crypt
   # diff /mnt/glusterfs/vol-crypt/test.txt /tmp/test.txt
@@ -219,6 +228,7 @@ volume reset
 ============
 
 ::
+
   # gluster volume info vol2
   
   Volume Name: vol2
@@ -263,6 +273,7 @@ reconfigure
 ===========
 
 ::
+
   # gluster volume set vol2 encryption.master-key /var/lib/glusterd/vols/vol2/encryption.master-key
   volume set: success
   # gluster volume set vol2 encryption.data-key-size 512
@@ -318,6 +329,7 @@ recreate
 ========
 
 ::
+
   [2014-05-19 1:00:53]# gluster volume stop vol2
   Stopping volume will make its data inaccessible. Do you want to continue? (y/n) y
   volume stop: vol2: success
