@@ -6,7 +6,7 @@ Distributed volume を Distributed-Replicated volume に変更する
 
 想定環境
 
-.. code-block::
+::
 
   Volume Name: vol0
   Type: Distributed
@@ -28,7 +28,7 @@ Distributed volume を Distributed-Replicated volume に変更する
 
 gluster volume info 結果
 
-.. code-block::
+::
 
   Volume Name: vol0
   Type: Replicate

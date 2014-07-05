@@ -8,7 +8,7 @@
 
 想定環境
 
-.. code-block::
+::
 
   Volume Name: vol0
   Type: Replicate
@@ -27,7 +27,7 @@
 
 gluster volume info 結果
 
-.. code-block::
+::
 
   Volume Name: vol0
   Type: Replicate
