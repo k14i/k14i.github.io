@@ -40,5 +40,6 @@ geo_replication_enhancement                                                     
 参考資料
 --------
 
+* http://www.gluster.org/community/documentation/index.php/Planning35
 * http://www.gluster.org/2014/05/glusterfs-3-5-unveiled/
 
