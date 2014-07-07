@@ -9,6 +9,7 @@ GlusterFS
 .. toctree::
   :maxdepth: 1
 
+  new_features/3.6/index.rst
   new_features/3.5/index.rst
 
 --------
