@@ -61,6 +61,22 @@
             
   <div class="section" id="heterogeneous-bricks">
 <h1>heterogeneous-bricks<a class="headerlink" href="#heterogeneous-bricks" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>概要<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>DHTは、現状ではbrickのサイズについて非常にナイーブです。これは、各brickが実際には異なるサイズであるかもしれないにも関わらず、新しいファイルを配置するために、等量の&#8221;重み&#8221;を各brickやsubvolumeに割り当てるからです。
+合計容量や空きスペースがより多いbrickに対しては、DHTはより大きな重み付け（例えばより多くのファイルを作成する）を行ったほうがよいでしょう。</p>
+</div>
+<div class="section" id="id2">
+<h2>詳細<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>（少なくとも）3つのオプションがあり得ます。</p>
+<ul class="simple">
+<li>総容量をベースにsubvolumeに対して重み付けを行う</li>
+<li>空き容量をベースにsubvolumeに対して重み付けを行う</li>
+<li>特定のsubvolumeに対して全ての（又はほぼ全ての）重みを割り当てる</li>
+</ul>
+<p>最後のオプションは、brickの追加によりvolumeを拡張する方で、古いデータをマイグレートさせることなく、新しいファイルを新しいbrickへ誘導することで、システムが「自動的なrebalance」を行うようにするようにしたい方にとって、便利です。
+一旦適切な重みが計算されたら、rebalanceコマンドはその結果を再帰的にvolume内の全てのディレクトリ（カスタムレイアウトを除く）に対して適用し、DHTはこれと同じ重み付けに従って、新しいディレクトリに対してレイアウトを割り当てるべきでしょう。</p>
+</div>
 </div>
 
 
