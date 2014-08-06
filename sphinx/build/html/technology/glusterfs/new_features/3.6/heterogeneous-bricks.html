@@ -77,6 +77,14 @@
 <p>最後のオプションは、brickの追加によりvolumeを拡張する方で、古いデータをマイグレートさせることなく、新しいファイルを新しいbrickへ誘導することで、システムが「自動的なrebalance」を行うようにするようにしたい方にとって、便利です。
 一旦適切な重みが計算されたら、rebalanceコマンドはその結果を再帰的にvolume内の全てのディレクトリ（カスタムレイアウトを除く）に対して適用し、DHTはこれと同じ重み付けに従って、新しいディレクトリに対してレイアウトを割り当てるべきでしょう。</p>
 </div>
+<div class="section" id="glusterfs">
+<h2>GlusterFSへのベネフィット<a class="headerlink" href="#glusterfs" title="Permalink to this headline">¶</a></h2>
+<p>（メーリングリストにも記した通り、）古いbrickと異なる新たなbrickを追加すること、それはディスクの容量が世代を経るに従って向上する傾向にあるため一般的ではありますが、それに対して、より良いサポートを提供することになります。</p>
+<p>（また、）高価な（データ移行を行う）rebalance操作を行うことなく、容量の追加を行うための、より良いサポートとなります。</p>
+</div>
+<div class="section" id="id3">
+<h2>スコープ<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+</div>
 </div>
 
 
