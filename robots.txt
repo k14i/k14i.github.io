@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /images/
+Sitemap: https://k14i.github.io/sitemap.xml
