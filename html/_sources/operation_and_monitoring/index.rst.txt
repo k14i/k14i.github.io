@@ -1,9 +1,0 @@
-========================
-Operation and Monitoring
-========================
-
-.. toctree::
-  :maxdepth: 1
-
-  shell/index
-

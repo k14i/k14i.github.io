@@ -1,7 +1,0 @@
-.. _150218_1330_hardcore_data_science_06:
-
-==================================================================================================
-Tensor Methods for Large-scale Unsupervised Learning: Applications to Topic and Community Modeling
-==================================================================================================
-
-http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/39352

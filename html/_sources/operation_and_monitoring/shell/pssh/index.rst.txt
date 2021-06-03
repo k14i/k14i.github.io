@@ -1,9 +1,0 @@
-====
-pssh
-====
-
-.. toctree::
-  :maxdepth: 1
-
-  article
-

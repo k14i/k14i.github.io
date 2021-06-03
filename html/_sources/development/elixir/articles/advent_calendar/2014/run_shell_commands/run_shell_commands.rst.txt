@@ -1,5 +1,0 @@
-************************
-シェルコマンドを実行する
-************************
-
-参考: http://stackoverflow.com/questions/22594988/run-shell-commands-in-elixir

@@ -1,5 +1,0 @@
-******************************
-マクロ経由で無名関数を生成する
-******************************
-
-参考: http://stackoverflow.com/questions/24849774/creating-anonymous-functions-via-macros

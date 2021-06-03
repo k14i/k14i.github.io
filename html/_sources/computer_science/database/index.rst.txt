@@ -1,8 +1,0 @@
-========
-Database
-========
-
-.. toctree::
-  :maxdepth: 1
-
-  sql

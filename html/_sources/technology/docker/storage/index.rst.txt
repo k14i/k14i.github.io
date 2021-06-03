@@ -1,8 +1,0 @@
-=======
-Storage
-=======
-
-.. toctree::
-  :maxdepth: 1
-
-  use_logical_volumes_instead_of_loopback_files

@@ -1,7 +1,0 @@
-.. _150218_1600_hardcore_data_science_10:
-
-======================================
-Why Julia's Important for Data Science
-======================================
-
-http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40047

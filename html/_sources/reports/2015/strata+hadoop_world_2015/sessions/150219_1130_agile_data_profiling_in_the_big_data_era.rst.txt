@@ -1,7 +1,0 @@
-.. _150219_1130_agile_data_profiling_in_the_big_data_era:
-
-========================================
-Agile Data Profiling in the Big Data Era
-========================================
-
-http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38754

@@ -1,7 +1,0 @@
-.. _150219_1600_data_applications_speed_vs_accuracy:
-
-====================================
-Data Applications: Speed vs Accuracy
-====================================
-
-http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38463

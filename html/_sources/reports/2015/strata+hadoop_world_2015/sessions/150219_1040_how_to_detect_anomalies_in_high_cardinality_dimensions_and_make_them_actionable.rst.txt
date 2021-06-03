@@ -1,7 +1,0 @@
-.. _150219_1040_how_to_detect_anomalies_in_high_cardinality_dimensions_and_make_them_actionable:
-
-===============================================================================
-How to Detect Anomalies in High Cardinality Dimensions and Make Them Actionable
-===============================================================================
-
-http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38511

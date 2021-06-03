@@ -1,8 +1,0 @@
-=========
-OSSパック
-=========
-
-.. toctree::
-
-  column
-  product

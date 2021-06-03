@@ -1,9 +1,0 @@
-=====
-Julia
-=====
-
-.. toctree::
-  :maxdepth: 1
-
-  DataFrames.jl/index
-
