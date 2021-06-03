@@ -1,0 +1,15 @@
+.. _150220_1130_playing_nice_in_the_product_playground_data_scientises_engineers_and_product_managers_working_together_to_create_innovative_data_products:
+
+============================================================================================================================================
+Playing Nice in the Product Playground: Data Scientists, Engineers, and Product Managers working together to create innovative data products
+============================================================================================================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38809
+
+-----
+Slide
+-----
+
+.. raw:: html
+
+  <iframe src="http://www.slideshare.net/slideshow/embed_code/45045093" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/IntuitInc/playing-nice-in-the-product-playground-stratahadoop" title="Playing Nice in the Product Playground #StrataHadoop" target="_blank">Playing Nice in the Product Playground #StrataHadoop</a> </strong> from <strong><a href="http://www.slideshare.net/IntuitInc" target="_blank">Intuit Inc.</a></strong> </div>

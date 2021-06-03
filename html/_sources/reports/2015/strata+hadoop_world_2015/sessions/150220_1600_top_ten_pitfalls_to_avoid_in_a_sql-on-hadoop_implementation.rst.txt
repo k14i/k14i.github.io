@@ -1,0 +1,443 @@
+.. _150220_1600_top_ten_pitfalls_to_avoid_in_a_sql-on-hadoop_implementation:
+
+===========================================================
+Top Ten Pitfalls to Avoid in a SQL-on-Hadoop Implementation
+===========================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38546
+
+-------
+Summary
+-------
+
+* SQL-on-Hadoop Benefits
+
+  - Excellent price/performance
+  - SQL access
+  - Incredible pace of product advancements
+
+* SQL-on-Hadoop Pitfalls
+
+  - Crowded, confusing market
+
+    - Hive, TEZ, Vertica, Splice, Impala, Drill, Vectorwise, Phoenix, Spark SQL, Presto, HAWQ ...
+
+  - Relatively immature products
+  - Difficult to determine product differences
+
+* Recommendations
+
+  - Review Top 10 pitfalls
+
+    #. Individual Lookups and Range Queries
+    #. Fixing Bad Data
+    #. Sharding
+    #. Hotspotting
+    #. SQL Coverage
+    #. Concurrency
+    #. Columnar
+    #. Node Sizing
+    #. Brittle ETL on Hadoop
+    #. Cost-Based Optimizer
+
+  - Truly understand your workloads
+  - Do POCSs to verify
+
+
+-------------------------------------------------------
+Pitfall #1: Individual Record Lookups and Range Queries
+-------------------------------------------------------
+
+Issues
+======
+
+* Support real-time apps?
+
+  - Concurrent readers/writers?
+  - e.g., TPC-C A.5
+
+Impact
+======
+
+* Data delays
+* Inability to support:
+
+  - many users
+  - many sources
+  - real-time apps
+
+Examples
+========
+
+* Affected:
+
+  - Hive
+  - HAWQ
+
+* Unaffected:
+
+  - Splice
+  - Phoenix
+
+Solution
+========
+
+* Avoid analytic systems designed for full table scans
+* Choose systems designed for range queries
+* Verification: do query <30ms?
+
+
+---------------------------
+Pitfall #2: Fixing Bad Data
+---------------------------
+
+Issues
+======
+
+* Fix bad data without reloading all data
+
+Impact
+======
+
+* Bad reports
+* Delays to reload entire data set
+
+Examples
+========
+
+* Affected:
+
+  - Impala
+  - Drill
+
+* Unaffected:
+
+  - Splice
+
+Solution
+========
+
+* Ability to update and delete
+* Transactions for multi-row updates
+* Verification: update one record in <30ms?
+
+
+--------------------
+Pitfall #3: Sharding
+--------------------
+
+Issues
+======
+
+* Right key to distribute data
+* Right shard size
+
+Impact
+======
+
+* Slow queries, esp. for large joins or aggregations
+
+Examples
+========
+
+* Affected:
+
+  - Splice
+  - Phoenix
+
+* Unaffected:
+
+  - Hive
+
+Solution
+========
+
+* Requires design time decisions and/or tuning
+* Small shards = more parallelization
+* Fewer shards = less memory and compaction overhead
+
+
+-----------------------
+Pitfall #4: Hotspotting
+-----------------------
+
+Issues
+======
+
+* Data too concentrated in a few nodes
+
+  - Especially for time series data
+  - e.g., order data
+
+Impact
+======
+
+* Slow queries
+* Poor parallelization
+
+Examples
+========
+
+* Affected:
+
+  - Splice
+  - Phoenix
+
+* Unaffected:
+
+  - Hive
+  - Impala
+
+Solution
+========
+
+* Key design
+* Salt keys, if range queries not important
+
+
+------------------------
+Pitfall #5: SQL Coverage
+------------------------
+
+Issues
+======
+
+* Limited SQL dialects
+
+  - Why can't I do full join syntax like ON or OR?
+  - Can I do a correlated sub-query?
+
+Impact
+======
+
+* Can't run queries to meet business needs
+
+Examples
+========
+
+* Affected:
+
+  - Hive
+  - Impala
+
+* Unaffected:
+
+  - Splice
+  - HOWQ
+
+Solution
+========
+
+* Do your homework
+* Compile list of toughest queries and test
+
+Note
+====
+
+* Correlated subquery that Impala has issues with:
+
+  - http://community.cloudera.com/t5/Interactive-Short-cycle-SQL/Plans-for-Impala-to-support-correlated-subqueries/td-p/16620
+
+* Subquery restrictions:
+
+  - http://www.cloudera.com/content/cloudera/en/documentation/cloudera-impala/latest/topics/impala_subqueries.html
+
+
+-----------------------
+Pitfall #6: Concurrency
+-----------------------
+
+Issues
+======
+
+* Power real-time apps
+* Support 1000s of readers/writers at once
+* Commit records across tables atomically
+
+Impact
+======
+
+* Inability to:
+
+  - Power real-time apps
+  - Handle many users
+  - Support many input sources
+  - Deliver reports as updates happen
+
+Examples
+========
+
+* Affected:
+
+  - Hive
+  - Drill
+
+* Unaffected:
+
+  - Splice
+
+Solution
+========
+
+* Lockless, high-concurrency transactions
+* Verification: TPC-C benchmark
+
+
+--------------------
+Pitfall #7: Columnar
+--------------------
+
+Issues
+======
+
+* OLAP queries slower
+
+  - Especially large joins or aggregations
+  - e.g., TPC-H Q6
+
+Impact
+======
+
+* Poor productivity
+
+  - Queries may take minutes or hours instead of seconds
+
+Examples
+========
+
+* Affected:
+
+  - Splice
+  - Phoenix
+
+* Unaffected:
+
+  - Vertica
+  - Spark SQL
+
+Solution
+========
+
+* Columnar, but not all created equal:
+
+  #. Columnar storage/compression (4x advantage)
+  #. Columnar projection (10x)
+  #. Columnar engine (e.g., vector processing, pipelining) (50x)
+
+Note
+====
+
+* Who is How Columnar?
+
+  - http://skylandtech.net/who-is-how-columnar/
+
+
+-----------------------
+Pitfall #8: Node Sizing
+-----------------------
+
+Issues
+======
+
+* Big boxes vs. pizza boxes?
+* SSDs?
+* Memory size?
+
+Impact
+======
+
+* Price/performance
+* Performance bottlenecks
+
+Examples
+========
+
+* Affected:
+
+  - Every distributed system
+
+Solution
+========
+
+* Defalut: stick to pizza boxes with moderate memory (32-64 GB) and no SSDs unless a good reason
+* Do your homework -- profile your workload
+
+  - CPU bound? Momory? I/O? Network?
+
+
+---------------------------------
+Pitfall #9: Brittle ETL on Hadoop
+---------------------------------
+
+Issues
+======
+
+* Restart ETL pipeline because of errors
+* Serialize ETL Pipeline
+
+Impact
+======
+
+* Miss ETL window
+* Delay reports to business users
+
+Examples
+========
+
+* Affected:
+
+  - Hive
+  - Impala
+
+* Unaffected:
+
+  - Splice
+
+Solution
+========
+
+* Incremental updates with transactions to addredd data quality
+
+
+---------------------------------
+Pitfall #10: Cost-Based Optimizer
+---------------------------------
+
+Issues
+======
+
+* Choose right join strategy
+* Choose right index
+* Choose right ordering
+
+Impact
+======
+
+* Poor performance = poor productivity
+* Manual tuning by DBAs
+
+Examples
+========
+
+* Affected:
+
+  - Presto
+  - Phoenix
+
+* Unaffected:
+
+  - HAWQ
+  - Vertica
+
+Solution
+========
+
+* Cost-based optimizer
+* However, maturity for OLAP queries may be issue for newer products like Hive, Impala, and Drill
+
+
+-----
+Slide
+-----
+
+http://cdn.oreillystatic.com/en/assets/1/event/118/Top%20Ten%20Pitfalls%20to%20Avoid%20in%20a%20SQL-on-Hadoop%20Implementation%20Presentation.pptx

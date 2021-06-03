@@ -1,0 +1,12 @@
+***************
+&演算子を使おう
+***************
+
+
+参考: 
+
+* http://stackoverflow.com/questions/16997059/elixir-cube-function
+* https://pragprog.com/magazines/2013-07/programming-elixir
+* http://variousandsundry.com/cs/blog/2014/06/12/sideways-elixir-double-ampersand/
+* http://stackoverflow.com/questions/23357748/whats-up-with-this-anonymous-function-syntax
+

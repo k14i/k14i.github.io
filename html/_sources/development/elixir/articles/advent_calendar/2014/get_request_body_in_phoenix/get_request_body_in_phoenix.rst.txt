@@ -1,0 +1,5 @@
+***********************************
+Phoenixでリクエストボディを取得する
+***********************************
+
+参考: http://stackoverflow.com/questions/24104180/how-do-i-get-request-body-in-phoenix

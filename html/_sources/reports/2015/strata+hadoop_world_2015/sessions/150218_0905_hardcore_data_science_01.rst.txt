@@ -1,0 +1,8 @@
+.. _150218_0905_hardcore_data_science_01:
+
+============================================================================================================================
+Beyond DNNs towards New Architectures for Deep Learning, with Applications to Large Vocabulary Continuous Speech Recognition
+============================================================================================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/39633
+

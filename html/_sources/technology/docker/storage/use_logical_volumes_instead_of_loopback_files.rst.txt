@@ -1,0 +1,33 @@
+=============================================
+Use logical volumes instead of loopback files
+=============================================
+
+------------------------
+Set up the Logical Disks
+------------------------
+
+::
+
+  $ sudo lvcreate --wipesignatures y -L 200G -n lv_docker_data vg
+  $ sudo lvcreate --wipesignatures y -L 10G -n lv_docker_metadata vg
+
+---------------------
+Rewrite configuration
+---------------------
+
+::
+
+  $ sudo cp -p /etc/sysconfig/docker-storage /etc/sysconfig/docker-storage.original
+  $ echo "DOCKER_STORAGE_OPTIONS = \
+      --storage-opt dm.datadev=/dev/mapper/vg-lv_docker_data \
+      --storage-opt dm.metadatadev=/dev/mapper/vg-lv_docker_metadata \
+      --storage-opt dm.fs=xfs" | sudo tee /etc/sysconfig/docker-storage
+
+----------------
+Apply the change
+----------------
+
+::
+
+  $ sudo systemctl restart docker
+

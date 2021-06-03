@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sphinx.ext.mathjax &#8212; k14i.github.io 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Presentation" href="../../presentation/index.html" />
+    <link rel="prev" title="sphinx.ext.pngmath" href="sphinx.ext.pngmath.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../presentation/index.html" title="Presentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sphinx.ext.pngmath.html" title="sphinx.ext.pngmath"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Sphinx</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Math</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sphinx-ext-mathjax">
+<h1>sphinx.ext.mathjax<a class="headerlink" href="#sphinx-ext-mathjax" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">bitbucket</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">kevindunn</span><span class="o">/</span><span class="n">sphinx</span><span class="o">-</span><span class="n">extension</span><span class="o">-</span><span class="n">mathjax</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="mi">812</span><span class="n">aa178b29e22ee0b09a4e2d0a6052538c4590b</span><span class="o">/</span><span class="n">mathjax</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>conf.py</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extensions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;sphinx.ext.mathjax&#39;</span><span class="p">)</span>
+<span class="n">mathjax_path</span> <span class="o">=</span> <span class="s1">&#39;http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span> <span class="p">{</span><span class="n">mathematical</span> <span class="n">expression</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+
+  <span class="p">{</span><span class="n">mathematical</span> <span class="n">expression</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+
+  <span class="p">{</span><span class="n">mathematical</span> <span class="n">expression</span> <span class="mi">1</span><span class="p">}</span>
+
+  <span class="p">{</span><span class="n">mathematical</span> <span class="n">expression</span> <span class="mi">2</span><span class="p">}</span>
+
+  <span class="p">{</span><span class="n">mathematical</span> <span class="n">expression</span> <span class="mi">3</span><span class="p">}</span>
+
+  <span class="o">...</span>
+
+  <span class="p">{</span><span class="n">mathematical</span> <span class="n">expression</span> <span class="n">N</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span> <span class="n">E</span> <span class="o">=</span> <span class="n">mc</span><span class="o">^</span><span class="mi">2</span>
+</pre></div>
+</div>
+<div class="math">
+<p><span class="math">E = mc^2</span></p>
+</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+
+  <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">=</span> <span class="n">a</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="n">ab</span> <span class="o">+</span> <span class="n">b</span><span class="o">^</span><span class="mi">2</span>
+
+  <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">=</span> <span class="n">a</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="n">ab</span> <span class="o">+</span> <span class="n">b</span><span class="o">^</span><span class="mi">2</span>
+</pre></div>
+</div>
+<div class="math">
+<p><span class="math">(a + b)^2 = a^2 + 2ab + b^2
+
+(a - b)^2 = a^2 - 2ab + b^2</span></p>
+</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+
+  <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span>  <span class="o">&amp;=</span>  <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> \\
+             <span class="o">&amp;=</span>  <span class="n">a</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="n">ab</span> <span class="o">+</span> <span class="n">b</span><span class="o">^</span><span class="mi">2</span>
+</pre></div>
+</div>
+<div class="math">
+<p><span class="math">(a + b)^2  &amp;=  (a + b)(a + b) \\
+           &amp;=  a^2 + 2ab + b^2</span></p>
+</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+  <span class="p">:</span><span class="n">nowrap</span><span class="p">:</span>
+
+  \<span class="n">begin</span><span class="p">{</span><span class="n">eqnarray</span><span class="p">}</span>
+    <span class="n">y</span>    <span class="o">&amp;</span> <span class="o">=</span> <span class="o">&amp;</span> <span class="n">ax</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="n">bx</span> <span class="o">+</span> <span class="n">c</span> \\
+    <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">=</span> <span class="o">&amp;</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="n">xy</span> <span class="o">+</span> <span class="n">y</span><span class="o">^</span><span class="mi">2</span>
+  \<span class="n">end</span><span class="p">{</span><span class="n">eqnarray</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="math">
+<p><span class="math">\begin{eqnarray}
+  y    &amp; = &amp; ax^2 + bx + c \\
+  f(x) &amp; = &amp; x^2 + 2xy + y^2
+\end{eqnarray}</span></p>
+</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+
+  \<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span><span class="mi">1</span><span class="o">^</span><span class="mi">0</span><span class="p">}</span> <span class="o">+</span> \<span class="n">log</span><span class="p">{</span>\<span class="n">exp</span><span class="p">{</span><span class="mi">1</span><span class="p">}}</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="mi">9</span><span class="p">}</span> <span class="mf">0.1</span>
+</pre></div>
+</div>
+<div class="math">
+<p><span class="math">\frac{1}{1^0} + \log{\exp{1}} = \sum_{i=0}^{9} 0.1</span></p>
+</div></div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="https://bitbucket.org/kevindunn/sphinx-extension-mathjax/wiki/Home">Sphinx extension: mathjax</a></li>
+<li><a class="reference external" href="http://docs.mathjax.org/en/latest/configuration.html">Loading and Configuring MathJax</a></li>
+</ul>
+<ul class="simple">
+<li><a class="reference external" href="http://sphinx-doc.org/latest/ext/math.html">Math support in Sphinx</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/k14i">My repository</a></h3>
+
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../computer_science/index.html">Computer Science</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/elixir/index.html">Elixir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/c/index.html">C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/programming_languages/index.html">Programming Languages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_and_monitoring/index.html">Operation and Monitoring</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../technology/glusterfs/index.html">GlusterFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../technology/docker/index.html">Docker</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_science/bayesian_statistics/bayes_theorem/index.html">Bayes’ theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_science/personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Sphinx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../presentation/index.html">Presentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reports/2015/strata+hadoop_world_2015/index.html">Strata + Hadoop World 2015</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sphinx.ext.pngmath.html"
+                        title="previous chapter">sphinx.ext.pngmath</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../presentation/index.html"
+                        title="next chapter">Presentation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/others/sphinx/math/sphinx.ext.mathjax.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../presentation/index.html" title="Presentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sphinx.ext.pngmath.html" title="sphinx.ext.pngmath"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Sphinx</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Math</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015-2021, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

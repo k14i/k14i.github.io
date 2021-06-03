@@ -1,0 +1,79 @@
+.. _150218_0945_hardcore_data_science_02:
+
+=============================================================
+On the Computational and Statistical Interface and "Big Data"
+=============================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/39588
+
+-------
+Summary
+-------
+
+* Many conceptual and methematical challenges arising in taking seriously the problem of "Big Data"
+* Facing these challenges will require a rapprochement between computer science and statistics, bringing them together at the level of their foundations
+
+-------------------
+Big Data Phenomenon
+-------------------
+
+Science in confirmatory mode and exploatory mode
+
+-----------------------------
+Conceptual/Mathematical Isues
+-----------------------------
+
+* The need to control statistical risk under constraints on algorithmic runtime
+* Statistical with distributed and streaming data
+* The tradeoff between statistical risk and privacy
+* Many other issues that reuire a blend of statistical thinking and computational thinkinng
+
+  - Statistical thinking: e.g., a focus on sampling, confidence intervals, evaluation, diagnostics, causal inference
+  - Computational thinking: e.g., scalability, abstraction
+
+------------------
+Data as a Resource
+------------------
+
+----------------------
+Big Data, Big Problems
+----------------------
+
+* Model complexity
+* Statistical control, involves algorithms, scale poorly
+* Need sophisticated algorithm
+
+------------
+Our Approach
+------------
+
+* Take (classical) statistical decision theory
+
+-------
+Outline
+-------
+
+* Background on minimax decision theory
+* Privacy constraints
+* Communication constraints
+* Computational constraints (via optimization)
+
+----------
+Background
+----------
+
+
+-------------
+Similar Slide
+-------------
+
+http://www.stat.harvard.edu/NRC2014/MichaelJordan.pdf
+
+
+-------------
+Similar Video
+-------------
+
+.. raw:: html
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/JyyxH9cmSJg" frameborder="0" allowfullscreen></iframe>

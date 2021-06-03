@@ -1,0 +1,46 @@
+.. _150218_1130_hardcore_data_science_04:
+
+==================================
+Visual Understanding Beyond Naming
+==================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40181
+
+-------
+Summary
+-------
+
+If you torture data long enough, it will confess.
+
+
+"90% of the traffic will be visual data" -- Cisco
+This is "Big Data", which is too big for humans.
+
+Visual data is "digital dark matter" because it's noisy, unsegmented, high-entropy, two or three dimentional, so it is difficult to handle.
+
+
+-------------------------------
+Visual similarity via semantics
+-------------------------------
+
+Using words to understand/index pictures.
+Object naming -> Object categorization
+Image labeling (e.g., with CNNs + ImageNet)
+
+
+------------
+Two problems
+------------
+
+#. Long tails! We have huge amount of data.
+#. There are many more things in our visual world.
+
+
+------------
+Visual world
+------------
+
+* Not one-to-one (Visual world -> City)
+* The language bottleneck
+
+

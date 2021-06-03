@@ -1,0 +1,52 @@
+------------------
+Events and Meetups
+------------------
+
+`ElixirConf`_
+=============
+
+.. _ElixirConf: http://www.elixirconf.eu
+
+
+`Erlang Factory`_
+=================
+
+.. _Erlang Factory: http://www.erlang-factory.com
+
+
+`Elixir Meetups - Meetup`_
+==========================
+
+.. _Elixir Meetups - Meetup: http://elixir.meetup.com
+
+
+`Shinjuku.ex`_
+==============
+
+.. _Shinjuku.ex: https://www.facebook.com/groups/shinjuku.ex/
+
+
+`Sapporo Beam`_
+===============
+
+.. _Sapporo Beam: http://sapporo-beam.github.io
+
+
+`ElixirKaigi 2013 & Asakusa.rb meetup after RubyKaigi 2013`_
+============================================================
+
+.. _ElixirKaigi 2013 & Asakusa.rb meetup after RubyKaigi 2013: https://asakusarb.doorkeeper.jp/events/4149
+
+
+`yokohama.ex`_
+==============
+
+.. _yokohama.ex: http://www.zusaar.com/event/935003
+
+
+`Strange Loop`_
+===============
+
+.. _Strange Loop: https://thestrangeloop.com
+
+

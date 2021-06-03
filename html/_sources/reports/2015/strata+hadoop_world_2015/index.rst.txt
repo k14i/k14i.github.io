@@ -1,0 +1,181 @@
+==========================
+Strata + Hadoop World 2015
+==========================
+
+http://strataconf.com/big-data-conference-ca-2015
+
+.. toctree::
+  :maxdepth: 1
+
+  sessions/150218_0905_hardcore_data_science_01
+  sessions/150218_0945_hardcore_data_science_02
+  sessions/150218_1100_hardcore_data_science_03
+  sessions/150218_1130_hardcore_data_science_04
+  sessions/150218_1200_hardcore_data_science_05
+  sessions/150218_1330_hardcore_data_science_06
+  sessions/150218_1400_hardcore_data_science_07
+  sessions/150218_1430_hardcore_data_science_08
+  sessions/150218_1530_hardcore_data_science_09
+  sessions/150218_1600_hardcore_data_science_10
+  sessions/150218_1630_hardcore_data_science_11
+  sessions/150219_0845_keynote
+  sessions/150219_1040_how_to_detect_anomalies_in_high_cardinality_dimensions_and_make_them_actionable
+  sessions/150219_1130_agile_data_profiling_in_the_big_data_era
+  sessions/150219_1330_howto_make_your_future_data_scientists_love_you
+  sessions/150219_1350_from_academia_to_data_science_lessons_learned_founding_the_insight_data_science_fellows_program
+  sessions/150219_1420_couchbase_to_hadoop_at_linkedin_kafka_is_enabling_the_big_data_pipeline
+  sessions/150219_1600_data_applications_speed_vs_accuracy
+  sessions/150219_1650_forecasting_space-time_events
+  sessions/150220_0845_keynote
+  sessions/150220_1040_why_spark_is_the_next_top_compute_model
+  sessions/150220_1130_playing_nice_in_the_product_playground_data_scientises_engineers_and_product_managers_working_together_to_create_innovative_data_products
+  sessions/150220_1330_practical_methods_for_identifying_anomalies_that_matter_in_large_datasets
+  sessions/150220_1420_streaming_analytics_its_not_the_same_game
+  sessions/150220_1600_top_ten_pitfalls_to_avoid_in_a_sql-on-hadoop_implementation
+
+
+---------------
+Average ratings
+---------------
+
+* 5.00
+
+  #. :ref:`150218_0945_hardcore_data_science_02` (5.00, 3 ratings)
+  #. :ref:`150218_1630_hardcore_data_science_11` (5.00, 3 ratings)
+  #. :ref:`150219_1330_howto_make_your_future_data_scientists_love_you` (5.00, 1 rating)
+
+* 4.00 - 4.99
+
+  #. :ref:`150218_1130_hardcore_data_science_04` (4.88, 8 ratings)
+  #. :ref:`150219_1650_forecasting_space-time_events` (4.83, 6 ratings)
+  #. :ref:`150220_0845_keynote_connected_cows` (4.67, 33 ratings)
+  #. :ref:`150218_1200_hardcore_data_science_05` (4.67, 6 ratings)
+  #. :ref:`150218_1100_hardcore_data_science_03` (4.67, 3 ratings)
+  #. :ref:`150219_1040_how_to_detect_anomalies_in_high_cardinality_dimensions_and_make_them_actionable` (4.65, 23 ratings)
+  #. :ref:`150220_1330_practical_methods_for_identifying_anomalies_that_matter_in_large_datasets` (4.60, 15 ratings)
+  #. :ref:`150218_0905_hardcore_data_science_01` (4.50, 4 ratings)
+  #. :ref:`150220_1040_why_spark_is_the_next_top_compute_model` (4.40, 5 ratings)
+  #. :ref:`150220_0845_keynote_charting_a_path_forward_the_future_of_data_visualization` (4.39, 36 ratings)
+  #. :ref:`150219_1130_agile_data_profiling_in_the_big_data_era` (4.33, 12 ratings)
+  #. :ref:`150220_1130_playing_nice_in_the_product_playground_data_scientises_engineers_and_product_managers_working_together_to_create_innovative_data_products` (4.25, 4 ratings)
+  #. :ref:`150220_0845_keynote_big_data_lessons_from_our_cybernetic_past` (4.23, 44 ratings)
+  #. :ref:`150220_0845_keynote_year_zero_how_we_will_run_our_lives_in_ten_years_time` (4.17, 24 ratings)
+  #. :ref:`150218_1430_hardcore_data_science_08` (4.14, 7 ratings)
+  #. :ref:`150219_0845_keynote_data_science_where_are_we_going` (4.12, 33 ratings)
+  #. :ref:`150220_0845_keynote_new_directions_for_spark_in_2015` (4.11, 37 ratings)
+  #. :ref:`150218_1330_hardcore_data_science_06` (4.00, 6 ratings)
+  #. :ref:`150219_1350_from_academia_to_data_science_lessons_learned_founding_the_insight_data_science_fellows_program` (4.00, 3 ratings)
+  #. :ref:`150219_1420_couchbase_to_hadoop_at_linkedin_kafka_is_enabling_the_big_data_pipeline` (4.00, 1 rating)
+  #. :ref:`150220_1420_streaming_analytics_its_not_the_same_game` (4.00, 1 rating)
+
+* 3.00 - 3.99
+
+  #. :ref:`150218_1400_hardcore_data_science_07` (3.86, 7 ratings)
+  #. :ref:`150218_1600_hardcore_data_science_10` (3.67, 3 ratings)
+  #. :ref:`150218_1530_hardcore_data_science_09` (3.60, 5 ratings)
+  #. :ref:`150219_0845_keynote_the_emerging_age_of_data-driven_policy_design_examples_from_trying_to_manage_the_global_climate` (3.55, 22 ratings)
+  #. :ref:`150219_0845_keynote_thursday_keynote_welcome` (3.12, 8 ratings)
+  #. :ref:`150219_0845_keynote_impacting_business_as_it_happens` (3.10, 21 ratings)
+
+* 2.00 - 2.99
+
+  #. :ref:`150219_0845_keynote_hadoops_impact_on_the_future_of_data_management` (2.77, 26 ratings)
+  #. :ref:`150219_0845_keynote_close_encounters_with_the_third_kind_of_database` (2.57, 21 ratings)
+  #. :ref:`150220_0845_keynote_data_open_for_good_and_secure_by_default` (2.52, 21 ratings)
+  #. :ref:`150220_0845_keynote_friday_keynote_welcome` (2.50, 4 ratings)
+  #. :ref:`150219_0845_keynote_intelligence_in_the_age_of_plethora` (2.44, 34 ratings)
+  #. :ref:`150220_0845_keynote_a_new_approach_to_big_data` (2.24, 33 ratings)
+  #. :ref:`150220_0845_keynote_intel_and_the_role_of_open_source_in_delivering_on_the_promise_of_big_data` (2.20, 25 ratings)
+  #. :ref:`150219_1600_data_applications_speed_vs_accuracy` (2.00, 4 ratings)
+
+* 1.00 - 1.99
+
+  #. :ref:`150219_0845_keynote_a_bigger_lens_through_which_to_view_the_world_the_ibm_twitter_alliance` (1.92, 25 ratings)
+
+* 0.00 - 0.99
+
+* N/A
+
+  #. :ref:`150220_1600_top_ten_pitfalls_to_avoid_in_a_sql-on-hadoop_implementation`
+
+
+---------------------
+Category with Ratings
+---------------------
+
+* Ask Us Anything
+* Business & Industry
+* Connected World
+* Data Science
+
+  #. :ref:`150219_1330_howto_make_your_future_data_scientists_love_you` (5.00, 1 rating)
+  #. :ref:`150219_1040_how_to_detect_anomalies_in_high_cardinality_dimensions_and_make_them_actionable` (4.65, 23 ratings)
+  #. :ref:`150219_1130_agile_data_profiling_in_the_big_data_era` (4.33, 12 ratings)
+  #. :ref:`150220_1130_playing_nice_in_the_product_playground_data_scientises_engineers_and_product_managers_working_together_to_create_innovative_data_products` (4.25, 4 ratings)
+  #. :ref:`150219_1350_from_academia_to_data_science_lessons_learned_founding_the_insight_data_science_fellows_program` (4.00, 3 ratings)
+  #. :ref:`150219_1600_data_applications_speed_vs_accuracy` (2.00, 4 ratings)
+
+* Design & Interfaces
+* Enterprise Adoption
+* Events
+* Hadoop & Beyond
+* Hadoop in Action
+* Hadoop Platform
+
+  #. :ref:`150220_1600_top_ten_pitfalls_to_avoid_in_a_sql-on-hadoop_implementation`
+
+* Hardcore Data Science
+
+  #. :ref:`150218_0945_hardcore_data_science_02` (5.00, 3 ratings)
+  #. :ref:`150218_1630_hardcore_data_science_11` (5.00, 3 ratings)
+  #. :ref:`150218_1130_hardcore_data_science_04` (4.88, 8 ratings)
+  #. :ref:`150218_1200_hardcore_data_science_05` (4.67, 6 ratings)
+  #. :ref:`150218_1100_hardcore_data_science_03` (4.67, 3 ratings)
+  #. :ref:`150218_0905_hardcore_data_science_01` (4.50, 4 ratings)
+  #. :ref:`150218_1430_hardcore_data_science_08` (4.14, 7 ratings)
+  #. :ref:`150218_1330_hardcore_data_science_06` (4.00, 6 ratings)
+  #. :ref:`150218_1400_hardcore_data_science_07` (3.86, 7 ratings)
+  #. :ref:`150218_1600_hardcore_data_science_10` (3.67, 3 ratings)
+  #. :ref:`150218_1530_hardcore_data_science_09` (3.60, 5 ratings)
+
+* Keynotes
+
+  #. :ref:`150220_0845_keynote_charting_a_path_forward_the_future_of_data_visualization` (4.39, 36 ratings)
+  #. :ref:`150220_0845_keynote_big_data_lessons_from_our_cybernetic_past` (4.23, 44 ratings)
+  #. :ref:`150220_0845_keynote_year_zero_how_we_will_run_our_lives_in_ten_years_time` (4.17, 24 ratings)
+  #. :ref:`150219_0845_keynote_data_science_where_are_we_going` (4.12, 33 ratings)
+  #. :ref:`150220_0845_keynote_new_directions_for_spark_in_2015` (4.11, 37 ratings)
+  #. :ref:`150219_0845_keynote_the_emerging_age_of_data-driven_policy_design_examples_from_trying_to_manage_the_global_climate` (3.55, 22 ratings)
+  #. :ref:`150219_0845_keynote_thursday_keynote_welcome` (3.12, 8 ratings)
+  #. :ref:`150219_0845_keynote_hadoops_impact_on_the_future_of_data_management` (2.77, 26 ratings)
+  #. :ref:`150220_0845_keynote_data_open_for_good_and_secure_by_default` (2.52, 21 ratings)
+  #. :ref:`150220_0845_keynote_friday_keynote_welcome` (2.50, 4 ratings)
+  #. :ref:`150219_0845_keynote_intelligence_in_the_age_of_plethora` (2.44, 34 ratings)
+  #. :ref:`150220_0845_keynote_a_new_approach_to_big_data` (2.24, 33 ratings)
+
+* Keynotes, Sponsored
+
+  #. :ref:`150220_0845_keynote_connected_cows` (4.67, 33 ratings)
+  #. :ref:`150219_0845_keynote_impacting_business_as_it_happens` (3.10, 21 ratings)
+  #. :ref:`150219_0845_keynote_close_encounters_with_the_third_kind_of_database` (2.57, 21 ratings)
+  #. :ref:`150220_0845_keynote_intel_and_the_role_of_open_source_in_delivering_on_the_promise_of_big_data` (2.20, 25 ratings)
+  #. :ref:`150219_0845_keynote_a_bigger_lens_through_which_to_view_the_world_the_ibm_twitter_alliance` (1.92, 25 ratings)
+
+* Law, Ethics & Open Data
+* Machine Data / IoT
+
+  #. :ref:`150219_1650_forecasting_space-time_events` (4.83, 6 ratings)
+  #. :ref:`150220_1330_practical_methods_for_identifying_anomalies_that_matter_in_large_datasets` (4.60, 15 ratings)
+  #. :ref:`150220_1420_streaming_analytics_its_not_the_same_game` (4.00, 1 rating)
+
+* Security
+* Spark in Action
+
+  #. :ref:`150220_1040_why_spark_is_the_next_top_compute_model` (4.40, 5 ratings)
+
+* Sponsored
+
+  #. :ref:`150219_1420_couchbase_to_hadoop_at_linkedin_kafka_is_enabling_the_big_data_pipeline` (4.00, 1 rating)
+
+* Training
+

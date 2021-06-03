@@ -1,0 +1,15 @@
+====================
+Operator-Overloading
+====================
+
+--------
+Examples
+--------
+
+C++
+===
+
+.. code-block:: cpp
+
+  BookShelf BookShelf::operator+(Packet &other) { ... }
+

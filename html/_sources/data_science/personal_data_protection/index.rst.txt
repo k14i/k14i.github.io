@@ -1,0 +1,18 @@
+========================
+Personal Data Protection
+========================
+
+.. toctree::
+  :maxdepth: 1
+
+  jurist_201403/reviewing_policy_for_instruction_about_practical_usage_of_personal_data
+  jurist_201403/independent_third_party_organization_for_personal_data
+  jurist_201403/discussion_about_anonymizing_personal_data
+  jurist_201403/big_data_usage_and_regulation_in_us
+  jurist_201403/instruction_for_personal_information_protection_in_eu
+  jurist_201403/open_government_data
+  jurist_201403/lifelog_usage_and_the_legal_issues
+  jurist_201403/reviewing_a_restrictive_clause_for_transferring_personal_data_into_foreign_countries
+  jurist_201403/big_data_usage_and_the_legal_issues_in_medical_fields
+  ppdm/index
+

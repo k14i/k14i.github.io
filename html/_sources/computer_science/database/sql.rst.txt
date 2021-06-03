@@ -1,0 +1,53 @@
+====
+SQL
+====
+
+--------
+Examples
+--------
+
+.. code-block:: sql
+
+  SELECT StudentName, Students.StudentID, Cnt
+  FROM (
+    SELECT Students.StudentID,
+           count(StudentCourses.CourseID) as [Cnt]
+    FROM Students LEFT JOIN StudentCourses
+    ON Students.StudentID = StudentCourses.StudentID
+    GROUP BY Students.StudentID
+  ) T INNER JOIN Students on T.studentID = Students.StudentID
+
+.. code-block:: sql
+
+  SELECT StudentName, Students.StudentID,
+         count(StudentCourses.CourseID) as [Cnt]
+  FROM Students LEFT JOIN StudentCourses
+  ON Students.StudentID = StudentCourses.StudentID
+  GROUP BY Students.StudentID, Students.StudentName
+
+.. code-block:: sql
+
+  SELECT max(StudentName) as [StudentName], bookStudents.StudentID,
+         count(bookStudentCourses.CourseID) as [Count]
+  FROM bookStudents LEFT JOIN bookStudentCourses
+  ON bookStudents.StudentID = bookStudentCourses.StudentID
+  GROUP BY bookStudents.StudentID
+
+.. code-block:: sql
+
+  SELECT TeacherID, count(StudnetCourses.CourseID) AS [Number]
+  FROM Courses INNER JOIN StudentCourses
+  ON Courses.CourseID = StudentCourses.CourseID
+  GROUP BY Courses.TeacherID
+
+.. code-block:: sql
+
+  SELECT TeacherName, isnull(StudentSize.Number, 0)
+  FROM Teachers LEFT JOIN
+       (SELECT TeacherID, count(StudentCourses.CourseID) AS [Number]
+        FROM Courses INNER JOIN StudentCourses
+        ON Courses.CourseID = StudentCourses.CourseID
+        GROUP BY Courses.TeacherID) StudentSize
+  ON Teachers.TeacherID = StudentSize.TeacherID
+  ORDER BY StudentSize.Number DESC
+

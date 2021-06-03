@@ -1,0 +1,297 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Brick Failure Detection &#8212; k14i.github.io 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Disk encryption" href="disk_encryption.html" />
+    <link rel="prev" title="zerofill" href="zerofill.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="disk_encryption.html" title="Disk encryption"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="zerofill.html" title="zerofill"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >GlusterFS</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">GlusterFS 3.5の新機能</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="brick-failure-detection">
+<h1>Brick Failure Detection<a class="headerlink" href="#brick-failure-detection" title="Permalink to this headline">¶</a></h1>
+<p>Detecting failures on the filesystem that a brick uses makes it possible to handle errors that are caused from outside of the Gluster environment.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">19</span> <span class="mi">3</span><span class="p">:</span><span class="mi">39</span><span class="p">:</span><span class="mi">53</span><span class="p">]</span><span class="c1"># brick=&quot;/mnt/lv4/vol4&quot;;gluster volume create vol4 eins:$brick zwei:$brick drei:$brick vier:$brick fuenf:$brick sechs:$brick</span>
+<span class="n">volume</span> <span class="n">create</span><span class="p">:</span> <span class="n">vol4</span><span class="p">:</span> <span class="n">success</span><span class="p">:</span> <span class="n">please</span> <span class="n">start</span> <span class="n">the</span> <span class="n">volume</span> <span class="n">to</span> <span class="n">access</span> <span class="n">data</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">19</span> <span class="mi">3</span><span class="p">:</span><span class="mi">40</span><span class="p">:</span><span class="mi">22</span><span class="p">]</span><span class="c1"># gluster volume start vol4</span>
+<span class="n">volume</span> <span class="n">start</span><span class="p">:</span> <span class="n">vol4</span><span class="p">:</span> <span class="n">success</span>
+
+<span class="c1"># gluster volume set vol4 storage.health-check-interval 10</span>
+<span class="n">volume</span> <span class="nb">set</span><span class="p">:</span> <span class="n">success</span>
+
+
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">19</span> <span class="mi">3</span><span class="p">:</span><span class="mi">51</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span><span class="c1"># gluster volume info vol4</span>
+
+<span class="n">Volume</span> <span class="n">Name</span><span class="p">:</span> <span class="n">vol4</span>
+<span class="n">Type</span><span class="p">:</span> <span class="n">Distribute</span>
+<span class="n">Volume</span> <span class="n">ID</span><span class="p">:</span> <span class="mi">706122</span><span class="n">a9</span><span class="o">-</span><span class="mi">44</span><span class="n">fc</span><span class="o">-</span><span class="mi">4</span><span class="n">d1d</span><span class="o">-</span><span class="mi">8</span><span class="n">c3b</span><span class="o">-</span><span class="mi">97482</span><span class="n">d98b95c</span>
+<span class="n">Status</span><span class="p">:</span> <span class="n">Started</span>
+<span class="n">Number</span> <span class="n">of</span> <span class="n">Bricks</span><span class="p">:</span> <span class="mi">6</span>
+<span class="n">Transport</span><span class="o">-</span><span class="nb">type</span><span class="p">:</span> <span class="n">tcp</span>
+<span class="n">Bricks</span><span class="p">:</span>
+<span class="n">Brick1</span><span class="p">:</span> <span class="n">eins</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>
+<span class="n">Brick2</span><span class="p">:</span> <span class="n">zwei</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>
+<span class="n">Brick3</span><span class="p">:</span> <span class="n">drei</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>
+<span class="n">Brick4</span><span class="p">:</span> <span class="n">vier</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>
+<span class="n">Brick5</span><span class="p">:</span> <span class="n">fuenf</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>
+<span class="n">Brick6</span><span class="p">:</span> <span class="n">sechs</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>
+<span class="n">Options</span> <span class="n">Reconfigured</span><span class="p">:</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">health</span><span class="o">-</span><span class="n">check</span><span class="o">-</span><span class="n">interval</span><span class="p">:</span> <span class="mi">10</span>
+
+
+<span class="p">[</span><span class="n">sechs</span><span class="p">]</span><span class="c1"># dmsetup table</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">swift</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">838862848</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">cinder</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">419432448</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv4</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">1468008448</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv3</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">1258293248</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv2</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">1048578048</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv1</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">209717248</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv0</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">2048</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">glance</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">629147648</span>
+
+<span class="c1"># echo 0 209715200 error &gt; dmsetup-error-target</span>
+
+
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">19</span> <span class="mi">3</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mi">43</span><span class="p">]</span><span class="c1"># dmsetup load vg0-lv4 dmsetup-error-target</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">19</span> <span class="mi">3</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mi">46</span><span class="p">]</span><span class="c1"># dmsetup resume vg0-lv4</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">19</span> <span class="mi">3</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">06</span><span class="p">]</span><span class="c1"># dmsetup table</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">swift</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">838862848</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">cinder</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">419432448</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv4</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">error</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv3</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">1258293248</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv2</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">1048578048</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv1</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">209717248</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">lv0</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">2048</span>
+<span class="n">vg0</span><span class="o">-</span><span class="n">glance</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">209715200</span> <span class="n">linear</span> <span class="mi">8</span><span class="p">:</span><span class="mi">7</span> <span class="mi">629147648</span>
+</pre></div>
+</div>
+<div class="section" id="brick">
+<h2>brick<a class="headerlink" href="#brick" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[2014-05-18 18:49:53.720594] I [glusterfsd-mgmt.c:56:mgmt_cbk_spec] 0-mgmt: Volume file changed
+[2014-05-18 18:50:04.238239] W [posix-helpers.c:1294:posix_health_check_thread_proc] 0-vol4-posix: stat() on /mnt/lv4/vol4 returned: Input/output error
+[2014-05-18 18:50:04.238328] M [posix-helpers.c:1314:posix_health_check_thread_proc] 0-vol4-posix: health-check failed, going down
+
+Message from syslogd@sechs at May 19 03:50:04 ...
+ glusterfsd: [2014-05-18 18:50:04.238328] M [posix-helpers.c:1314:posix_health_check_thread_proc] 0-vol4-posix: health-check failed, going down
+
+
+[2014-05-18 18:50:34.238551] M [posix-helpers.c:1319:posix_health_check_thread_proc] 0-vol4-posix: still alive! -&gt; SIGTERM
+
+Message from syslogd@sechs at May 19 03:50:34 ...
+ glusterfsd: [2014-05-18 18:50:34.238551] M [posix-helpers.c:1319:posix_health_check_thread_proc] 0-vol4-posix: still alive! -&gt; SIGTERM
+[2014-05-18 18:50:34.238910] W [glusterfsd.c:1095:cleanup_and_exit] (--&gt;/lib64/libc.so.6(clone+0x6d) [0x7f1144ebab7d] (--&gt;/lib64/libpthread.so.0(+0x79d1) [0x7f114554d9d1] (--&gt;/usr/local/glusterfs-3.5.0/sbin/glusterfsd(glusterfs_sigwaiter+0xf0) [0x4085af]))) 0-: received signum (15), shutting down
+</pre></div>
+</div>
+</div>
+<div class="section" id="syslog">
+<h2>syslog<a class="headerlink" href="#syslog" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>May 19 03:49:55 sechs kernel: XFS (dm-7): metadata I/O error: block 0x0 (&quot;xfs_buf_iodone_callbacks&quot;) error 5 buf count 4096
+May 19 03:49:57 sechs kernel: XFS (dm-7): metadata I/O error: block 0x6400108 (&quot;xlog_iodone&quot;) error 5 buf count 4096
+May 19 03:49:57 sechs kernel: XFS (dm-7): xfs_do_force_shutdown(0x2) called from line 1062 of file fs/xfs/xfs_log.c.  Return address = 0xffffffffa04dd131
+May 19 03:49:57 sechs kernel: XFS (dm-7): Log I/O Error Detected.  Shutting down filesystem
+May 19 03:49:57 sechs kernel: XFS (dm-7): Please umount the filesystem and rectify the problem(s)
+May 19 03:50:04 sechs glusterfsd: [2014-05-18 18:50:04.238328] M [posix-helpers.c:1314:posix_health_check_thread_proc] 0-vol4-posix: health-check failed, going down
+
+Message from syslogd@sechs at May 19 03:50:04 ...
+ glusterfsd: [2014-05-18 18:50:04.238328] M [posix-helpers.c:1314:posix_health_check_thread_proc] 0-vol4-posix: health-check failed, going down
+May 19 03:50:27 sechs kernel: XFS (dm-7): xfs_log_force: error 5 returned.
+
+Message from syslogd@sechs at May 19 03:50:34 ...
+ glusterfsd: [2014-05-18 18:50:34.238551] M [posix-helpers.c:1319:posix_health_check_thread_proc] 0-vol4-posix: still alive! -&gt; SIGTERM
+May 19 03:50:34 sechs glusterfsd: [2014-05-18 18:50:34.238551] M [posix-helpers.c:1319:posix_health_check_thread_proc] 0-vol4-posix: still alive! -&gt; SIGTERM
+May 19 03:50:57 sechs kernel: XFS (dm-7): xfs_log_force: error 5 returned.
+</pre></div>
+</div>
+</div>
+<div class="section" id="gluster-volume-status">
+<h2>gluster volume status<a class="headerlink" href="#gluster-volume-status" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">19</span> <span class="mi">3</span><span class="p">:</span><span class="mi">52</span><span class="p">:</span><span class="mi">41</span><span class="p">]</span><span class="c1"># gluster volume status vol4</span>
+<span class="n">Status</span> <span class="n">of</span> <span class="n">volume</span><span class="p">:</span> <span class="n">vol4</span>
+<span class="n">Gluster</span> <span class="n">process</span>                                               <span class="n">Port</span>    <span class="n">Online</span>  <span class="n">Pid</span>
+<span class="o">------------------------------------------------------------------------------</span>
+<span class="n">Brick</span> <span class="n">eins</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>                              <span class="mi">49160</span>   <span class="n">Y</span>       <span class="mi">2925</span>
+<span class="n">Brick</span> <span class="n">zwei</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>                              <span class="mi">49159</span>   <span class="n">Y</span>       <span class="mi">440</span>
+<span class="n">Brick</span> <span class="n">drei</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>                              <span class="mi">49152</span>   <span class="n">Y</span>       <span class="mi">32500</span>
+<span class="n">Brick</span> <span class="n">vier</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>                              <span class="mi">49152</span>   <span class="n">Y</span>       <span class="mi">32657</span>
+<span class="n">Brick</span> <span class="n">fuenf</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>                             <span class="mi">49152</span>   <span class="n">Y</span>       <span class="mi">24517</span>
+<span class="n">Brick</span> <span class="n">sechs</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span>                             <span class="n">N</span><span class="o">/</span><span class="n">A</span>     <span class="n">N</span>       <span class="n">N</span><span class="o">/</span><span class="n">A</span>
+<span class="n">NFS</span> <span class="n">Server</span> <span class="n">on</span> <span class="n">localhost</span>                                       <span class="mi">2049</span>    <span class="n">Y</span>       <span class="mi">29535</span>
+<span class="n">NFS</span> <span class="n">Server</span> <span class="n">on</span> <span class="n">zwei</span>                                    <span class="n">N</span><span class="o">/</span><span class="n">A</span>     <span class="n">N</span>       <span class="n">N</span><span class="o">/</span><span class="n">A</span>
+<span class="n">NFS</span> <span class="n">Server</span> <span class="n">on</span> <span class="n">vier</span>                                    <span class="n">N</span><span class="o">/</span><span class="n">A</span>     <span class="n">N</span>       <span class="n">N</span><span class="o">/</span><span class="n">A</span>
+<span class="n">NFS</span> <span class="n">Server</span> <span class="n">on</span> <span class="n">drei</span>                                    <span class="n">N</span><span class="o">/</span><span class="n">A</span>     <span class="n">N</span>       <span class="n">N</span><span class="o">/</span><span class="n">A</span>
+<span class="n">NFS</span> <span class="n">Server</span> <span class="n">on</span> <span class="n">eins</span>                                    <span class="n">N</span><span class="o">/</span><span class="n">A</span>     <span class="n">N</span>       <span class="n">N</span><span class="o">/</span><span class="n">A</span>
+<span class="n">NFS</span> <span class="n">Server</span> <span class="n">on</span> <span class="n">fuenf</span>                                   <span class="n">N</span><span class="o">/</span><span class="n">A</span>     <span class="n">N</span>       <span class="n">N</span><span class="o">/</span><span class="n">A</span>
+<span class="n">NFS</span> <span class="n">Server</span> <span class="n">on</span> <span class="n">sechs</span>                                   <span class="n">N</span><span class="o">/</span><span class="n">A</span>     <span class="n">N</span>       <span class="n">N</span><span class="o">/</span><span class="n">A</span>
+
+<span class="n">Task</span> <span class="n">Status</span> <span class="n">of</span> <span class="n">Volume</span> <span class="n">vol4</span>
+<span class="o">------------------------------------------------------------------------------</span>
+<span class="n">There</span> <span class="n">are</span> <span class="n">no</span> <span class="n">active</span> <span class="n">volume</span> <span class="n">tasks</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="process">
+<h2>process<a class="headerlink" href="#process" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ps -ef | grep glusterfsd | grep -v grep | wc -l</span>
+<span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="service-glusterd-restart">
+<h2>service glusterd restart<a class="headerlink" href="#service-glusterd-restart" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">17.197872</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">glusterfsd</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">1959</span><span class="p">:</span><span class="n">main</span><span class="p">]</span> <span class="mi">0</span><span class="o">-/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">glusterfs</span><span class="o">-</span><span class="mf">3.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">glusterfsd</span><span class="p">:</span> <span class="n">Started</span> <span class="n">running</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">glusterfs</span><span class="o">-</span><span class="mf">3.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">glusterfsd</span> <span class="n">version</span> <span class="mf">3.5</span><span class="n">git</span> <span class="p">(</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">glusterfs</span><span class="o">-</span><span class="mf">3.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">glusterfsd</span> <span class="o">-</span><span class="n">s</span> <span class="n">sechs</span> <span class="o">--</span><span class="n">volfile</span><span class="o">-</span><span class="nb">id</span> <span class="n">vol4</span><span class="o">.</span><span class="n">sechs</span><span class="o">.</span><span class="n">mnt</span><span class="o">-</span><span class="n">lv4</span><span class="o">-</span><span class="n">vol4</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">glusterd</span><span class="o">/</span><span class="n">vols</span><span class="o">/</span><span class="n">vol4</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">sechs</span><span class="o">-</span><span class="n">mnt</span><span class="o">-</span><span class="n">lv4</span><span class="o">-</span><span class="n">vol4</span><span class="o">.</span><span class="n">pid</span> <span class="o">-</span><span class="n">S</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="mi">23</span><span class="n">afc72b5ceddccd28b405b1cdf5b4df</span><span class="o">.</span><span class="n">socket</span> <span class="o">--</span><span class="n">brick</span><span class="o">-</span><span class="n">name</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">lv4</span><span class="o">/</span><span class="n">vol4</span> <span class="o">-</span><span class="n">l</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">glusterfs</span><span class="o">-</span><span class="mf">3.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">glusterfs</span><span class="o">/</span><span class="n">bricks</span><span class="o">/</span><span class="n">mnt</span><span class="o">-</span><span class="n">lv4</span><span class="o">-</span><span class="n">vol4</span><span class="o">.</span><span class="n">log</span> <span class="o">--</span><span class="n">xlator</span><span class="o">-</span><span class="n">option</span> <span class="o">*-</span><span class="n">posix</span><span class="o">.</span><span class="n">glusterd</span><span class="o">-</span><span class="n">uuid</span><span class="o">=</span><span class="mi">0765</span><span class="n">d288</span><span class="o">-</span><span class="n">a59b</span><span class="o">-</span><span class="mi">4</span><span class="n">ccf</span><span class="o">-</span><span class="mi">90</span><span class="n">ae</span><span class="o">-</span><span class="n">c3332c83dbf4</span> <span class="o">--</span><span class="n">brick</span><span class="o">-</span><span class="n">port</span> <span class="mi">49152</span> <span class="o">--</span><span class="n">xlator</span><span class="o">-</span><span class="n">option</span> <span class="n">vol4</span><span class="o">-</span><span class="n">server</span><span class="o">.</span><span class="n">listen</span><span class="o">-</span><span class="n">port</span><span class="o">=</span><span class="mi">49152</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">17.205310</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">socket</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">3561</span><span class="p">:</span><span class="n">socket_init</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">socket</span><span class="o">.</span><span class="n">glusterfsd</span><span class="p">:</span> <span class="n">SSL</span> <span class="n">support</span> <span class="ow">is</span> <span class="n">NOT</span> <span class="n">enabled</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">17.205486</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">socket</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">3576</span><span class="p">:</span><span class="n">socket_init</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">socket</span><span class="o">.</span><span class="n">glusterfsd</span><span class="p">:</span> <span class="n">using</span> <span class="n">system</span> <span class="n">polling</span> <span class="n">thread</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">17.205880</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">socket</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">3561</span><span class="p">:</span><span class="n">socket_init</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">glusterfs</span><span class="p">:</span> <span class="n">SSL</span> <span class="n">support</span> <span class="ow">is</span> <span class="n">NOT</span> <span class="n">enabled</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">17.205949</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">socket</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">3576</span><span class="p">:</span><span class="n">socket_init</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">glusterfs</span><span class="p">:</span> <span class="n">using</span> <span class="n">system</span> <span class="n">polling</span> <span class="n">thread</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.834910</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">graph</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">254</span><span class="p">:</span><span class="n">gf_add_cmdline_options</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">vol4</span><span class="o">-</span><span class="n">server</span><span class="p">:</span> <span class="n">adding</span> <span class="n">option</span> <span class="s1">&#39;listen-port&#39;</span> <span class="k">for</span> <span class="n">volume</span> <span class="s1">&#39;vol4-server&#39;</span> <span class="k">with</span> <span class="n">value</span> <span class="s1">&#39;49152&#39;</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.834976</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">graph</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">254</span><span class="p">:</span><span class="n">gf_add_cmdline_options</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">vol4</span><span class="o">-</span><span class="n">posix</span><span class="p">:</span> <span class="n">adding</span> <span class="n">option</span> <span class="s1">&#39;glusterd-uuid&#39;</span> <span class="k">for</span> <span class="n">volume</span> <span class="s1">&#39;vol4-posix&#39;</span> <span class="k">with</span> <span class="n">value</span> <span class="s1">&#39;0765d288-a59b-4ccf-90ae-c3332c83dbf4&#39;</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.837332</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">rpcsvc</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">2064</span><span class="p">:</span><span class="n">rpcsvc_set_outstanding_rpc_limit</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">rpc</span><span class="o">-</span><span class="n">service</span><span class="p">:</span> <span class="n">Configured</span> <span class="n">rpc</span><span class="o">.</span><span class="n">outstanding</span><span class="o">-</span><span class="n">rpc</span><span class="o">-</span><span class="n">limit</span> <span class="k">with</span> <span class="n">value</span> <span class="mi">64</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.837510</span><span class="p">]</span> <span class="n">W</span> <span class="p">[</span><span class="n">options</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">848</span><span class="p">:</span><span class="n">xl_opt_validate</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">vol4</span><span class="o">-</span><span class="n">server</span><span class="p">:</span> <span class="n">option</span> <span class="s1">&#39;listen-port&#39;</span> <span class="ow">is</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">preferred</span> <span class="ow">is</span> <span class="s1">&#39;transport.socket.listen-port&#39;</span><span class="p">,</span> <span class="n">continuing</span> <span class="k">with</span> <span class="n">correction</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.837572</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">socket</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">3561</span><span class="p">:</span><span class="n">socket_init</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">tcp</span><span class="o">.</span><span class="n">vol4</span><span class="o">-</span><span class="n">server</span><span class="p">:</span> <span class="n">SSL</span> <span class="n">support</span> <span class="ow">is</span> <span class="n">NOT</span> <span class="n">enabled</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.837601</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">socket</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">3576</span><span class="p">:</span><span class="n">socket_init</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">tcp</span><span class="o">.</span><span class="n">vol4</span><span class="o">-</span><span class="n">server</span><span class="p">:</span> <span class="n">using</span> <span class="n">system</span> <span class="n">polling</span> <span class="n">thread</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.838445</span><span class="p">]</span> <span class="n">E</span> <span class="p">[</span><span class="n">common</span><span class="o">-</span><span class="n">utils</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">93</span><span class="p">:</span><span class="n">mkdir_p</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="p">:</span> <span class="n">Failed</span> <span class="n">due</span> <span class="n">to</span> <span class="n">reason</span> <span class="n">Input</span><span class="o">/</span><span class="n">output</span> <span class="n">error</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.838505</span><span class="p">]</span> <span class="n">I</span> <span class="p">[</span><span class="n">mem</span><span class="o">-</span><span class="n">pool</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">539</span><span class="p">:</span><span class="n">mem_pool_destroy</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">vol4</span><span class="o">-</span><span class="n">changelog</span><span class="p">:</span> <span class="n">size</span><span class="o">=</span><span class="mi">108</span> <span class="nb">max</span><span class="o">=</span><span class="mi">0</span> <span class="n">total</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.838533</span><span class="p">]</span> <span class="n">E</span> <span class="p">[</span><span class="n">xlator</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">403</span><span class="p">:</span><span class="n">xlator_init</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">vol4</span><span class="o">-</span><span class="n">changelog</span><span class="p">:</span> <span class="n">Initialization</span> <span class="n">of</span> <span class="n">volume</span> <span class="s1">&#39;vol4-changelog&#39;</span> <span class="n">failed</span><span class="p">,</span> <span class="n">review</span> <span class="n">your</span> <span class="n">volfile</span> <span class="n">again</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.838561</span><span class="p">]</span> <span class="n">E</span> <span class="p">[</span><span class="n">graph</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">307</span><span class="p">:</span><span class="n">glusterfs_graph_init</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">vol4</span><span class="o">-</span><span class="n">changelog</span><span class="p">:</span> <span class="n">initializing</span> <span class="n">translator</span> <span class="n">failed</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.838610</span><span class="p">]</span> <span class="n">E</span> <span class="p">[</span><span class="n">graph</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">502</span><span class="p">:</span><span class="n">glusterfs_graph_activate</span><span class="p">]</span> <span class="mi">0</span><span class="o">-</span><span class="n">graph</span><span class="p">:</span> <span class="n">init</span> <span class="n">failed</span>
+<span class="p">[</span><span class="mi">2014</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">18</span> <span class="mi">18</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">18.839480</span><span class="p">]</span> <span class="n">W</span> <span class="p">[</span><span class="n">glusterfsd</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">1095</span><span class="p">:</span><span class="n">cleanup_and_exit</span><span class="p">]</span> <span class="p">(</span><span class="o">--&gt;/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">glusterfs</span><span class="o">-</span><span class="mf">3.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">libgfrpc</span><span class="o">.</span><span class="n">so</span><span class="o">.</span><span class="mi">0</span><span class="p">(</span><span class="n">rpc_clnt_handle_reply</span><span class="o">+</span><span class="mh">0x1b5</span><span class="p">)</span> <span class="p">[</span><span class="mh">0x7f2981c837d8</span><span class="p">]</span> <span class="p">(</span><span class="o">--&gt;/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">glusterfs</span><span class="o">-</span><span class="mf">3.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">glusterfsd</span><span class="p">(</span><span class="n">mgmt_getspec_cbk</span><span class="o">+</span><span class="mh">0x36a</span><span class="p">)</span> <span class="p">[</span><span class="mh">0x40cf77</span><span class="p">]</span> <span class="p">(</span><span class="o">--&gt;/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">glusterfs</span><span class="o">-</span><span class="mf">3.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">glusterfsd</span><span class="p">(</span><span class="n">glusterfs_process_volfp</span><span class="o">+</span><span class="mh">0x18a</span><span class="p">)</span> <span class="p">[</span><span class="mh">0x408bf2</span><span class="p">])))</span> <span class="mi">0</span><span class="o">-</span><span class="p">:</span> <span class="n">received</span> <span class="n">signum</span> <span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">shutting</span> <span class="n">down</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/k14i">My repository</a></h3>
+
+  <h3><a href="../../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../computer_science/index.html">Computer Science</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/elixir/index.html">Elixir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/c/index.html">C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/programming_languages/index.html">Programming Languages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../operation_and_monitoring/index.html">Operation and Monitoring</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">GlusterFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docker/index.html">Docker</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/bayesian_statistics/bayes_theorem/index.html">Bayes’ theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../others/sphinx/index.html">Sphinx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../others/presentation/index.html">Presentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reports/2015/strata+hadoop_world_2015/index.html">Strata + Hadoop World 2015</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="zerofill.html"
+                        title="previous chapter">zerofill</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="disk_encryption.html"
+                        title="next chapter">Disk encryption</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/technology/glusterfs/new_features/3.5/brick_failure_detection.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="disk_encryption.html" title="Disk encryption"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="zerofill.html" title="zerofill"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >GlusterFS</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >GlusterFS 3.5の新機能</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015-2021, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

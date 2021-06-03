@@ -1,0 +1,36 @@
+======================================================
+Write Less, Do More (and Have Fun!) with Elixir Macros
+======================================================
+
+Speaker
+=======
+
+`Chris McCord <http://twitter.com/chris_mccord>`_
+
+Slides
+======
+
+http://slid.es/chrismccord/elixir-macros
+
+Video
+=====
+
+.. raw:: html
+
+  <iframe width="420" height="315" src="//www.youtube.com/embed/mkoYqXdXl5Y" frameborder="0" allowfullscreen></iframe>
+
+Speech
+======
+
+  Welcome everyone. This is actually great segue from brise's talk because ____ ____ ____ details of how macros work in kind of ____ ____ item from ____ basic level. So, again, we are going to learn how to "Write Less, Do More" for code, and also "Have Fun". And, again, I'm ____ ____ ____ and ____ a lot of about me is I work a programmer in Ruby for last 4 or 5 years professionally, and before that I did a lot of PHP and Java. So Elixir has been my first foreign to functional programming. But I got it into stand by a year ago, a ____ Rubyist, Jose Valim, had put this language out there, ____ been learned about its ... I used auth his open-source libraries in a Ruby community. It's farer than my be worse a look and worth ____ I discover the wonderful Erlang/OTP eco-system, and a kind of bloom my mind at this ____ of innovation has existed ____ ____ ____ to full my entire programming career.
+
+  And so since then I've basically learned about process super-vision perform a lot about OTP. And having a most fun I've ever had programming. And large part of this is due to Elixir macros.
+
+  So have been ... what we talk about today? So basically we really go over what about macros. And a brief session in a little bits. And a ____ ____ have ever work phenomenon is far as Elixir's AST structured. As on going to some of a macro use-cases far as ____ ____ ____ ____ ____ code. Basically do things like remove a dry code of ____ things that are basically we otherwise we had write by hand would've been very t.d.s. try by hand.
+
+  How could we do ____ ____ ____ ____ considerations? So how can we take like text file as a compile time in do much in code generation? Base so off of a file contents? And how we can do need things is like composed domain specific languages, so how can we almost ____ at all our own language level on tuple of the Elixir to basically exist on whatever domain ____ ____. And last see how can we have fun with macros. Thus, why I'm here, a program is very clear process for me. So anything like macros ____ ____ in the power to explore the language and development keywords, ____ lot a fun, and I enjoyed that a lot.
+
+  And then I ____ ____ through over ____ guided lesson on writing macros. So we get implement in a sort of macro via slides, but actually sigil put it straight forward because it trans out composing ____ a little bits of co-generation. It is the best way to write macros and work sure a ____ to show as a ____ presentation. And implement ____ a new sort of macro will write on ____ ____ many testing DSL, that's could be like a bare bones version of a ____ from Elixir's test framework.
+
+  And our close-listen real-world use cases and examples are , so, macros on ____ to be avoided not something ____ you should be afraid of are there are their domain ____ the real world. Our go through see how Elixir's unicode handling is using a co-generation in compile time to basically provide be best unicode support I have seen the language. And go through some exmaples of a way from ____ ____ ____ code Phoenix, a ____ code web framework as a ____ _____ that's probably incorrect term, but an application framework called Phoenix ____ using a macros for the routing layer right now. We can have a very nice routing DSL, mostly harder works.
+

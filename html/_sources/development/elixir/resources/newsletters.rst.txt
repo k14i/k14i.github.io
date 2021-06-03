@@ -1,0 +1,10 @@
+-----------
+Newsletters
+-----------
+
+`Elixir Radar`_
+===============
+
+.. _Elixir Radar: http://plataformatec.com.br/elixir-radar
+
+

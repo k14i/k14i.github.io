@@ -1,0 +1,10 @@
+=====
+Shell
+=====
+
+.. toctree::
+  :maxdepth: 1
+
+  pssh/index
+  zsh/index
+

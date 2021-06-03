@@ -1,0 +1,9 @@
+===================
+Bayesian Statistics
+===================
+
+.. toctree::
+  :maxdepth: 1
+
+  bayes_theorem/index
+

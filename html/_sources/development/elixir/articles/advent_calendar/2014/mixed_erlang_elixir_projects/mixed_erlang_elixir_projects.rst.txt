@@ -1,0 +1,5 @@
+***********************************************************
+ErlangとElixirのソースコードを1つのプロジェクトに同居させる
+***********************************************************
+
+参考: http://stackoverflow.com/questions/19776403/mixed-erlang-elixir-projects-can-i-use-mix-or-rebar

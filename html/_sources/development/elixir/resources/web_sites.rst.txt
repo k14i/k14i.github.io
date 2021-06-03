@@ -1,0 +1,110 @@
+---------
+Web Sites
+---------
+
+`elixir-lang.org`_
+==================
+
+.. _elixir-lang.org: http://elixir-lang.org
+
+Official site.
+
+
+`elixir-lang/elixir`_
+=====================
+
+.. _elixir-lang/elixir: https://github.com/elixir-lang/elixir
+
+GitHub repository.
+
+
+`Elixir Cheat Sheet`_
+=====================
+
+.. _Elixir Cheat Sheet: http://media.pragprog.com/titles/elixir/ElixirCheat.pdf
+
+Cheat sheet of Elixir's syntax and functionality by Dave Thomas.
+
+
+`Hex`_
+======
+
+.. _Hex: https://hex.pm
+
+A package manager for Elixir and Erlang.
+
+
+`elixir sips`_
+==============
+
+.. _elixir sips: http://elixirsips.com
+
+A screencast to learn Elixir. $9/mo.
+
+
+`ElixirStream`_
+===============
+
+.. _ElixirStream: http://elixirstream.com/entries
+
+::
+
+  For more than half a year a group of our developers has been researching Elixir programming language. Now here at Diatom, we strongly believe that Elixir is "The Next big Thing", so we've decided to give our community a boost and create a link-sharing platform.
+  
+  "So, how is this platform different from other platforms like Reddit, Elixir mailing lists, blog aggregators, etc.?" you might ask. The answer is - our goal is to bring news, share at the single place and have fun along the way. Self-promotion is more than welcome here. Thus, feel free to share your posts!
+
+
+`Try Elixir`_
+=============
+
+.. _Try Elixir: http://try-elixir.herokuapp.com
+
+iex on the web (but now buggy and outdated).
+
+
+`Newest 'elixir' Questions - Stack Overflow`_
+=============================================
+
+.. _Newest 'elixir' Questions - Stack Overflow: http://stackoverflow.com/questions/tagged/elixir
+
+Questions tagged on Elixir at Stack Overflow.
+
+
+`Elixir (programming language) - Quora`_
+========================================
+
+.. _Elixir (programming language) - Quora: http://www.quora.com/Elixir-programming-language
+
+Questions on Elixir at Quora.
+
+
+`The Elixir Programming Language - Reddit`_
+===========================================
+
+.. _The Elixir Programming Language - Reddit: https://www.reddit.com/r/elixir/
+
+Forum on Elixir at Reddit.
+
+
+`Elixir - Qiita`_
+=================
+
+.. _Elixir - Qiita: http://qiita.com/tags/elixir
+
+Latest posts with Elixir tag at Qiita.
+
+
+`Elixir Advent Calendar 2013`_
+==============================
+
+.. _Elixir Advent Calendar 2013: http://qiita.com/advent-calendar/2013/elixir
+
+Advent Calendar on Elixir in 2013 at Qiita.
+
+
+`Elixir Advent Calendar 2014`_
+==============================
+
+.. _Elixir Advent Calendar 2014: http://qiita.com/advent-calendar/2014/elixir
+
+Advent Calendar on Elixir in 2014 at Qiita.

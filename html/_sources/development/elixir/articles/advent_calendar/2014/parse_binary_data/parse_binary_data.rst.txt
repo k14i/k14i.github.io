@@ -1,0 +1,5 @@
+**************************
+バイナリデータをパースする
+**************************
+
+参考: http://stackoverflow.com/questions/24435197/elixir-parse-binary-data

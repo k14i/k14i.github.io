@@ -1,0 +1,563 @@
+***************
+Phoenixを使おう
+***************
+
+::
+
+  % git clone https://github.com/phoenixframework/phoenix.git && cd phoenix && git checkout v0.6.0 && mix do deps.get, compile
+
+
+::
+
+  Cloning into 'phoenix'...
+  remote: Counting objects: 7766, done.
+  remote: Compressing objects: 100% (104/104), done.
+  remote: Total 7766 (delta 51), reused 0 (delta 0)
+  Receiving objects: 100% (7766/7766), 1.28 MiB | 670.00 KiB/s, done.
+  Resolving deltas: 100% (5016/5016), done.
+  Checking connectivity... done.
+  Note: checking out 'v0.6.0'.
+  
+  You are in 'detached HEAD' state. You can look around, make experimental
+  changes and commit them, and you can discard any commits you make in this
+  state without impacting any branches by performing another checkout.
+  
+    git checkout -b new_branch_name
+  
+  HEAD is now at 5615dea... Prep for 0.6.0 release
+  * Getting websocket_client (git://github.com/jeremyong/websocket_client.git)
+  Cloning into '/home/keith/devel/elixir/phoenix/deps/websocket_client'...
+  remote: Counting objects: 344, done.
+  remote: Total 344 (delta 0), reused 0 (delta 0)
+  Receiving objects: 100% (344/344), 68.66 KiB | 92.00 KiB/s, done.
+  Resolving deltas: 100% (202/202), done.
+  Checking connectivity... done.
+  Dependency resolution completed successfully
+  * Getting cowboy (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/cowboy-1.0.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/cowboy-1.0.0.tar)
+  * Getting linguist (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/linguist-0.1.3.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/linguist-0.1.3.tar)
+  * Getting plug (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/plug-0.8.2.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/plug-0.8.2.tar)
+  * Getting poison (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/poison-1.2.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/poison-1.2.0.tar)
+  * Getting earmark (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/earmark-0.1.10.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/earmark-0.1.10.tar)
+  * Getting ex_doc (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/ex_doc-0.6.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/ex_doc-0.6.0.tar)
+  * Getting inch_ex (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/inch_ex-0.2.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/inch_ex-0.2.0.tar)
+  * Getting json (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/json-0.3.2.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/json-0.3.2.tar)
+  * Getting cowlib (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/cowlib-1.0.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/cowlib-1.0.0.tar)
+  * Getting ranch (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/ranch-1.0.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/ranch-1.0.0.tar)
+  ==> linguist
+  Compiled lib/linguist/compiler.ex
+  Compiled lib/linguist.ex
+  Compiled lib/linguist/vocabulary.ex
+  Generated linguist.app
+  ==> ranch (compile)
+  Compiled src/ranch_transport.erl
+  Compiled src/ranch_app.erl
+  Compiled src/ranch_protocol.erl
+  Compiled src/ranch_sup.erl
+  Compiled src/ranch_acceptors_sup.erl
+  Compiled src/ranch.erl
+  Compiled src/ranch_listener_sup.erl
+  Compiled src/ranch_acceptor.erl
+  Compiled src/ranch_server.erl
+  Compiled src/ranch_conns_sup.erl
+  Compiled src/ranch_tcp.erl
+  Compiled src/ranch_ssl.erl
+  ==> poison
+  Compiled lib/poison.ex
+  Compiled lib/poison/decoder.ex
+  Compiled lib/poison/parser.ex
+  Compiled lib/poison/encoder.ex
+  Generated poison.app
+  ==> cowlib (compile)
+  Compiled src/cow_http.erl
+  Compiled src/cow_qs.erl
+  Compiled src/cow_multipart.erl
+  Compiled src/cow_cookie.erl
+  Compiled src/cow_spdy.erl
+  Compiled src/cow_http_hd.erl
+  Compiled src/cow_http_te.erl
+  Compiled src/cow_date.erl
+  Compiled src/cow_mimetypes.erl
+  ==> cowboy (compile)
+  Compiled src/cowboy_middleware.erl
+  Compiled src/cowboy_sub_protocol.erl
+  Compiled src/cowboy_websocket_handler.erl
+  Compiled src/cowboy.erl
+  Compiled src/cowboy_static.erl
+  Compiled src/cowboy_sup.erl
+  Compiled src/cowboy_clock.erl
+  Compiled src/cowboy_spdy.erl
+  Compiled src/cowboy_http_handler.erl
+  Compiled src/cowboy_app.erl
+  Compiled src/cowboy_bstr.erl
+  Compiled src/cowboy_router.erl
+  Compiled src/cowboy_handler.erl
+  Compiled src/cowboy_http.erl
+  Compiled src/cowboy_loop_handler.erl
+  Compiled src/cowboy_rest.erl
+  Compiled src/cowboy_protocol.erl
+  Compiled src/cowboy_websocket.erl
+  Compiled src/cowboy_req.erl
+  ==> plug
+  Compiled lib/plug.ex
+  Compiled lib/plug/adapters/cowboy.ex
+  Compiled lib/plug/builder.ex
+  Compiled lib/plug/conn/adapter.ex
+  Compiled lib/plug/conn/cookies.ex
+  Compiled lib/plug/conn/query.ex
+  Compiled lib/plug/conn/status.ex
+  Compiled lib/plug/conn/unfetched.ex
+  Compiled lib/plug/conn/utils.ex
+  Compiled lib/plug/crypto/key_generator.ex
+  Comx.ex
+  Compiled lib/phoenix/code_reloader.ex
+  Compiled lib/phoenix/config.ex
+  Compiled lib/phoenix/controller/connection.ex
+  Compiled lib/phoenix/controller/exception.ex
+  Compiled lib/phoenix/controller/flash.ex
+  Compiled lib/phoen
+
+
+::
+
+  % mix phoenix.new phoenix_example ~/devel/elixir/phoenix_example
+
+
+::
+
+  * creating /home/keith/devel/elixir/phoenix_example/.gitignore
+  * creating /home/keith/devel/elixir/phoenix_example/README.md
+  * creating /home/keith/devel/elixir/phoenix_example/config/config.exs
+  * creating /home/keith/devel/elixir/phoenix_example/config/dev.exs
+  * creating /home/keith/devel/elixir/phoenix_example/config/locales/en.exs
+  * creating /home/keith/devel/elixir/phoenix_example/config/prod.exs
+  * creating /home/keith/devel/elixir/phoenix_example/config/test.exs
+  * creating /home/keith/devel/elixir/phoenix_example/lib/phoenix_example.ex
+  * creating /home/keith/devel/elixir/phoenix_example/mix.exs
+  * creating /home/keith/devel/elixir/phoenix_example/test/phoenix_example_test.exs
+  * creating /home/keith/devel/elixir/phoenix_example/test/test_helper.exs
+  * creating /home/keith/devel/elixir/phoenix_example/web/channels/.gitkeep
+  * creating /home/keith/devel/elixir/phoenix_example/web/controllers/page_controller.ex
+  * creating /home/keith/devel/elixir/phoenix_example/web/i18n.ex
+  * creating /home/keith/devel/elixir/phoenix_example/web/models/.gitkeep
+  * creating /home/keith/devel/elixir/phoenix_example/web/router.ex
+  * creating /home/keith/devel/elixir/phoenix_example/web/templates/layout/application.html.eex
+  * creating /home/keith/devel/elixir/phoenix_example/web/templates/page/error.html.eex
+  * creating /home/keith/devel/elixir/phoenix_example/web/templates/page/index.html.eex
+  * creating /home/keith/devel/elixir/phoenix_example/web/templates/page/not_found.html.eex
+  * creating /home/keith/devel/elixir/phoenix_example/web/view.ex
+  * creating /home/keith/devel/elixir/phoenix_example/web/views/layout_view.ex
+  * creating /home/keith/devel/elixir/phoenix_example/web/views/page_view.ex
+  * creating /home/keith/devel/elixir/phoenix_example/priv/static/css/phoenix.css
+  * creating /home/keith/devel/elixir/phoenix_example/priv/static/images/phoenix.png
+  * creating /home/keith/devel/elixir/phoenix_example/priv/static/js/phoenix.js
+
+
+::
+
+  cd ~/devel/elixir/phoenix_example
+
+::
+
+  mix do deps.get, compile
+
+
+::
+
+  * Getting phoenix (git://github.com/phoenixframework/phoenix.git)
+  Cloning into '/home/keith/devel/elixir/phoenix_example/deps/phoenix'...
+  remote: Counting objects: 7766, done.
+  remote: Compressing objects: 100% (104/104), done.
+  remote: Total 7766 (delta 51), reused 0 (delta 0)
+  Receiving objects: 100% (7766/7766), 1.28 MiB | 545.00 KiB/s, done.
+  Resolving deltas: 100% (5016/5016), done.
+  Checking connectivity... done.
+  Running dependency resolution
+  Unlocked:   cowboy, poison, plug, linguist
+  Dependency resolution completed successfully
+    ranch: v1.0.0
+    cowlib: v1.0.0
+    cowboy: v1.0.0
+    linguist: v0.1.4
+    plug: v0.8.2
+    poison: v1.2.0
+  * Getting cowboy (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/cowboy-1.0.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/cowboy-1.0.0.tar)
+  * Getting cowlib (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/cowlib-1.0.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/cowlib-1.0.0.tar)
+  * Getting ranch (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/ranch-1.0.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/ranch-1.0.0.tar)
+  * Getting linguist (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/linguist-0.1.4.tar)
+  Fetched package
+  Unpacked package tarball (/home/keith/.hex/packages/linguist-0.1.4.tar)
+  * Getting plug (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/plug-0.8.2.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/plug-0.8.2.tar)
+  * Getting poison (Hex package)
+  Checking package (https://s3.amazonaws.com/s3.hex.pm/tarballs/poison-1.2.0.tar)
+  Using locally cached package
+  Unpacked package tarball (/home/keith/.hex/packages/poison-1.2.0.tar)
+  ==> linguist
+  Compiled lib/linguist/compiler.ex
+  Compiled lib/linguist.ex
+  Compiled lib/linguist/vocabulary.ex
+  Generated linguist.app
+  ==> ranch (compile)
+  Compiled src/ranch_transport.erl
+  Compiled src/ranch_protocol.erl
+  Compiled src/ranch_app.erl
+  Compiled src/ranch_sup.erl
+  Compiled src/ranch_acceptors_sup.erl
+  Compiled src/ranch.erl
+  Compiled src/ranch_listener_sup.erl
+  Compiled src/ranch_acceptor.erl
+  Compiled src/ranch_server.erl
+  Compiled src/ranch_tcp.erl
+  Compiled src/ranch_ssl.erl
+  Compiled src/ranch_conns_sup.erl
+  ==> poison
+  Compiled lib/poison.ex
+  Compiled lib/poison/decoder.ex
+  Compiled lib/poison/parser.ex
+  Compiled lib/poison/encoder.ex
+  Generated poison.app
+  ==> cowlib (compile)
+  Compiled src/cow_qs.erl
+  Compiled src/cow_http.erl
+  Compiled src/cow_multipart.erl
+  Compiled src/cow_cookie.erl
+  Compiled src/cow_http_te.erl
+  Compiled src/cow_spdy.erl
+  Compiled src/cow_http_hd.erl
+  Compiled src/cow_date.erl
+  Compiled src/cow_mimetypes.erl
+  ==> cowboy (compile)
+  Compiled src/cowboy_middleware.erl
+  Compiled src/cowboy_sub_protocol.erl
+  Compiled src/cowboy_websocket_handler.erl
+  Compiled src/cowboy.erl
+  Compiled src/cowboy_static.erl
+  Compiled src/cowboy_sup.erl
+  Compiled src/cowboy_clock.erl
+  Compiled src/cowboy_spdy.erl
+  Compiled src/cowboy_http_handler.erl
+  Compiled src/cowboy_app.erl
+  Compiled src/cowboy_bstr.erl
+  Compiled src/cowboy_handler.erl
+  Compiled src/cowboy_http.erl
+  Compiled src/cowboy_router.erl
+  Compiled src/cowboy_loop_handler.erl
+  Compiled src/cowboy_protocol.erl
+  Compiled src/cowboy_websocket.erl
+  Compiled src/cowboy_rest.erl
+  Compiled src/cowboy_req.erl
+  ==> plug
+  Compiled lib/plug.ex
+  Compiled lib/plug/adapters/cowboy.ex
+  Compiled lib/plug/builder.ex
+  Compiled lib/plug/conn/adapter.ex
+  Compiled lib/plug/conn/query.ex
+  Compiled lib/plug/conn/cookies.ex
+  Compiled lib/plug/conn/status.ex
+  Compiled lib/plug/conn/unfetched.ex
+  Compiled lib/plug/conn/utils.ex
+  Compiled lib/plug/crypto/key_generator.ex
+  Compiled lib/plug/adapters/test/conn.ex
+  Compiled lib/plug/adapters/cowboy/handler.ex
+  Compiled lib/plug/crypto/message_encryptor.ex
+  Compiled lib/plug/crypto/message_verifier.ex
+  Compiled lib/plug/conn.ex
+  Compiled lib/plug/exceptions.ex
+  Compiled lib/plug/head.ex
+  Compiled lib/plug/method_override.ex
+  Compiled lib/plug/logger.ex
+  Compiled lib/plug/parsers.ex
+  Compiled lib/plug/parsers/json.ex
+  Compiled lib/plug/parsers/urlencoded.ex
+  Compiled lib/plug/router.ex
+  Compiled lib/plug/router/utils.ex
+  Compiled lib/plug/session.ex
+  Compiled lib/plug/session/store.ex
+  Compiled lib/plug/session/ets.ex
+  Compiled lib/plug/session/cookie.ex
+  Compiled lib/plug/static.ex
+  Compiled lib/plug/supervisor.ex
+  Compiled lib/plug/test.ex
+  Compiled lib/plug/upload.ex
+  Compiled lib/plug/parsers/multipart.ex
+  Compiled lib/plug/adapters/cowboy/conn.ex
+  Compiled lib/plug/mime.ex
+  Generated plug.app
+  ==> phoenix
+  Compiled lib/mex_engine.ex
+  Compiled lib/phoenix/template/exs_engine.ex
+  Compiled lib/phoenix/template.
+
+
+::
+
+  mix phoenix.start
+
+::
+
+  % mix phoenix.start
+  Running PhoenixExample.Router with Cowboy on port 4000 (http)
+
+
+
+
+::
+
+  21:47:49.449 request_id=g9Ghz5lbLAimp/WwSvhA [info] GET /
+  21:47:49.488 request_id=g9Ghz5lbLAimp/WwSvhA [debug] Processing by PhoenixExample.PageController.index/2
+  Parameters: %{"format" => "html"}
+  21:47:49.519 request_id=g9Ghz5lbLAimp/WwSvhA [info] Sent 200 in 70ms
+  21:47:50.315 request_id=GPWCQ+3xtOU3kMHmO+uR [info] GET /favicon.ico
+  21:47:50.331 request_id=GPWCQ+3xtOU3kMHmO+uR [debug] Processing by Phoenix.Controller.ErrorController.not_found_debug/2
+  Parameters: %{}
+  21:47:50.331 request_id=GPWCQ+3xtOU3kMHmO+uR [info] Sent 404 in 15ms
+
+
+::
+
+  .
+  ├── CHANGELOG.md
+  ├── LICENSE
+  ├── README.md
+  ├── RELEASE.md
+  ├── assets
+  │   └── cs
+  │       └── phoenix.coffee
+  ├── config
+  │   └── config.exs
+  ├── deps
+  │   └── websocket_client
+  │       ├── LICENSE.md
+  │       ├── Makefile
+  │       ├── README.md
+  │       ├── ct
+  │       │   ├── echo_server.erl
+  │       │   ├── wc_SUITE.erl
+  │       │   ├── websocket_client.coverspec
+  │       │   └── ws_client.erl
+  │       ├── erlang.mk
+  │       ├── examples
+  │       │   ├── sample_ws_handler.erl
+  │       │   └── ws_ping_example.erl
+  │       ├── rebar.config
+  │       └── src
+  │           ├── websocket_client.app.src
+  │           ├── websocket_client.erl
+  │           ├── websocket_client_handler.erl
+  │           └── websocket_req.erl
+  ├── lib
+  │   ├── mix
+  │   │   ├── phoenix.ex
+  │   │   └── tasks
+  │   │       ├── compile.phoenix.ex
+  │   │       ├── phoenix.new.ex
+  │   │       ├── phoenix.routes.ex
+  │   │       └── phoenix.start.ex
+  │   ├── phoenix
+  │   │   ├── channel
+  │   │   │   └── transport.ex
+  │   │   ├── channel.ex
+  │   │   ├── code_reloader.ex
+  │   │   ├── config.ex
+  │   │   ├── controller
+  │   │   │   ├── connection.ex
+  │   │   │   ├── error_controller.ex
+  │   │   │   ├── exception.ex
+  │   │   │   ├── flash.ex
+  │   │   │   └── pipeline.ex
+  │   │   ├── controller.ex
+  │   │   ├── exceptions.ex
+  │   │   ├── html
+  │   │   │   ├── engine.ex
+  │   │   │   └── safe.ex
+  │   │   ├── html.ex
+  │   │   ├── naming.ex
+  │   │   ├── plugs
+  │   │   │   ├── code_reloader.ex
+  │   │   │   └── controller_logger.ex
+  │   │   ├── pubsub
+  │   │   │   ├── garbage_collector.ex
+  │   │   │   └── server.ex
+  │   │   ├── pubsub.ex
+  │   │   ├── router
+  │   │   │   ├── adapter.ex
+  │   │   │   ├── console_formatter.ex
+  │   │   │   ├── cowboy_handler.ex
+  │   │   │   ├── helpers.ex
+  │   │   │   ├── resource.ex
+  │   │   │   ├── route.ex
+  │   │   │   ├── scope.ex
+  │   │   │   └── socket.ex
+  │   │   ├── router.ex
+  │   │   ├── socket
+  │   │   │   └── message.ex
+  │   │   ├── socket.ex
+  │   │   ├── supervisor.ex
+  │   │   ├── template
+  │   │   │   ├── eex_engine.ex
+  │   │   │   ├── engine.ex
+  │   │   │   └── exs_engine.ex
+  │   │   ├── template.ex
+  │   │   ├── transports
+  │   │   │   ├── long_poller
+  │   │   │   │   └── server.ex
+  │   │   │   ├── long_poller.ex
+  │   │   │   └── websocket.ex
+  │   │   ├── view.ex
+  │   │   └── websocket.ex
+  │   └── phoenix.ex
+  ├── mix.exs
+  ├── mix.lock
+  ├── priv
+  │   ├── static
+  │   │   ├── css
+  │   │   │   └── phoenix.css
+  │   │   ├── images
+  │   │   │   └── phoenix.png
+  │   │   └── js
+  │   │       └── phoenix.js
+  │   └── template
+  │       ├── README.md
+  │       ├── config
+  │       │   ├── config.exs
+  │       │   ├── dev.exs
+  │       │   ├── locales
+  │       │   │   └── en.exs
+  │       │   ├── prod.exs
+  │       │   └── test.exs
+  │       ├── lib
+  │       │   └── application_name.ex
+  │       ├── mix.exs
+  │       ├── test
+  │       │   ├── application_name_test.exs
+  │       │   └── test_helper.exs
+  │       └── web
+  │           ├── channels
+  │           ├── controllers
+  │           │   └── page_controller.ex
+  │           ├── i18n.ex
+  │           ├── models
+  │           ├── router.ex
+  │           ├── templates
+  │           │   ├── layout
+  │           │   │   └── application.html.eex
+  │           │   └── page
+  │           │       ├── error.html.eex
+  │           │       ├── index.html.eex
+  │           │       └── not_found.html.eex
+  │           ├── view.ex
+  │           └── views
+  │               ├── layout_view.ex
+  │               └── page_view.ex
+  ├── release_docs.exs
+  └── test
+      ├── conn_helper.exs
+      ├── fixtures
+      │   ├── ssl
+      │   │   ├── cert.pem
+      │   │   └── key.pem
+      │   ├── templates
+      │   │   ├── layout
+      │   │   │   └── application.html.eex
+      │   │   ├── safe.html.eex
+      │   │   ├── show.html.eex
+      │   │   └── user
+      │   │       ├── index.html.eex
+      │   │       └── show.json.exs
+      │   └── views.exs
+      ├── mix
+      │   ├── mix_helper.exs
+      │   ├── phoenix_test.exs
+      │   └── tasks
+      │       └── phoenix
+      │           ├── new_test.exs
+      │           └── routes_test.exs
+      ├── phoenix
+      │   ├── channel_test.exs
+      │   ├── code_reloader_test.exs
+      │   ├── config_test.exs
+      │   ├── controller
+      │   │   ├── error_handling_test.exs
+      │   │   ├── exception_test.exs
+      │   │   ├── flash_test.exs
+      │   │   ├── pipeline_test.exs
+      │   │   └── render_test.exs
+      │   ├── controller_test.exs
+      │   ├── html
+      │   │   └── html_test.exs
+      │   ├── integration
+      │   │   ├── adapter_test.exs
+      │   │   ├── channel_transports_test.exs
+      │   │   ├── http_client.exs
+      │   │   └── websocket_client.exs
+      │   ├── naming_test.exs
+      │   ├── plugs
+      │   │   └── controller_logger_test.exs
+      │   ├── pubsub
+      │   │   └── pubsub_test.exs
+      │   ├── router
+      │   │   ├── adapter_test.exs
+      │   │   ├── console_formatter_test.exs
+      │   │   ├── helpers_test.exs
+      │   │   ├── pipeline_test.exs
+      │   │   ├── resources_test.exs
+      │   │   ├── route_test.exs
+      │   │   ├── routing_test.exs
+      │   │   └── scope_test.exs
+      │   ├── socket
+      │   │   └── message_test.exs
+      │   ├── socket_test.exs
+      │   ├── template_test.exs
+      │   ├── transports
+      │   │   └── long_poller_test.exs
+      │   └── view_test.exs
+      └── test_helper.exs
+
+
+参考: 
+
+* https://github.com/phoenixframework/phoenix
+* https://github.com/chrismccord/phoenix_chat_example
+
