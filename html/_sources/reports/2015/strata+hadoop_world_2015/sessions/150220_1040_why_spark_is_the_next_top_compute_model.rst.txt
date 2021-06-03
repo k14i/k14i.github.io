@@ -1,0 +1,17 @@
+.. _150220_1040_why_spark_is_the_next_top_compute_model:
+
+=========================================
+Why Spark Is the Next Top (Compute) Model
+=========================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38437
+
+-----
+Slide
+-----
+
+.. raw:: html
+
+  <iframe src="http://www.slideshare.net/slideshow/embed_code/44960314" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/deanwampler/why-spark-is-the-nexttopcomputemodel" title="Why Spark Is the Next Top (Compute) Model" target="_blank">Why Spark Is the Next Top (Compute) Model</a> </strong> from <strong><a href="http://www.slideshare.net/deanwampler" target="_blank">Dean Wampler</a></strong> </div>
+
+

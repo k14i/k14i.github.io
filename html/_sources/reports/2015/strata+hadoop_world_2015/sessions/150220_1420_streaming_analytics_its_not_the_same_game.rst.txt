@@ -1,0 +1,16 @@
+.. _150220_1420_streaming_analytics_its_not_the_same_game:
+
+===========================================
+Streaming Analytics: It’s Not The Same Game
+===========================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38703
+
+-----
+Slide
+-----
+
+.. raw:: html
+
+  <iframe src="http://www.slideshare.net/slideshow/embed_code/45044014" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/numenta/streaming-analytics-its-not-the-same-game" title="Streaming Analytics: It&#x27;s Not the Same Game" target="_blank">Streaming Analytics: It&#x27;s Not the Same Game</a> </strong> from <strong><a href="http://www.slideshare.net/numenta" target="_blank">Numenta</a></strong> </div>
+

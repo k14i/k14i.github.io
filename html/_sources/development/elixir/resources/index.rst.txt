@@ -1,0 +1,20 @@
+=========
+Resources
+=========
+
+.. toctree::
+  :maxdepth: 1
+
+  web_sites
+  blogs
+  articles_to_read
+  newsletters
+  mailing_lists
+  twitter_people
+  twitter_hashtags
+  text_chat
+  books
+  events_and_meetups
+  survey
+  comparison
+

@@ -1,0 +1,142 @@
+.. _150219_0845_keynote_thursday_keynote_welcome:
+
+========================
+Thursday Keynote Welcome
+========================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/39535
+
+
+.. _150219_0845_keynote_hadoops_impact_on_the_future_of_data_management:
+
+================================================
+Hadoop's Impact on the Future of Data Management
+================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40400
+
+-------------
+Similar Slide
+-------------
+
+.. raw:: html
+
+  <iframe src="http://www.slideshare.net/slideshow/embed_code/31096506" width="510" height="420" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/cloudera/hadoops-impact-on-the-future-of-data-management-export" title="Cloudera Federal Forum 2014: Hadoop&#x27;s Impact on the Future of Data Management" target="_blank">Cloudera Federal Forum 2014: Hadoop&#x27;s Impact on the Future of Data Management</a> </strong> from <strong><a href="http://www.slideshare.net/cloudera" target="_blank">Cloudera, Inc.</a></strong> </div>
+
+-----
+Video
+-----
+
+.. raw:: html
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/1KvTZZAkHy0" frameborder="0" allowfullscreen></iframe>
+
+
+.. _150219_0845_keynote_close_encounters_with_the_third_kind_of_database:
+
+================================================
+Close Encounters with the Third Kind of Database
+================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40406
+
+-----
+Video
+-----
+
+.. raw:: html
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/Ep4s3zDS8Bw" frameborder="0" allowfullscreen></iframe>
+
+
+.. _150219_0845_keynote_intelligence_in_the_age_of_plethora:
+
+===================================
+Intelligence in the Age of Plethora
+===================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40706
+
+-----
+Video
+-----
+
+.. raw:: html
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/udKz2zHpfac" frameborder="0" allowfullscreen></iframe>
+
+
+.. _150219_0845_keynote_impacting_business_as_it_happens:
+
+================================
+Impacting Business as it Happens
+================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/42390
+
+-----
+Slide
+-----
+
+.. raw:: html
+
+  <iframe src="http://www.slideshare.net/slideshow/embed_code/45241047" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/MapRTechnologies/stratahadoop-2015-keynote-impacting-business-as-it-happens" title="Strata+Hadoop 2015 Keynote: Impacting Business as it Happens" target="_blank">Strata+Hadoop 2015 Keynote: Impacting Business as it Happens</a> </strong> from <strong><a href="http://www.slideshare.net/MapRTechnologies" target="_blank">MapR Technologies</a></strong> </div>
+
+-----
+Video
+-----
+
+.. raw:: html
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/kmXwvyUTwP8" frameborder="0" allowfullscreen></iframe>
+
+
+.. _150219_0845_keynote_a_bigger_lens_through_which_to_view_the_world_the_ibm_twitter_alliance:
+
+=======================================================================
+A Bigger Lens Through which to View the World- the IBM Twitter Alliance
+=======================================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40395
+
+-----
+Video
+-----
+
+.. raw:: html
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/sWXMbtPCLL8" frameborder="0" allowfullscreen></iframe>
+
+
+.. _150219_0845_keynote_data_science_where_are_we_going:
+
+=================================
+Data Science: Where are We Going?
+=================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/42418
+
+-----
+Video
+-----
+
+.. raw:: html
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/3_1reLdh5xw" frameborder="0" allowfullscreen></iframe>
+
+
+.. _150219_0845_keynote_the_emerging_age_of_data-driven_policy_design_examples_from_trying_to_manage_the_global_climate:
+
+================================================================================================
+The Emerging Age of Data-Driven Policy Design: Examples from Trying to Manage the Global Climate
+================================================================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40509
+
+-----
+Video
+-----
+
+.. raw:: html
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/4HlKomseARU" frameborder="0" allowfullscreen></iframe>

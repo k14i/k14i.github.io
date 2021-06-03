@@ -1,0 +1,112 @@
+.. _150218_1630_hardcore_data_science_11:
+
+==============================================================================
+Drugs, DNA, and Dinosaurs: Building High Quality Knowledge Bases with DeepDive
+==============================================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40208
+
+-------
+Summary
+-------
+
+* KBs hoelp with macroscopic questions
+* Probabilistic inference = algorithmic independence
+* Hardware-aware engine is our current approach
+
+
+------------------------------------
+KBs hoelp with macroscopic questions
+------------------------------------
+
+The world's scientific knowledge is accessible.
+Today, some pressing problems require microscopic knowledge such as climate & biodiversity, health or financial markets.
+But we're still human. Could we build a machine to read for us?
+Data are buried in tables, but not in a self-contained way.
+
+PaleoDeepDive
+=============
+
+The goal: extract paleobiological facts to build higher coverage fossil record.
+Aggressive approach: Statistical interface of billions of variables.
+
+Machine-created
+
+* 10x documents
+* 100x extractions
+
+PaleoDB
+=======
+
+Human-created
+
+* 329 volunteers
+* 13 years
+* 46K documents
+* 200+ Papers, 17 Nature/Science
+
+Formation Precision
+
+* PaleoDB volunteers: 0.84
+* PaleoDeepDive: 0.94
+
+PaleoDeepDive vs. PharmaDeepDive
+================================
+
+PaleoDeepDive is broadly usable.
+
+=============  ==============
+PaleoDeepDive  PharmaDeepDive
+=============  ==============
+2 years        6 months
+1 CS Student   1 BioE Student
+=============  ==============
+
+* easier and cheaper
+* features not algorithms
+* framework
+
+
+--------------------------------------------------
+Probabilistic inference = algorithmic independence
+--------------------------------------------------
+
+The DeepDive Framework (Geo)
+============================
+
+Data Acquisition -> SotA NLP -> Statistical Stuff (DeepDive) -> Web Front-end
+
+Meaningful probability, not just scores
+Accuracy, Output Probability
+
+
+---------------------------------------------
+Hardware-aware engine is our current approach
+---------------------------------------------
+
+To get rid of algorithms, we need a fast engine. Let hardware do the work.
+
+How do we run SGD in Parallel?
+==============================
+
+* Insane conflicts: ... the model
+* Thm: no locking
+* High-level idea: answer is only statistically correct
+
+Are CPUs really so slow for CNNs?
+=================================
+
+"Comming soon"
+
+Key Issue: Statistical versus Hardware Efficiency
+=================================================
+
+Relaxing consistency require ... tradeoff
+
+
+--------
+See also
+--------
+
+* http://deepdive.stanford.edu/
+* http://cs.stanford.edu/people/chrismre/

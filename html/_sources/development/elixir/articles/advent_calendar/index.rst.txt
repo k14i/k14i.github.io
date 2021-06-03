@@ -1,0 +1,10 @@
+===============
+Advent Calendar
+===============
+
+.. toctree::
+  :maxdepth: 1
+
+  2013/index
+  2014/index
+

@@ -1,0 +1,9 @@
+===
+zsh
+===
+
+.. toctree::
+  :maxdepth: 1
+
+  completion
+

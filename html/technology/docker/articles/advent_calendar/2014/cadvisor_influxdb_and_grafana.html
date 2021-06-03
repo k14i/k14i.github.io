@@ -1,0 +1,506 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cAdvisorとInfluxDBとGrafanaでDockerリソースの可視化を行うDockerコンテナ群をFigでデプロイしたPaaS上にてGo言語でRedisを叩く &#8212; k14i.github.io 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="Storage" href="../../../storage/index.html" />
+    <link rel="prev" title="2014" href="index.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../storage/index.html" title="Storage"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="2014"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Docker</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../index.html" >Articles</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../index.html" >Advent Calendar</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="index.html" accesskey="U">2014</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cadvisorinfluxdbgrafanadockerdockerfigpaasgoredis">
+<h1>cAdvisorとInfluxDBとGrafanaでDockerリソースの可視化を行うDockerコンテナ群をFigでデプロイしたPaaS上にてGo言語でRedisを叩く<a class="headerlink" href="#cadvisorinfluxdbgrafanadockerdockerfigpaasgoredis" title="Permalink to this headline">¶</a></h1>
+<p>5日目 keith です、どうも。
+今年最も&lt;del&gt;バズっている&lt;/del&gt;ホットなテーマの一つといえば Docker ということで異論は認めませんが、
+今回はただひたすらバズることを目的に、記事を書きます。</p>
+<div class="section" id="docker">
+<h2>Dockerとは<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h2>
+<p>説明不要ですね。</p>
+</div>
+<div class="section" id="id1">
+<h2>Dockerのリソース可視化<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Dockerのホストと、各コンテナについて、リソースの使用状況を知りたくない人は居ませんよね。
+そういうわけで、ここでは、cAdvisorを使ってリソースを収集、それをInfluxDBに突っ込み、Grafanaで可視化する方法をご紹介します。</p>
+</div>
+<div class="section" id="cadvisor">
+<h2>cAdvisorとは<a class="headerlink" href="#cadvisor" title="Permalink to this headline">¶</a></h2>
+<p>Dockerコンテナのリソース使用量やパフォーマンス特性を分析するツールです。Google謹製。</p>
+</div>
+<div class="section" id="influxdb">
+<h2>InfluxDBとは<a class="headerlink" href="#influxdb" title="Permalink to this headline">¶</a></h2>
+<p>説明不要ですね。</p>
+</div>
+<div class="section" id="grafana">
+<h2>Grafanaとは<a class="headerlink" href="#grafana" title="Permalink to this headline">¶</a></h2>
+<p>リッチなグラフを描画できるダッシュボードです。Kibanaからforkしたらしい。</p>
+</div>
+<div class="section" id="id2">
+<h2>Dockerのインストール<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>行数を水増しするために一応書いておきます。</p>
+<div class="section" id="centos-7-docker-1-2-0">
+<h3>CentOS 7 (Docker 1.2.0) の場合<a class="headerlink" href="#centos-7-docker-1-2-0" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">sudo</span> <span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">docker</span>
+<span class="o">%</span> <span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">docker</span>
+<span class="o">%</span> <span class="n">sudo</span> <span class="n">docker</span> <span class="n">pull</span> <span class="n">centos</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ubuntu-14-04-lts-docker-1-0-1">
+<h3>Ubuntu 14.04 LTS (Docker 1.0.1) の場合<a class="headerlink" href="#ubuntu-14-04-lts-docker-1-0-1" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">docker</span>
+<span class="o">%</span> <span class="n">sudo</span> <span class="n">docker</span> <span class="n">pull</span> <span class="n">ubuntu</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>いざ構築<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>とりあえず、全部Dockerコンテナとして構築します。
+私は面倒くさいのが大嫌いなので、基本的にDocker Hubを使います。
+それでも飽き足らず、「楽をするためならどんな苦労も惜しまない！」の精神で、Figを使います。</p>
+</div>
+<div class="section" id="fig">
+<h2>Figのインストール<a class="headerlink" href="#fig" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">fig</span>
+</pre></div>
+</div>
+<p>が公式手順なのですが、個人的趣味により、GitHubからcloneしてきます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">docker</span><span class="o">/</span><span class="n">fig</span><span class="o">.</span><span class="n">git</span>
+<span class="o">%</span> <span class="n">cd</span> <span class="n">fig</span>
+<span class="o">%</span> <span class="n">git</span> <span class="n">checkout</span> <span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span>
+<span class="o">%</span> <span class="n">python</span> <span class="o">./</span><span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build</span>
+<span class="o">%</span> <span class="n">sudo</span> <span class="n">python</span> <span class="o">./</span><span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fig-yml">
+<h2>fig.yml<a class="headerlink" href="#fig-yml" title="Permalink to this headline">¶</a></h2>
+<p>FigはYAML形式で設定を記述します。シングルホストではありますが、複数のコンテナをまとめて操作することができます。</p>
+<p>まず準備をします。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="n">tmp</span><span class="o">/</span><span class="n">figtest</span>
+<span class="o">%</span> <span class="n">cd</span> <span class="o">~/</span><span class="n">tmp</span><span class="o">/</span><span class="n">figtest</span>
+</pre></div>
+</div>
+<p>で、fig.ymlを記述します。私はこう書きました。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">web</span><span class="p">:</span>
+  <span class="n">build</span><span class="p">:</span> <span class="o">.</span>
+  <span class="n">command</span><span class="p">:</span> <span class="o">./</span><span class="n">goRedisExample</span>
+  <span class="n">ports</span><span class="p">:</span>
+    <span class="o">-</span> <span class="s2">&quot;48080:58080&quot;</span>
+  <span class="n">volumes</span><span class="p">:</span>
+    <span class="o">-</span> <span class="o">.</span><span class="p">:</span><span class="o">/</span><span class="n">code</span>
+  <span class="n">links</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">redis</span>
+    <span class="o">-</span> <span class="n">influxdb</span>
+    <span class="o">-</span> <span class="n">grafana</span>
+<span class="n">redis</span><span class="p">:</span>
+  <span class="n">image</span><span class="p">:</span> <span class="n">redis</span>
+<span class="n">influxdb</span><span class="p">:</span>
+  <span class="n">image</span><span class="p">:</span> <span class="n">tutum</span><span class="o">/</span><span class="n">influxdb</span>
+  <span class="n">ports</span><span class="p">:</span>
+    <span class="o">-</span> <span class="s2">&quot;58083:8083&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;58084:8084&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;58086:8086&quot;</span>
+  <span class="n">environment</span><span class="p">:</span>
+    <span class="o">-</span> <span class="s2">&quot;PRE_CREATE_DB=cadvisor;nodemetrics&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;SSL_SUPPORT=true&quot;</span>
+<span class="n">elasticsearch</span><span class="p">:</span>
+  <span class="n">image</span><span class="p">:</span> <span class="n">dockerfile</span><span class="o">/</span><span class="n">elasticsearch</span>
+  <span class="n">ports</span><span class="p">:</span>
+    <span class="o">-</span> <span class="s2">&quot;59200:9200&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;59300:9300&quot;</span>
+  <span class="c1">#volumes:</span>
+    <span class="c1">#- .:/data</span>
+    <span class="c1">#- /dockerfile/elasticsearch</span>
+    <span class="c1">#- /elasticsearch/bin/elasticsearch</span>
+<span class="n">grafana</span><span class="p">:</span>
+  <span class="n">image</span><span class="p">:</span> <span class="n">tutum</span><span class="o">/</span><span class="n">grafana</span>
+  <span class="n">ports</span><span class="p">:</span>
+    <span class="o">-</span> <span class="s2">&quot;50080:80&quot;</span>
+  <span class="n">environment</span><span class="p">:</span>
+    <span class="o">-</span> <span class="s2">&quot;HTTP_USER=admin&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;HTTP_PASS=d033e22ae348aeb5660fc2140aec35850c4da997&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;INFLUXDB_PROTO=http&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;INFLUXDB_HOST=figtest_influxdb_1&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;INFLUXDB_PORT=8086&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;INFLUXDB_NAME=cadvisor;nodemetrics&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;INFLUXDB_USER=root&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;INFLUXDB_PASS=root&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;ELASTICSEARCH_PROTO=http&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;ELASTICSEARCH_HOST=figtest_elasticsearch_1&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;ELASTICSEARCH_PORT=9200&quot;</span>
+    <span class="c1">#- &quot;ELASTICSEARCH_USER=&quot;</span>
+    <span class="c1">#- &quot;ELASTICSEARCH_PASS=&quot;</span>
+  <span class="n">links</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">influxdb</span>
+<span class="n">cadvisor</span><span class="p">:</span>
+  <span class="n">image</span><span class="p">:</span> <span class="n">tutum</span><span class="o">/</span><span class="n">container</span><span class="o">-</span><span class="n">metrics</span>
+  <span class="n">ports</span><span class="p">:</span>
+    <span class="o">-</span> <span class="s2">&quot;58080:8080&quot;</span>
+  <span class="n">volumes</span><span class="p">:</span>
+    <span class="o">-</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="p">:</span><span class="n">rw</span>
+    <span class="o">-</span> <span class="o">/</span><span class="n">sys</span><span class="p">:</span><span class="o">/</span><span class="n">sys</span><span class="p">:</span><span class="n">ro</span>
+    <span class="o">-</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="p">:</span><span class="n">ro</span>
+  <span class="n">links</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">influxdb</span>
+  <span class="n">environment</span><span class="p">:</span>
+    <span class="o">-</span> <span class="s2">&quot;DB_NAME=cadvisor&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;DB_USER=root&quot;</span>
+    <span class="o">-</span> <span class="s2">&quot;DB_PASS=root&quot;</span>
+</pre></div>
+</div>
+<p>webとredisは最後のお楽しみです。
+elasticsearchも入れており、これでさらにバズろうと思ったのですが、やめました。</p>
+<p>ちなみに、cAdvisorは公式のリポジトリがあるのですが、Figとの相性が悪いので使いませんでした。
+残念ながら、Figには既定以外のオプションが付けられません。
+cAdvisorのコンテナでInfluxDBを使うためには、独自のオプションを使用する必要があり、
+従ってFigではなく通常のdockerコマンドを使用することになります。</p>
+<p>一応、その場合のやり方を示します。
+こ、これも行数稼ぎのためであって、これを見ている人のためじゃないんだからねっ！///</p>
+</div>
+<div class="section" id="id4">
+<h2>cAdvisorの起動(参考)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h3>基本<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">docker</span> <span class="n">run</span> \
+  <span class="o">--</span><span class="n">volume</span><span class="o">=/</span><span class="p">:</span><span class="o">/</span><span class="n">rootfs</span><span class="p">:</span><span class="n">ro</span> \
+  <span class="o">--</span><span class="n">volume</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="p">:</span><span class="n">rw</span> \
+  <span class="o">--</span><span class="n">volume</span><span class="o">=/</span><span class="n">sys</span><span class="p">:</span><span class="o">/</span><span class="n">sys</span><span class="p">:</span><span class="n">ro</span> \
+  <span class="o">--</span><span class="n">volume</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="p">:</span><span class="n">ro</span> \
+  <span class="o">--</span><span class="n">publish</span><span class="o">=</span><span class="mi">8080</span><span class="p">:</span><span class="mi">8080</span> \
+  <span class="o">--</span><span class="n">detach</span><span class="o">=</span><span class="n">true</span> \
+  <span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="n">cadvisor</span> \
+  <span class="n">google</span><span class="o">/</span><span class="n">cadvisor</span><span class="p">:</span><span class="n">latest</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rhel-7-centos-7">
+<h3>RHEL 7 又は CentOS 7 の場合<a class="headerlink" href="#rhel-7-centos-7" title="Permalink to this headline">¶</a></h3>
+<p>以下のオプションを追加します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">volume</span><span class="o">=/</span><span class="n">cgroup</span><span class="p">:</span><span class="o">/</span><span class="n">cgroup</span> \
+</pre></div>
+</div>
+</div>
+<div class="section" id="ubuntu-14-04-lts-docker">
+<h3>Ubuntu 14.04 LTS 等、Dockerが最新でない場合<a class="headerlink" href="#ubuntu-14-04-lts-docker" title="Permalink to this headline">¶</a></h3>
+<p>以下のオプションを削除します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">volume</span><span class="o">=/</span><span class="p">:</span><span class="o">/</span><span class="n">rootfs</span><span class="p">:</span><span class="n">ro</span> \
+</pre></div>
+</div>
+</div>
+<div class="section" id="cadvisorinfluxdb">
+<h3>cAdvisorをInfluxDBと連携させて起動する<a class="headerlink" href="#cadvisorinfluxdb" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">docker</span> <span class="n">run</span> \
+<span class="o">--</span><span class="n">volume</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="p">:</span><span class="n">rw</span> \
+<span class="o">--</span><span class="n">volume</span><span class="o">=/</span><span class="n">sys</span><span class="p">:</span><span class="o">/</span><span class="n">sys</span><span class="p">:</span><span class="n">ro</span> \
+<span class="o">--</span><span class="n">volume</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="p">:</span><span class="n">ro</span> \
+<span class="o">--</span><span class="n">publish</span><span class="o">=</span><span class="mi">8080</span><span class="p">:</span><span class="mi">8080</span> \
+<span class="o">--</span><span class="n">detach</span><span class="o">=</span><span class="n">true</span> \
+<span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="n">cadvisor_with_influxdb</span> \
+<span class="n">google</span><span class="o">/</span><span class="n">cadvisor</span><span class="p">:</span><span class="n">latest</span> \
+<span class="o">--</span><span class="n">storage_driver</span><span class="o">=</span><span class="n">influxdb</span> \
+<span class="o">--</span><span class="n">log_dir</span><span class="o">=/</span> \
+<span class="o">--</span><span class="n">storage_driver_host</span><span class="o">=</span><span class="n">figtest_influxdb_1</span><span class="p">:</span><span class="mi">8086</span>
+</pre></div>
+</div>
+<p>なお、デフォルトでのオプションは以下の通りです。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">storage_driver</span><span class="o">=</span><span class="n">memory</span> \
+<span class="o">--</span><span class="n">storage_driver_host</span><span class="o">=</span><span class="n">localhost</span><span class="p">:</span><span class="mi">8086</span> \
+<span class="o">--</span><span class="n">storage_driver_name</span><span class="o">=</span><span class="n">cadvisor</span> \
+<span class="o">--</span><span class="n">storage_driver_user</span><span class="o">=</span><span class="n">root</span> \
+<span class="o">--</span><span class="n">storage_driver_password</span><span class="o">=</span><span class="n">root</span> \
+<span class="o">--</span><span class="n">storage_driver_secure</span><span class="o">=</span><span class="kc">False</span>
+</pre></div>
+</div>
+<p>・・・はい、劇的にめんどくさいというか、どんくさいので、やめましょう。
+Figで使えそうなリポジトリを探したら、わりと簡単に見つけました。
+それが、今回fig.ymlに記述したcontainer-metricsです。</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>コンテナ群を起動する<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>-dオプションを付けて、バックグラウンドで起動します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">sudo</span> <span class="n">fig</span> <span class="n">up</span> <span class="o">-</span><span class="n">d</span>
+</pre></div>
+</div>
+<p>初回はコンテナ作成のため時間がかかりますが、2回目からは高速です。</p>
+<p>ちょっと状態を確認してみましょう。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">sudo</span> <span class="n">fig</span> <span class="n">ps</span>
+         <span class="n">Name</span>                        <span class="n">Command</span>               <span class="n">State</span>                                     <span class="n">Ports</span>
+<span class="o">--------------------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">figtest_cadvisor_1</span>        <span class="o">/</span><span class="n">run</span><span class="o">.</span><span class="n">sh</span>                          <span class="n">Up</span>      <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">58080</span><span class="o">-&gt;</span><span class="mi">8080</span><span class="o">/</span><span class="n">tcp</span>
+<span class="n">figtest_elasticsearch_1</span>   <span class="o">/</span><span class="n">elasticsearch</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">elastic</span> <span class="o">...</span>   <span class="n">Up</span>      <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">59200</span><span class="o">-&gt;</span><span class="mi">9200</span><span class="o">/</span><span class="n">tcp</span><span class="p">,</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">59300</span><span class="o">-&gt;</span><span class="mi">9300</span><span class="o">/</span><span class="n">tcp</span>
+<span class="n">figtest_grafana_1</span>         <span class="o">/</span><span class="n">run</span><span class="o">.</span><span class="n">sh</span>                          <span class="n">Up</span>      <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">50080</span><span class="o">-&gt;</span><span class="mi">80</span><span class="o">/</span><span class="n">tcp</span>
+<span class="n">figtest_influxdb_1</span>        <span class="o">/</span><span class="n">run</span><span class="o">.</span><span class="n">sh</span>                          <span class="n">Up</span>      <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">58083</span><span class="o">-&gt;</span><span class="mi">8083</span><span class="o">/</span><span class="n">tcp</span><span class="p">,</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">58084</span><span class="o">-&gt;</span><span class="mi">8084</span><span class="o">/</span><span class="n">tcp</span><span class="p">,</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">58086</span><span class="o">-&gt;</span><span class="mi">8086</span><span class="o">/</span><span class="n">tcp</span>
+<span class="n">figtest_redis_1</span>           <span class="o">/</span><span class="n">entrypoint</span><span class="o">.</span><span class="n">sh</span> <span class="n">redis</span><span class="o">-</span><span class="n">server</span>      <span class="n">Up</span>      <span class="mi">6379</span><span class="o">/</span><span class="n">tcp</span>
+<span class="n">figtest_web_1</span>             <span class="o">./</span><span class="n">goRedisExample</span>                 <span class="n">Up</span>      <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">48080</span><span class="o">-&gt;</span><span class="mi">58080</span><span class="o">/</span><span class="n">tcp</span>
+</pre></div>
+</div>
+<p>docker ps よりも見やすくて、僕はこちらの方が好きです。</p>
+</div>
+<div class="section" id="id7">
+<h2>cAdvisorでリソースを簡単に把握する<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>cAdvisorにログインしてみましょう。</p>
+<p>簡易ですが、情報がリアルタイムに可視化されます。
+なお、cAdvisorにはREST APIもあり、利用価値は非常に高いと思います。
+(レスポンスのJSONがやたら巨大ですが・・・)</p>
+</div>
+<div class="section" id="id8">
+<h2>InfluxDBで時系列データを検索し可視化する<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>cAdvisorとInfluxDBとの連携は、fig.ymlで定義してあります。
+さっそく、InfluxDBのGUIにログインしてみましょう。</p>
+<p>クエリを投げてみます。</p>
+<p>いい感じにリソースに関する時系列データを取得して可視化することができました。</p>
+</div>
+<div class="section" id="influxdbgfarana">
+<h2>InfluxDBの時系列データをGfaranaのダッシュボードに表示する<a class="headerlink" href="#influxdbgfarana" title="Permalink to this headline">¶</a></h2>
+<p>InfluxDBのグラフは、クエリの結果表示にすぎない、つまりイベントドリブンなので、
+自動的に可視化してくれるフロントエンドのGUIがあると捗ります。</p>
+<p>この手のやつはKibanaが有名で、これに言及するとバズれる確率が高まるのですが、
+今回はInfluxDBとの親和性が非常に高いGrafanaを使います。</p>
+<p>では、Grafanaにログインしてみます。</p>
+<p>さすがに、クエリは自分で入力しないといけないみたいです。
+ジェネレータもありますが、InfluxDBで使ったクエリを直接入力してみます。</p>
+<p>・・・</p>
+<p>・・・</p>
+<p>ブラウザとGraphiteサーバとでタイムゾーンが違う、と怒られています。</p>
+<p>・・・</p>
+<p>・・・</p>
+<p>そっ閉じ。</p>
+</div>
+<div class="section" id="paas">
+<h2>PaaSしよう<a class="headerlink" href="#paas" title="Permalink to this headline">¶</a></h2>
+<p>気を取り直して、これだけのシステムを簡単に作って余った時間と体力で、
+実際にPaaSを使って遊んでみましょう。</p>
+</div>
+<div class="section" id="id9">
+<h2>適当なサーバーアプリケーションを作る<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>Dockerは何のプログラミング言語で書かれていますか？</p>
+<p>そうです、Goです。</p>
+<p>こういう諺があります。</p>
+<p>「Goに入らばGoに従え」</p>
+<p>そういうわけで、今回はGoで書きます。はい、ただバズりたいだけです。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">package</span> <span class="n">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s2">&quot;flag&quot;</span>
+  <span class="s2">&quot;fmt&quot;</span>
+  <span class="s2">&quot;net/http&quot;</span>
+  <span class="s2">&quot;log&quot;</span>
+
+  <span class="s2">&quot;github.com/garyburd/redigo/redis&quot;</span>
+<span class="p">)</span>
+
+<span class="n">var</span> <span class="p">(</span>
+  <span class="n">httpAddress</span>    <span class="o">=</span> <span class="s2">&quot;:58080&quot;</span>
+  <span class="n">redisAddress</span>   <span class="o">=</span> <span class="n">flag</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s2">&quot;redis-address&quot;</span><span class="p">,</span> <span class="s2">&quot;redis:6379&quot;</span><span class="p">,</span> <span class="s2">&quot;Address to the Redis server&quot;</span><span class="p">)</span>
+  <span class="n">maxConnections</span> <span class="o">=</span> <span class="n">flag</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="s2">&quot;max-connections&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;Max connections to Redis&quot;</span><span class="p">)</span>
+  <span class="n">c</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Dial</span><span class="p">(</span><span class="s2">&quot;tcp&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">redisAddress</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">func</span> <span class="n">handler</span><span class="p">(</span><span class="n">w</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span> <span class="n">r</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">c</span><span class="o">.</span><span class="n">Send</span><span class="p">(</span><span class="s2">&quot;INCR&quot;</span><span class="p">,</span> <span class="s2">&quot;hits&quot;</span><span class="p">)</span>
+  <span class="n">v</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;hits&quot;</span><span class="p">))</span>
+  <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="n">fmt</span><span class="o">.</span><span class="n">Fprintf</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">c</span><span class="o">.</span><span class="n">Send</span><span class="p">(</span><span class="s2">&quot;SET&quot;</span><span class="p">,</span> <span class="s2">&quot;hits&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="n">http</span><span class="o">.</span><span class="n">HandleFunc</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">handler</span><span class="p">)</span>
+  <span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="n">httpAddress</span><span class="p">,</span> <span class="n">nil</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>単に、アクセスがあったらRedis上のカウンタをインクリメントするだけです。簡単ですね。</p>
+<p>これを go build したバイナリを、 web という名前のコンテナにデプロイします。
+というか、3分クッキングばりに、もうデプロイしちゃいました。</p>
+<p>動作確認してみましょう。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>% for i in `seq 0 9`; do curl &quot;http://localhost:48080&quot;; echo; done
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+%
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h2>まとめ<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<p>cAdvisorとInfluxDBとGrafanaでDockerリソースの可視化を行うDockerコンテナ群をFigでデプロイしたPaaS上にてGo言語でRedisを叩いてみました。</p>
+<p>次の担当者は y_kumiha さんです。</p>
+</div>
+<div class="section" id="id11">
+<h2>参考<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://blog.tutum.co/2014/08/07/using-cadvisor-to-monitor-docker-containers/">http://blog.tutum.co/2014/08/07/using-cadvisor-to-monitor-docker-containers/</a></li>
+<li><a class="reference external" href="https://github.com/google/cadvisor">https://github.com/google/cadvisor</a></li>
+<li><a class="reference external" href="http://blog.tutum.co/2014/08/25/panamax-docker-application-template-with-cadvisor-elasticsearch-grafana-and-influxdb/">http://blog.tutum.co/2014/08/25/panamax-docker-application-template-with-cadvisor-elasticsearch-grafana-and-influxdb/</a></li>
+<li><a class="reference external" href="http://www.fig.sh/">http://www.fig.sh/</a></li>
+<li><a class="reference external" href="http://qiita.com/sonots/items/8fbc92ff1c3e57ee7de7">http://qiita.com/sonots/items/8fbc92ff1c3e57ee7de7</a></li>
+<li><a class="reference external" href="https://registry.hub.docker.com/_/redis/">https://registry.hub.docker.com/_/redis/</a></li>
+<li><a class="reference external" href="https://registry.hub.docker.com/u/google/cadvisor/">https://registry.hub.docker.com/u/google/cadvisor/</a></li>
+<li><a class="reference external" href="https://registry.hub.docker.com/u/tutum/influxdb/">https://registry.hub.docker.com/u/tutum/influxdb/</a></li>
+<li><a class="reference external" href="https://registry.hub.docker.com/u/tutum/grafana/">https://registry.hub.docker.com/u/tutum/grafana/</a></li>
+<li><a class="reference external" href="https://registry.hub.docker.com/u/dockerfile/elasticsearch/">https://registry.hub.docker.com/u/dockerfile/elasticsearch/</a></li>
+</ul>
+</div>
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="https://docs.docker.com/reference/api/docker_remote_api_v1.13/">https://docs.docker.com/reference/api/docker_remote_api_v1.13/</a></li>
+<li><a class="reference external" href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Resource_Management_and_Linux_Containers_Guide/sec-Monitoring_Images.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Resource_Management_and_Linux_Containers_Guide/sec-Monitoring_Images.html</a></li>
+<li><a class="reference external" href="http://blog.docker.com/2013/07/effortless-monitoring-with-collectd-graphite-and-docker/">http://blog.docker.com/2013/07/effortless-monitoring-with-collectd-graphite-and-docker/</a></li>
+<li><a class="reference external" href="http://panamax.io/">http://panamax.io/</a></li>
+<li><a class="reference external" href="http://golang.jp/codelab-wiki">http://golang.jp/codelab-wiki</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/k14i">My repository</a></h3>
+
+  <h3><a href="../../../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../computer_science/index.html">Computer Science</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../development/elixir/index.html">Elixir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../development/c/index.html">C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../development/programming_languages/index.html">Programming Languages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../operation_and_monitoring/index.html">Operation and Monitoring</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../glusterfs/index.html">GlusterFS</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Docker</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../data_science/bayesian_statistics/bayes_theorem/index.html">Bayes’ theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../data_science/personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../others/sphinx/index.html">Sphinx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../others/presentation/index.html">Presentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../reports/2015/strata+hadoop_world_2015/index.html">Strata + Hadoop World 2015</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">2014</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../../storage/index.html"
+                        title="next chapter">Storage</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../../_sources/technology/docker/articles/advent_calendar/2014/cadvisor_influxdb_and_grafana.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../storage/index.html" title="Storage"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="2014"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Docker</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../index.html" >Articles</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../index.html" >Advent Calendar</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="index.html" >2014</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015-2021, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+------
+Survey
+------
+
+`Elixir Users' Survey 2014 - elixir sips`_
+==========================================
+
+.. _Elixir Users' Survey 2014 - elixir sips: http://blog.elixirsips.com/2014/09/12/elixir-users-survey-2014/
+
+How many months have you been using Elixir?
+-------------------------------------------
+
+What was your primary language before getting interested in Elixir?
+-------------------------------------------------------------------
+
+How much do you anticipate using Elixir professionally in the next 12 months?
+-----------------------------------------------------------------------------
+
+What is your text editor preference?
+------------------------------------
+
+How would you rate your Elixir expertise?
+-----------------------------------------
+
+What are your thoughts on automated testing?
+--------------------------------------------
+
+Have you contributed open source code in the past year?
+-------------------------------------------------------
+
+What is your employment status?
+-------------------------------
+
+Which of these languages do you regularly use?
+----------------------------------------------
+
+Is Elixir your favorite programming language?
+---------------------------------------------
+
+Anonymized Raw Data
+-------------------
+
+Absolute Self-Advertisement
+---------------------------
+
+

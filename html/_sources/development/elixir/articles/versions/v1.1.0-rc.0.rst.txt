@@ -1,0 +1,130 @@
+===========
+v1.1.0-rc.0
+===========
+
+https://github.com/elixir-lang/elixir/releases/tag/v1.1.0-rc.0
+
+------------
+Enhancements
+------------
+
+Elixir
+======
+
+Application に追加
+------------------
+
+* ``Application.fetch_env!/2``
+* ``Application.loaded_applications/0``
+* ``Application.started_applications/0``
+
+CLI に追加
+----------
+
+* ``--werl``
+
+Dict に追加
+-----------
+
+* ``Dict.get_and_update/3``
+* ``Dict.get_lazy/3``
+* ``Dict.pop_lazy/3``
+* ``Dict.put_new_lazy/3``
+
+Enum に追加
+-----------
+
+* ``Enum.random/1``
+* ``Enum.take_random/2``
+* ``Enum.min_max/1``
+* ``Enum.min_max_by/2``
+* ``Enum.reverse_slice/3``
+* ``Enum.reduce_while/3``
+* ``Enum.dedup/1``
+* ``Enum.dedup_by/2``
+
+File に追加
+-----------
+
+* ``File.lstat/1``
+* ``File.rename/2``
+
+Integer に追加
+--------------
+
+* ``Integer.digits/2``
+* ``Integer.undigits/2``
+
+Inspect に追加
+--------------
+
+* ``inspect/2`` に ``:safe`` オプションを追加
+
+GenServer に追加
+----------------
+
+* ``GenServer.whereis/1``
+
+List に追加
+-----------
+
+* ``List.keytake/3``
+
+Process に追加
+--------------
+
+* ``Process.hibernate/3``
+
+Stream に追加
+-------------
+
+* ``Stream.dedup/1``
+* ``Stream.dedup_by/2``
+* ``Stream.transform/4``
+
+String に追加
+-------------
+
+* ``String.splitter/3``
+
+StringIO に追加
+---------------
+
+* ``StringIO.flush/1``
+
+Task に追加
+-----------
+
+* ``Task.yield/2``
+* ``Task.shutdown/2``
+
+Tuple に追加
+------------
+
+* ``Tuple.append/2``
+
+URI に追加
+----------
+
+* ``URI.to_string/1``
+
+
+EEx
+===
+
+* ``:trim`` オプションを追加
+
+
+ExUnit
+======
+
+* ``ExUnit`` の出力にスキップされたテストの数を追加
+* ``:timeout`` 設定により、すべてのテスト・スイートのタイムアウトを設定可能に
+* doctestsにおいてはmoduledocがフィルターされたりスキップされたりするのを許可
+* ログ収集機能を内蔵
+* ``assert_receive_timeout`` と ``refute_receive_timeout`` をExUnitアプリケーションから設定できるようにした
+
+IEx
+===
+
+

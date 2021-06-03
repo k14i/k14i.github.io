@@ -1,0 +1,24 @@
+==================
+sphinx.ext.pngmath
+==================
+
+Setup
+=====
+
+conf.py
+
+::
+
+  extensions.append('sphinx.ext.pngmath')
+  pngmath_latex='platex'
+
+.. include:: commons/usage.rst
+
+.. include:: commons/examples.rst
+
+
+References
+==========
+
+.. include:: commons/references.rst
+

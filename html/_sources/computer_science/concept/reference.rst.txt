@@ -1,0 +1,22 @@
+=========
+Reference
+=========
+
+--------
+Examples
+--------
+
+C++
+===
+
+.. code-block:: cpp
+
+  int a = 5;
+  int & b = a;
+  b = 7;
+  cout << a;
+
+.. code-block:: cpp
+
+  int & b = 12;
+

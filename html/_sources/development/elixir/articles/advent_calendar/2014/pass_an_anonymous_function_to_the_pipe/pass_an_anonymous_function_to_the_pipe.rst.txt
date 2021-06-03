@@ -1,0 +1,5 @@
+**********************
+無名関数をパイプに渡す
+**********************
+
+参考: http://stackoverflow.com/questions/24593967/how-to-pass-an-anonymous-function-to-the-pipe-in-elixir

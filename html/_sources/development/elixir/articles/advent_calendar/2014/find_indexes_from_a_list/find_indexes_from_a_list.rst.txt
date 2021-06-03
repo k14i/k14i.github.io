@@ -1,0 +1,182 @@
+**************************************
+リストの要素からインデックス位置を返す
+**************************************
+
+Elixir Advent Calendar 2014 15日目。
+今日もライトなネタを。リストの要素からインデックス位置を返したいと思います。
+
+============
+やりたいこと
+============
+
+例えば、こういうリストがあるとします。
+
+.. code-block:: elixir
+
+  list = [1, 2, 3, 2, 1]
+
+リストとリストの要素パラメタを渡すと、インデックス位置のリストを返します。
+例えば、上記リストと1を渡すと、[0, 4] を返します。
+与えられたパラメタがリストに存在しない場合、空のリスト [] を返します。
+
+ちなみに、余談ですが、Rubyの場合はこんな感じで実装します。
+
+.. code-block:: ruby
+
+  class Array
+    def get_index(param)
+      self
+        .each_with_index
+        .select{|x| x[0] == param}
+        .map{|x| x[1]}
+    end
+  end
+
+====
+動機
+====
+
+ElixirのEnumモジュール及びListモジュールには、インデックス位置を引数に取る関数があります。
+
+* Enum.at/3
+* Enum.fetch/2
+* Enum.fetch!/2
+* List.delete_at/2
+* List.insert_at/3
+* List.replace_at/3
+* List.update_at/3
+
+ここで誰もが思うわけです。
+「インデックス位置って、どうやって知るんだっけ？」
+
+
+====================
+標準関数を眺めてみる
+====================
+
+とりあえず、標準関数の処理系を眺めてみます。
+List.keyfind/4、Enum.find/3、Enum.find_index/2 あたりを見ればよいでしょうか？（適当）
+
+--------------
+List.keyfind/4
+--------------
+
+.. code-block:: elixir
+
+  @spec keyfind([tuple], any, non_neg_integer, any) :: any
+  def keyfind(list, key, position, default \\ nil) do
+    :lists.keyfind(key, position + 1, list) || default
+  end
+
+これはイメージと違いますね。Tupled List専用です。
+
+-----------
+Enum.find/3
+-----------
+
+.. code-block:: elixir
+
+  @spec find(t, default, (element -> any)) :: element | default
+  def find(collection, ifnone \\ nil, fun)
+  
+  def find(collection, ifnone, fun) when is_list(collection) do
+    do_find(collection, ifnone, fun)
+  end
+  
+  def find(collection, ifnone, fun) do
+    Enumerable.reduce(collection, {:cont, ifnone}, fn(entry, ifnone) ->
+      if fun.(entry), do: {:halt, entry}, else: {:cont, ifnone}
+    end) |> elem(1)
+  end
+  
+  defp do_find([h|t], ifnone, fun) do
+    if fun.(h) do
+      h
+    else
+      do_find(t, ifnone, fun)
+    end
+  end
+  
+  defp do_find([], ifnone, _) do
+    ifnone
+  end
+
+Elixirのこういうソースコードはとても美しいと想います。
+関数作って第三引数に渡すなりすれば良さそうだと、ぱっと見は思うのですが、それは間違いです。
+この関数は、funにマッチした最初の要素の値を返します。
+
+-----------------
+Enum.find_index/2
+-----------------
+
+.. code-block:: elixir
+
+  @spec find_index(t, (element -> any)) :: index | :nil
+  def find_index(collection, fun) when is_list(collection) do
+    do_find_index(collection, 0, fun)
+  end
+  
+  defp do_find_index([h|t], counter, fun) do
+    if fun.(h) do
+      counter
+    else
+      do_find_index(t, counter + 1, fun)
+    end
+  end
+  
+  defp do_find_index([], _, _) do
+    nil
+  end
+
+関数作って第二引数に渡すなりすれば良さそうだと、ぱっと見は思うのですが、それも間違いです。
+この関数は、funにマッチした最初の要素のインデックス位置しか返しません。
+（Rubyで言うとArray#indexに相当します。）
+
+
+==========
+作ってみる
+==========
+
+無い物は作るのみ。こんな感じでいかがでしょう。
+
+.. code-block:: elixir
+
+  defmodule EnumX do
+  
+    def get_index(collection, param) when is_list(collection) do
+      Enum.with_index(collection)
+      |> Enum.filter_map(fn {x, _} -> x == param end, fn {_, i} -> i end)
+	  end
+
+  end
+
+実行してみます。
+
+.. code-block:: elixir
+
+  list = [1, 2, 3, 2, 1]
+  
+  iex> EnumX.get_index(list, 0)
+  []
+  iex> EnumX.get_index(list, 1)
+  [0, 4]
+  iex> EnumX.get_index(list, 2)
+  [1, 3]
+  iex> EnumX.get_index(list, 3)
+  [2]
+  iex> EnumX.get_index(list, 4)
+  []
+
+意図した通りに動作します。
+
+======
+まとめ
+======
+
+リストの要素からインデックス位置を返す関数が無かったので、作ってみました。
+これでElixirの活用の幅も広がりますね。
+
+明日は @k1complete さんです。
+
+
+参考: http://stackoverflow.com/questions/18551814/find-indexes-from-list-in-elixir

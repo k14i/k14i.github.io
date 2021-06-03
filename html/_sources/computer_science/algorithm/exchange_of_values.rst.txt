@@ -1,0 +1,13 @@
+========
+値の交換
+========
+
+.. code-block:: c
+
+  void swap(int *x, int *y)
+  {
+      int temp;
+
+      temp = *x; *x = *y; *y = temp;
+  }
+

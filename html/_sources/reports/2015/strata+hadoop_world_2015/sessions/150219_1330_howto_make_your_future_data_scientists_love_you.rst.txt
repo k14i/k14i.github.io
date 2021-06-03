@@ -1,0 +1,58 @@
+.. _150219_1330_howto_make_your_future_data_scientists_love_you:
+
+===============================================
+HOWTO Make Your Future Data Scientists Love You
+===============================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38492
+
+-------
+Summary
+-------
+
+* Check if your data set
+
+  - complete?
+  - correct?
+
+    - Check against existing knowledge
+
+  - connectable?
+
+    - Can you join? Actually do the join.
+
+* Check volume
+
+  - e.g., Google analytics: 500,000 lines, logs 5,000 lines, missing 99%
+
+* Capture events, not just errors
+
+  - e.g., articles, newsletters, audio, video, donate ...
+
+* Storage is cheap. So cheap.
+
+
+------
+csvkit
+------
+
+https://github.com/onyxfish/csvkit
+
+::
+
+  $ cat logs.csv | csvcut -c 3 | sort | uniq -c
+
+
+----------
+data_hacks
+----------
+
+https://github.com/bitly/data_hacks
+
+
+--------
+See also
+--------
+
+* http://http://www.polynumeral.com/
+* http://sasha.io

@@ -1,0 +1,7 @@
+.. _150218_1200_hardcore_data_science_05:
+
+=======================================================================================
+Finding Repeated Structure in Time Series Data: Commercial and Scientific Opportunities
+=======================================================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40174

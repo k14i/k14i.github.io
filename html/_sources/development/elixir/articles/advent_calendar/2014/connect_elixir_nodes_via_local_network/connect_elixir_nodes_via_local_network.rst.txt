@@ -1,0 +1,160 @@
+******************************************
+ローカルネットワーク経由でノードを接続する
+******************************************
+
+Elixir Advent Calendar 2014 8日目。
+
+今年はElixirがついにv1.0になったというのもビッグニュースでしたが、
+CentOSがバージョン7になり、あれこれ大きく変わったというのも大きな話題を呼びました。
+CentOS 7は、これまでのCentOS同様、長い期間に渡って使われることになるはずなので、
+今のうちにそのお作法と絡めて、ノウハウを蓄積していきたいところです。
+
+今回は、前回ご紹介したMessage Passingのやり方の応用として、
+ネットワーク越しでのプロセス間通信をElixirで行う方法をご紹介します。
+
+====
+構成
+====
+
+今回、2台のIntel NUCを使います。
+
+================
+Firewallを開ける
+================
+
+CentOS 6ではiptablesでしたが、CentOS 7ではfirewalldが動作していて、外部との通信を遮断しています。
+ElixirはProduction Ready。
+firewalldを止めるよりは、セキュリティのために、必要なポートを開放するようにしましょう。
+TCP 4369は、Erlang/OTPでおなじみです。
+これとは別に、プロセス間通信を行うためのポートも開放する必要があり、
+今回は例として、TCP 26000 から TCP 26099 の100ポートを開放します。
+
+```
+# firewall-cmd --zone=public --add-port=4369/tcp --permanent
+# firewall-cmd --zone=public --add-port=26000-26099/tcp --permanent
+# firewall-cmd --reload
+```
+
+========
+名前解決
+========
+
+ノード同士を接続する際に、FQDNで名前解決できるようにする必要があります。
+DNSサーバを持ち出すのは今回はオーバースペックなので、 /etc/hosts にIPアドレスとFQDNを書いておきます。
+
+```
+10.1.0.1 eins.elixiradventcalendar2014.net
+10.1.0.7 sieben.elixiradventcalendar2014.net
+```
+
+=========
+iexの起動
+=========
+
+おなじみの方法でiexをオプション付きで起動します。
+まず、--snameは使いません。--nameを使います。
+また、erlコマンドにはあるがiexコマンドには無いオプションを使います。
+具体的には以下の通りに指定します。
+
+```
+% iex --name node1@eins.elixiradventcalendar2014.net --cookie elixir-example --erl "-kernel inet_dist_listen_min 26000 inet_dist_listen_max 26099"
+% iex --name node1@sieben.elixiradventcalendar2014.net --cookie elixir-example --erl "-kernel inet_dist_listen_min 26000 inet_dist_listen_max 26099"
+```
+
+両方とも起動できました。早速、ノード同士を接続してみましょう。
+
+```
+iex(node1@sieben.elixiradventcalendar2014.net)1> Node.connect :"node1@eins.elixiradventcalendar2014.net"
+true
+```
+
+成功です。
+ノードのリストを表示してみましょう。
+
+```
+iex(node1@sieben.elixiradventcalendar2014.net)2> Node.list
+[:"node1@eins.elixiradventcalendar2014.net"]
+```
+
+対抗側からも確認します。
+
+```
+iex(node1@eins.elixiradventcalendar2014.net)1> Node.list
+[:"node1@sieben.elixiradventcalendar2014.net"]
+```
+
+接続できています。
+ここから先は、ローカルホストに閉じた場合と同様です。
+
+======
+まとめ
+======
+
+CentOS 7でElixirを使ったプロセス間通信をローカルネットワーク越しに行う方法をご紹介しました。
+
+明日は @tbpgr さんです。
+
+
+
+```elixir
+% iex --name node1@eins --cookie elixir-example
+Erlang/OTP 17 [erts-6.2] [source] [64-bit] [smp:2:2] [async-threads:10] [hipe] [kernel-poll:false]
+
+Interactive Elixir (1.1.0-dev) - press Ctrl+C to exit (type h() ENTER for help)
+```
+
+```elixir
+% iex --name node1@zwei --cookie elixir-example
+Erlang/OTP 17 [erts-6.2] [source] [64-bit] [smp:2:2] [async-threads:10] [hipe] [kernel-poll:false]
+
+Interactive Elixir (1.1.0-dev) - press Ctrl+C to exit (type h() ENTER for help)
+```
+
+```elixir
+% iex --name node1@drei --cookie elixir-example
+Erlang/OTP 17 [erts-6.2] [source] [64-bit] [smp:2:2] [async-threads:10] [hipe] [kernel-poll:false]
+
+Interactive Elixir (1.1.0-dev) - press Ctrl+C to exit (type h() ENTER for help)
+```
+
+```elixir
+% iex --name node1@vier --cookie elixir-example
+Erlang/OTP 17 [erts-6.2] [source] [64-bit] [smp:2:2] [async-threads:10] [hipe] [kernel-poll:false]
+
+Interactive Elixir (1.1.0-dev) - press Ctrl+C to exit (type h() ENTER for help)
+```
+
+```elixir
+% iex --name node1@fuenf --cookie elixir-example
+Erlang/OTP 17 [erts-6.2] [source] [64-bit] [smp:2:2] [async-threads:10] [hipe] [kernel-poll:false]
+
+Interactive Elixir (1.1.0-dev) - press Ctrl+C to exit (type h() ENTER for help)
+```
+
+```elixir
+% iex --name node1@sechs --cookie elixir-example
+Erlang/OTP 17 [erts-6.2] [source] [64-bit] [smp:2:2] [async-threads:10] [hipe] [kernel-poll:false]
+
+Interactive Elixir (1.1.0-dev) - press Ctrl+C to exit (type h() ENTER for help)
+```
+
+```elixir
+% iex --name node1@sieben --cookie elixir-example
+Erlang/OTP 17 [erts-6.2] [source] [64-bit] [smp:2:2] [async-threads:10] [hipe] [kernel-poll:false]
+
+Interactive Elixir (1.1.0-dev) - press Ctrl+C to exit (type h() ENTER for help)
+```
+
+
+```elixir
+iex(node1@sieben)1> Node.connect :"node1@eins"
+
+07:35:46.867 [error] ** System running to use fully qualified hostnames **
+** Hostname eins is illegal **
+
+false
+```
+
+
+参考: http://stackoverflow.com/questions/17351882/how-to-connect-two-elixir-nodes-via-local-network
+http://stackoverflow.com/questions/24729024/centos-7-open-firewall-port

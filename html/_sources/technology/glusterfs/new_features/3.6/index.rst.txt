@@ -1,0 +1,43 @@
+=====================
+GlusterFS 3.6の新機能
+=====================
+
+.. toctree::
+  :maxdepth: 1
+
+  better-ssl
+  heterogeneous-bricks
+  disperse
+  IPv6
+  glusterd-volume-locks
+  persistent-AFR-changelog-xattributes
+  better-logging
+  Better_peer_identification
+  Gluster_Volume_Snapshot
+  Gluster_User_Serviceable_Snapshots
+  afrv2
+  RDMA_Improvements
+  Server-side_Barrier_feature
+
+..
+  Features beyond 3.6.0
+  ---------------------
+  data-classification
+  new-style-replication
+  thousand-node-glusterd
+  Trash
+  Object_Count
+  SELinux_Integration
+  Easy_addition_of_custom_translators
+  Exports_Netgroups_Authentication
+  outcast
+  pbspbr
+  rest-api
+  Archipelago_Integration
+
+--------
+参考資料
+--------
+
+* http://www.gluster.org/community/documentation/index.php/Planning36
+

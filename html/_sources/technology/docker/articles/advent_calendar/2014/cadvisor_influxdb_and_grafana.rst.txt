@@ -1,0 +1,461 @@
+*************************************************************************************************************************
+cAdvisorとInfluxDBとGrafanaでDockerリソースの可視化を行うDockerコンテナ群をFigでデプロイしたPaaS上にてGo言語でRedisを叩く
+*************************************************************************************************************************
+
+5日目 keith です、どうも。
+今年最も<del>バズっている</del>ホットなテーマの一つといえば Docker ということで異論は認めませんが、
+今回はただひたすらバズることを目的に、記事を書きます。
+
+==========
+Dockerとは
+==========
+
+説明不要ですね。
+
+======================
+Dockerのリソース可視化
+======================
+
+Dockerのホストと、各コンテナについて、リソースの使用状況を知りたくない人は居ませんよね。
+そういうわけで、ここでは、cAdvisorを使ってリソースを収集、それをInfluxDBに突っ込み、Grafanaで可視化する方法をご紹介します。
+
+============
+cAdvisorとは
+============
+
+Dockerコンテナのリソース使用量やパフォーマンス特性を分析するツールです。Google謹製。
+
+============
+InfluxDBとは
+============
+
+説明不要ですね。
+
+===========
+Grafanaとは
+===========
+
+リッチなグラフを描画できるダッシュボードです。Kibanaからforkしたらしい。
+
+
+====================
+Dockerのインストール
+====================
+
+行数を水増しするために一応書いておきます。
+
+------------------------------
+CentOS 7 (Docker 1.2.0) の場合
+------------------------------
+
+::
+
+  % sudo yum install -y docker
+  % sudo systemctl start docker
+  % sudo docker pull centos
+
+--------------------------------------
+Ubuntu 14.04 LTS (Docker 1.0.1) の場合
+--------------------------------------
+
+::
+
+  % sudo apt-get install -y docker
+  % sudo docker pull ubuntu
+
+
+========
+いざ構築
+========
+
+とりあえず、全部Dockerコンテナとして構築します。
+私は面倒くさいのが大嫌いなので、基本的にDocker Hubを使います。
+それでも飽き足らず、「楽をするためならどんな苦労も惜しまない！」の精神で、Figを使います。
+
+=================
+Figのインストール
+=================
+
+::
+
+  % sudo pip install -U fig
+
+が公式手順なのですが、個人的趣味により、GitHubからcloneしてきます。
+
+::
+
+  % git clone git@github.com:docker/fig.git
+  % cd fig
+  % git checkout 1.0.1
+  % python ./setup.py build
+  % sudo python ./setup.py install
+
+
+=======
+fig.yml
+=======
+
+FigはYAML形式で設定を記述します。シングルホストではありますが、複数のコンテナをまとめて操作することができます。
+
+まず準備をします。
+
+::
+
+  % mkdir -p ~/tmp/figtest
+  % cd ~/tmp/figtest
+
+で、fig.ymlを記述します。私はこう書きました。
+
+::
+
+  web:
+    build: .
+    command: ./goRedisExample
+    ports:
+      - "48080:58080"
+    volumes:
+      - .:/code
+    links:
+      - redis
+      - influxdb
+      - grafana
+  redis:
+    image: redis
+  influxdb:
+    image: tutum/influxdb
+    ports:
+      - "58083:8083"
+      - "58084:8084"
+      - "58086:8086"
+    environment:
+      - "PRE_CREATE_DB=cadvisor;nodemetrics"
+      - "SSL_SUPPORT=true"
+  elasticsearch:
+    image: dockerfile/elasticsearch
+    ports:
+      - "59200:9200"
+      - "59300:9300"
+    #volumes:
+      #- .:/data
+      #- /dockerfile/elasticsearch
+      #- /elasticsearch/bin/elasticsearch
+  grafana:
+    image: tutum/grafana
+    ports:
+      - "50080:80"
+    environment:
+      - "HTTP_USER=admin"
+      - "HTTP_PASS=d033e22ae348aeb5660fc2140aec35850c4da997"
+      - "INFLUXDB_PROTO=http"
+      - "INFLUXDB_HOST=figtest_influxdb_1"
+      - "INFLUXDB_PORT=8086"
+      - "INFLUXDB_NAME=cadvisor;nodemetrics"
+      - "INFLUXDB_USER=root"
+      - "INFLUXDB_PASS=root"
+      - "ELASTICSEARCH_PROTO=http"
+      - "ELASTICSEARCH_HOST=figtest_elasticsearch_1"
+      - "ELASTICSEARCH_PORT=9200"
+      #- "ELASTICSEARCH_USER="
+      #- "ELASTICSEARCH_PASS="
+    links:
+      - influxdb
+  cadvisor:
+    image: tutum/container-metrics
+    ports:
+      - "58080:8080"
+    volumes:
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    links:
+      - influxdb
+    environment:
+      - "DB_NAME=cadvisor"
+      - "DB_USER=root"
+      - "DB_PASS=root"
+
+webとredisは最後のお楽しみです。
+elasticsearchも入れており、これでさらにバズろうと思ったのですが、やめました。
+
+ちなみに、cAdvisorは公式のリポジトリがあるのですが、Figとの相性が悪いので使いませんでした。
+残念ながら、Figには既定以外のオプションが付けられません。
+cAdvisorのコンテナでInfluxDBを使うためには、独自のオプションを使用する必要があり、
+従ってFigではなく通常のdockerコマンドを使用することになります。
+
+一応、その場合のやり方を示します。
+こ、これも行数稼ぎのためであって、これを見ている人のためじゃないんだからねっ！///
+
+====================
+cAdvisorの起動(参考)
+====================
+
+----
+基本
+----
+
+::
+
+  sudo docker run \
+    --volume=/:/rootfs:ro \
+    --volume=/var/run:/var/run:rw \
+    --volume=/sys:/sys:ro \
+    --volume=/var/lib/docker/:/var/lib/docker:ro \
+    --publish=8080:8080 \
+    --detach=true \
+    --name=cadvisor \
+    google/cadvisor:latest
+
+---------------------------
+RHEL 7 又は CentOS 7 の場合
+---------------------------
+
+以下のオプションを追加します。
+
+::
+
+    --volume=/cgroup:/cgroup \
+
+-------------------------------------------
+Ubuntu 14.04 LTS 等、Dockerが最新でない場合
+-------------------------------------------
+
+以下のオプションを削除します。
+
+::
+
+    --volume=/:/rootfs:ro \
+
+--------------------------------------
+cAdvisorをInfluxDBと連携させて起動する
+--------------------------------------
+
+::
+
+  sudo docker run \
+  --volume=/var/run:/var/run:rw \
+  --volume=/sys:/sys:ro \
+  --volume=/var/lib/docker/:/var/lib/docker:ro \
+  --publish=8080:8080 \
+  --detach=true \
+  --name=cadvisor_with_influxdb \
+  google/cadvisor:latest \
+  --storage_driver=influxdb \
+  --log_dir=/ \
+  --storage_driver_host=figtest_influxdb_1:8086
+
+なお、デフォルトでのオプションは以下の通りです。
+
+::
+
+  --storage_driver=memory \
+  --storage_driver_host=localhost:8086 \
+  --storage_driver_name=cadvisor \
+  --storage_driver_user=root \
+  --storage_driver_password=root \
+  --storage_driver_secure=False
+
+
+・・・はい、劇的にめんどくさいというか、どんくさいので、やめましょう。
+Figで使えそうなリポジトリを探したら、わりと簡単に見つけました。
+それが、今回fig.ymlに記述したcontainer-metricsです。
+
+
+====================
+コンテナ群を起動する
+====================
+
+-dオプションを付けて、バックグラウンドで起動します。
+
+::
+
+  % sudo fig up -d
+
+初回はコンテナ作成のため時間がかかりますが、2回目からは高速です。
+
+ちょっと状態を確認してみましょう。
+
+::
+
+  % sudo fig ps
+           Name                        Command               State                                     Ports
+  --------------------------------------------------------------------------------------------------------------------------------------------
+  figtest_cadvisor_1        /run.sh                          Up      0.0.0.0:58080->8080/tcp
+  figtest_elasticsearch_1   /elasticsearch/bin/elastic ...   Up      0.0.0.0:59200->9200/tcp, 0.0.0.0:59300->9300/tcp
+  figtest_grafana_1         /run.sh                          Up      0.0.0.0:50080->80/tcp
+  figtest_influxdb_1        /run.sh                          Up      0.0.0.0:58083->8083/tcp, 0.0.0.0:58084->8084/tcp, 0.0.0.0:58086->8086/tcp
+  figtest_redis_1           /entrypoint.sh redis-server      Up      6379/tcp
+  figtest_web_1             ./goRedisExample                 Up      0.0.0.0:48080->58080/tcp
+
+docker ps よりも見やすくて、僕はこちらの方が好きです。
+
+
+==================================
+cAdvisorでリソースを簡単に把握する
+==================================
+
+cAdvisorにログインしてみましょう。
+
+簡易ですが、情報がリアルタイムに可視化されます。
+なお、cAdvisorにはREST APIもあり、利用価値は非常に高いと思います。
+(レスポンスのJSONがやたら巨大ですが・・・)
+
+
+========================================
+InfluxDBで時系列データを検索し可視化する
+========================================
+
+cAdvisorとInfluxDBとの連携は、fig.ymlで定義してあります。
+さっそく、InfluxDBのGUIにログインしてみましょう。
+
+
+クエリを投げてみます。
+
+
+いい感じにリソースに関する時系列データを取得して可視化することができました。
+
+
+=========================================================
+InfluxDBの時系列データをGfaranaのダッシュボードに表示する
+=========================================================
+
+InfluxDBのグラフは、クエリの結果表示にすぎない、つまりイベントドリブンなので、
+自動的に可視化してくれるフロントエンドのGUIがあると捗ります。
+
+この手のやつはKibanaが有名で、これに言及するとバズれる確率が高まるのですが、
+今回はInfluxDBとの親和性が非常に高いGrafanaを使います。
+
+では、Grafanaにログインしてみます。
+
+
+さすがに、クエリは自分で入力しないといけないみたいです。
+ジェネレータもありますが、InfluxDBで使ったクエリを直接入力してみます。
+
+
+・・・
+
+・・・
+
+ブラウザとGraphiteサーバとでタイムゾーンが違う、と怒られています。
+
+・・・
+
+・・・
+
+そっ閉じ。
+
+
+==========
+PaaSしよう
+==========
+
+気を取り直して、これだけのシステムを簡単に作って余った時間と体力で、
+実際にPaaSを使って遊んでみましょう。
+
+====================================
+適当なサーバーアプリケーションを作る
+====================================
+
+Dockerは何のプログラミング言語で書かれていますか？
+
+そうです、Goです。
+
+こういう諺があります。
+
+「Goに入らばGoに従え」
+
+そういうわけで、今回はGoで書きます。はい、ただバズりたいだけです。
+
+::
+
+  package main
+  
+  import (
+    "flag"
+    "fmt"
+    "net/http"
+    "log"
+  
+    "github.com/garyburd/redigo/redis"
+  )
+  
+  var (
+    httpAddress    = ":58080"
+    redisAddress   = flag.String("redis-address", "redis:6379", "Address to the Redis server")
+    maxConnections = flag.Int("max-connections", 10, "Max connections to Redis")
+    c, err = redis.Dial("tcp", *redisAddress)
+  )
+  
+  func handler(w http.ResponseWriter, r *http.Request) {
+    c.Send("INCR", "hits")
+    v, err := redis.Int(c.Do("GET", "hits"))
+    if err != nil {
+      log.Fatal(err)
+    }
+    fmt.Fprintf(w, "%d", v)
+  }
+  
+  func main() {
+    c.Send("SET", "hits", 0)
+    http.HandleFunc("/", handler)
+    http.ListenAndServe(httpAddress, nil)
+  }
+
+単に、アクセスがあったらRedis上のカウンタをインクリメントするだけです。簡単ですね。
+
+これを go build したバイナリを、 web という名前のコンテナにデプロイします。
+というか、3分クッキングばりに、もうデプロイしちゃいました。
+
+動作確認してみましょう。
+
+::
+
+
+  % for i in `seq 0 9`; do curl "http://localhost:48080"; echo; done
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+  10
+  %
+
+
+======
+まとめ
+======
+
+cAdvisorとInfluxDBとGrafanaでDockerリソースの可視化を行うDockerコンテナ群をFigでデプロイしたPaaS上にてGo言語でRedisを叩いてみました。
+
+次の担当者は y_kumiha さんです。
+
+
+====
+参考
+====
+
+* http://blog.tutum.co/2014/08/07/using-cadvisor-to-monitor-docker-containers/
+* https://github.com/google/cadvisor
+* http://blog.tutum.co/2014/08/25/panamax-docker-application-template-with-cadvisor-elasticsearch-grafana-and-influxdb/
+* http://www.fig.sh/
+* http://qiita.com/sonots/items/8fbc92ff1c3e57ee7de7
+* https://registry.hub.docker.com/_/redis/
+* https://registry.hub.docker.com/u/google/cadvisor/
+* https://registry.hub.docker.com/u/tutum/influxdb/
+* https://registry.hub.docker.com/u/tutum/grafana/
+* https://registry.hub.docker.com/u/dockerfile/elasticsearch/
+
+========
+See also
+========
+
+* https://docs.docker.com/reference/api/docker_remote_api_v1.13/
+* https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Resource_Management_and_Linux_Containers_Guide/sec-Monitoring_Images.html
+* http://blog.docker.com/2013/07/effortless-monitoring-with-collectd-graphite-and-docker/
+* http://panamax.io/
+
+* http://golang.jp/codelab-wiki
+

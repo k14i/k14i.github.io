@@ -1,0 +1,187 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>製品紹介 &#8212; k14i.github.io 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>製品紹介<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id2">
+<h2>製品概要<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>GlusterFS は、「Software Defined Storage（ソフトウェアで定義されたストレージ）」を実現するための分散ファイルシステム・ミドルウェアです。
+開発元はThe Gluster Community で、Red Hat、Citrix、Intel、NTTPCコミュニケーションズなどに所属する有識者がボードメンバーを務めています。
+GlusterFS は、Googleのような企業が持つ先端ストレージ技術を、一般企業が手軽に利用できるように開発されました。
+GlusterFS のポテンシャルは、ペタバイト・スケール。安価なIAサーバー機を追加してゆくことで、数ペタバイトまで容量をスケールアウトすることが可能です。
+また、これにレプリケーション機能を組み合わせることで、信頼性を高めることができます。
+情報爆発の時代、ストレージのサイジング、単一障害点、ベンダーロックイン、そしてコストといった悩みから企業を解放し、競争力の高いサービスの土台となるプロダクトです。</p>
+</div>
+<div class="section" id="id3">
+<h2>主な特徴<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>GlusterFS の特徴は、以下の通りです。</p>
+<ul class="simple">
+<li>シンプルなアーキテクチャ</li>
+<li>多彩なインタフェース</li>
+<li>高い拡張性と絶え間ない進化</li>
+<li>豊富な導入実績</li>
+</ul>
+<div class="section" id="id4">
+<h3>シンプルなアーキテクチャ<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>シンプルさは、ユーザーに多くのメリットをもたらします。
+例えば、データの保管。この仕組み自体は、GlusterFS独自のものではなく、Linuxカーネルが提供するファイルシステムを利用します。そのため、万が一GlusterFSが利用不能となってしまったとしても、データの保全性が担保されます。
+そして、システム構成。中央サーバが無く、各サーバーが協調して動作するため、単一障害点の無い構成を採ることが可能です。
+あるいは、データを分散配置する仕組み。計算を用いて配置先を決めるため、オーバーヘッドが極小化されます。
+または、クラスタの構築・管理。設定ファイルの記述は不要。ヘルプ付きのコマンドラインを、クラスタ内のサーバのうち任意の1箇所で実行すればOK。イージーなオペレーションを実現しています。</p>
+</div>
+<div class="section" id="id5">
+<h3>多彩なインタフェース<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>ユーザは、GlusterFS で構築されたボリュームを、様々なインタフェースで利用することができます。
+一番メジャーなのは、NFS。一般的なNFSと全く同じ方式で、GlusterFSで構築したストレージを利用することが可能です。
+他にも、POSIX準拠のGlusterネイティブ、OpenStack Swiftと同等のRESTfulなHTTP、ブロックデバイスとしてのBD xlator、OpenStack Cinderインテグレーション、Sambaと連携してWindowsへの提供、C言語からのAPI利用など、様々なインタフェースを持っています。
+これらは同時に提供することが可能であるため、プロトコルの異なる複数のサービスを、GlusterFSで構築したストレージ・プール上に集約することが可能です。</p>
+</div>
+<div class="section" id="id6">
+<h3>高い拡張性と絶え間ない進化<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>GlusterFS は、常に進化を続けます。
+多彩なインタフェースはその最たるものです。また、遠隔レプリケーション、暗号化、クォータ、スナップショット、パフォーマンスに関わる機能の追加など、枚挙に暇がありません。
+これを実現するのが、高度にモジュール化されたアーキテクチャ。機能はそれぞれモジュールとして抜き差しが可能な設計となっているため、拡張が容易となっています。
+将来は、ユーザー企業が独自にモジュールを開発し機能拡張することも、より簡単に実現できるようになる予定です。</p>
+</div>
+<div class="section" id="id7">
+<h3>豊富な導入実績<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>ワールドワイドなソーシャルネットワークサービスや動画ストリーミングサービスで利用されているだけでなく、日本でも多数の導入実績があります。</p>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>担当から一言<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>GlusterFSは、今や最も実績を挙げている分散ファイルシステムの一つであると言っても過言ではありません。
+現時点でのバージョンは3.6で、今でこそ有名ですが、これが世に公開されて間もないバージョン1.3の時代から、弊社はノウハウを蓄積して参りました。
+ソフトウェア、ハードウェア、そしてソリューション提供を高度にインテグレートした本パッケージで、ストレージの課題解決を支援できればと思います。</p>
+</div>
+<div class="section" id="id9">
+<h2>ラインナップ<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="glusterfs">
+<h3>GlusterFS（オープンソース・コミュニティ版）<a class="headerlink" href="#glusterfs" title="Permalink to this headline">¶</a></h3>
+<p>フリーで提供されるバージョンです。バージョン選択の自由度が高く、ソースコードからビルドすれば、カスタマイズの幅も広くなります。</p>
+</div>
+<div class="section" id="red-hat-storage-server">
+<h3>Red Hat Storage Server<a class="headerlink" href="#red-hat-storage-server" title="Permalink to this headline">¶</a></h3>
+<p>Red Hat社が提供するプロダクトです。OSとセットで提供され、インストールすれば必要な環境が整います。また、保守のための有償サポートが提供されます。</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/k14i">My repository</a></h3>
+
+  <h3><a href="../../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../computer_science/index.html">Computer Science</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/elixir/index.html">Elixir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/c/index.html">C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/programming_languages/index.html">Programming Languages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../operation_and_monitoring/index.html">Operation and Monitoring</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">GlusterFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docker/index.html">Docker</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/bayesian_statistics/bayes_theorem/index.html">Bayes’ theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../others/sphinx/index.html">Sphinx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../others/presentation/index.html">Presentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reports/2015/strata+hadoop_world_2015/index.html">Strata + Hadoop World 2015</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/technology/glusterfs/articles/201410_oss_pack/product.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015-2021, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

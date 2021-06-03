@@ -1,0 +1,51 @@
+-----
+Books
+-----
+
+`Programming Elixir`_
+=====================
+
+.. _Programming Elixir: https://pragprog.com/book/elixir/programming-elixir
+
+
+`Elixir in Action`_
+===================
+
+.. _Elixir in Action: http://manning.com/juric/
+
+
+`Introducing Elixir`_
+=====================
+
+.. _Introducing Elixir: http://shop.oreilly.com/product/0636920030584.do
+
+
+`The Little Elixir and OTP Guidebook`_
+======================================
+
+.. _The Little Elixir and OTP Guidebook: http://www.manning.com/tanweihao/
+
+
+`Elixir Cookbook`_
+==================
+
+.. _Elixir Cookbook: https://www.packtpub.com/application-development/elixir-cookbook
+
+
+`Metaprogramming Elixir`_
+=========================
+
+.. _Metaprogramming Elixir: https://pragprog.com/book/cmelixir/metaprogramming-elixir
+
+
+`Études for Elixir`_
+====================
+
+.. _Études for Elixir: http://chimera.labs.oreilly.com/books/1234000001642
+
+
+`defmacro`_
+===========
+
+.. _defmacro: https://leanpub.com/defmacro/
+

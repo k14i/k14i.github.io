@@ -1,0 +1,15 @@
+-------------
+Mailing Lists
+-------------
+
+`elixir-lang-core`_
+===================
+
+.. _elixir-lang-core: https://groups.google.com/forum/#!forum/elixir-lang-core
+
+
+`elixir-lang-talk`_
+===================
+
+.. _elixir-lang-talk: https://groups.google.com/forum/#!forum/elixir-lang-talk
+

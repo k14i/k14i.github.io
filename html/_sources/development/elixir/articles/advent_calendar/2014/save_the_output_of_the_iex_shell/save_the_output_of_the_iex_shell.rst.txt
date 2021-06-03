@@ -1,0 +1,5 @@
+*****************************
+iexの出力をファイルに保存する
+*****************************
+
+参考: http://stackoverflow.com/questions/22426716/is-it-possible-to-save-the-output-of-the-iex-shell

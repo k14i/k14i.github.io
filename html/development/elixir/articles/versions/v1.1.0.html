@@ -1,0 +1,500 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>v1.1.0 &#8212; k14i.github.io 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="v1.1.0-rc.0" href="v1.1.0-rc.0.html" />
+    <link rel="prev" title="Versions" href="index.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="v1.1.0-rc.0.html" title="v1.1.0-rc.0"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Versions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Elixir</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../index.html" >Articles</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="index.html" accesskey="U">Versions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="v1-1-0">
+<h1>v1.1.0<a class="headerlink" href="#v1-1-0" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/elixir-lang/elixir/releases/tag/v1.1.0">https://github.com/elixir-lang/elixir/releases/tag/v1.1.0</a></p>
+<div class="section" id="id1">
+<h2>概要<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>強化<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Erlang 17, 18 の双方をサポート</li>
+<li>v1.2では Erlang 18 のみのサポートとなる予定</li>
+<li><code class="docutils literal notranslate"><span class="pre">Enum</span></code>, <code class="docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="docutils literal notranslate"><span class="pre">Task</span></code> モジュールに新規関数を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">MapSet</span></code> データ型を追加</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h3>廃止<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="accessopts-key">
+<h4>Accessプロトコルにおけるopts[key]形式の文法<a class="headerlink" href="#accessopts-key" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Access</span></code> プロトコルは <code class="docutils literal notranslate"><span class="pre">opts[key]</span></code> 形式の文法をサポートしなくなる。</li>
+<li><code class="docutils literal notranslate"><span class="pre">opts[key]</span></code> 形式の文法は <code class="docutils literal notranslate"><span class="pre">Dict</span></code> モジュールのサブセットとなる。</li>
+<li>そのため、このように <code class="docutils literal notranslate"><span class="pre">Access</span></code> プロトコルを実装しようとすると警告が出る。</li>
+<li><code class="docutils literal notranslate"><span class="pre">Access</span></code> モジュールや <code class="docutils literal notranslate"><span class="pre">opts[key]</span></code> 形式が廃止となるわけではない。</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>ツール<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>ExUnit の利用においてテストをスキップできるようになった。</li>
+<li>Mix で警告やエラーメッセージを強化。</li>
+<li>Mix のコンパイル速度を高速化。</li>
+<li><code class="docutils literal notranslate"><span class="pre">mix</span> <span class="pre">profile.fprof</span></code> タスクを追加。</li>
+<li>Hex と Rebar でチェックサムを正しく取得できるようにするため、 <code class="docutils literal notranslate"><span class="pre">local.public_keys</span></code> を設定。</li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h3>その他<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">CODE_OF_CONDUCT.md</span></code> をリポジトリに追加。</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>強化<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="elixir">
+<h3>Elixir<a class="headerlink" href="#elixir" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="application">
+<h4>Application<a class="headerlink" href="#application" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Application.fetch_env!/2</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Application.loaded_applications/0</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Application.started_applications/0</span></code> を追加</li>
+</ul>
+</div>
+<div class="section" id="cli">
+<h4>CLI<a class="headerlink" href="#cli" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Windowsのbashライクなシェルで <code class="docutils literal notranslate"><span class="pre">--werl</span></code> をサポート</li>
+</ul>
+</div>
+<div class="section" id="dict">
+<h4>Dict<a class="headerlink" href="#dict" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Dict.get_and_update/3</span></code> を追加。廃止されたAccessプロトコルに似た振る舞いをする。</li>
+<li><code class="docutils literal notranslate"><span class="pre">Dict.get_lazy/3</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Dict.pop_lazy/3</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Dict.put_new_lazy/3</span></code> を追加</li>
+</ul>
+</div>
+<div class="section" id="enum">
+<h4>Enum<a class="headerlink" href="#enum" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Enum.random/1</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Enum.take_random/2</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Enum.min_max/1</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Enum.min_max_by/2</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Enum.reverse_slice/3</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Enum.reduce_while/3</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Enum.dedup/1</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Enum.dedup_by/2</span></code> を追加</li>
+<li>パフォーマンス追求のため <code class="docutils literal notranslate"><span class="pre">Enum</span></code> の各関数にインラインで共通的な map の使い方ができるようにした</li>
+</ul>
+</div>
+<div class="section" id="file">
+<h4>File<a class="headerlink" href="#file" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">File.lstat/1</span></code> を追加。 <code class="docutils literal notranslate"><span class="pre">File.stat/1</span></code> のような働きをするが、シンボリックリンクの情報を返すことができる。</li>
+<li><code class="docutils literal notranslate"><span class="pre">File.rename/2</span></code> を追加</li>
+</ul>
+</div>
+<div class="section" id="integer">
+<h4>Integer<a class="headerlink" href="#integer" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Integer.digits/2</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Integer.undigits/2</span></code> を追加</li>
+</ul>
+</div>
+<div class="section" id="inspect">
+<h4>Inspect<a class="headerlink" href="#inspect" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">inspect/2</span></code> に　<code class="docutils literal notranslate"><span class="pre">:safe</span></code> オプションを追加。デフォルトで有効。</li>
+</ul>
+</div>
+<div class="section" id="io">
+<h4>IO<a class="headerlink" href="#io" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">IO.ANSI.Docs</span></code> で括弧書きのコードブロックをサポート</li>
+</ul>
+</div>
+<div class="section" id="genserver">
+<h4>GenServer<a class="headerlink" href="#genserver" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">GenServer.whereis/1</span></code> を追加。任意のpidに <code class="docutils literal notranslate"><span class="pre">GenServer</span></code> のディスパッチを展開する。</li>
+</ul>
+</div>
+<div class="section" id="kernel">
+<h4>Kernel<a class="headerlink" href="#kernel" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>依存関係のため <code class="docutils literal notranslate"><span class="pre">:crypto</span></code> と <code class="docutils literal notranslate"><span class="pre">:syntax_tools</span></code> を内包しないようにする。前者は暗号化されたデバッグ情報のためだけに必要で、後者は利用されていない。</li>
+<li><code class="docutils literal notranslate"><span class="pre">var.Alias</span></code> 文法が使用され、かつ、それがコンパイル時にatomに展開されなかった場合に、raiseする。（以前は警告）</li>
+<li>関数シグネチャのための引数名を新世代のものに</li>
+<li><code class="docutils literal notranslate"><span class="pre">::/2</span></code> を特別なフォームとした</li>
+<li>アンダースコア付きの変数が使用された場合に警告する</li>
+<li>バイナリ、8進数、16進数のリテラルでアンダースコアを許容する</li>
+<li>コード内でモジュール・アトリビュート、変数、文字列、数値が使用された場合に、警告する。但し、この表現には何の効果も無い。</li>
+<li>Unicodeのコードポイントにマップするため、文字列と文字リストにおいて <code class="docutils literal notranslate"><span class="pre">\uXXXX</span></code> と <code class="docutils literal notranslate"><span class="pre">\u{X*}</span></code> をサポートする。</li>
+</ul>
+</div>
+<div class="section" id="list">
+<h4>List<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">List.keytake/3</span></code> を追加</li>
+</ul>
+</div>
+<div class="section" id="module">
+<h4>Module<a class="headerlink" href="#module" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>ドキュメントのメタデータ内で関数シグネチャのための名前推定を向上</li>
+</ul>
+</div>
+<div class="section" id="process">
+<h4>Process<a class="headerlink" href="#process" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Process.info/2</span></code> でスペースのリストを許容</li>
+</ul>
+</div>
+<div class="section" id="set">
+<h4>Set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">MapSet</span></code> データ型を導入</li>
+</ul>
+</div>
+<div class="section" id="stream">
+<h4>Stream<a class="headerlink" href="#stream" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Stream.dedup/1</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Stream.dedup_by/2</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">Stream.transform/4</span></code> を追加</li>
+</ul>
+</div>
+<div class="section" id="string">
+<h4>String<a class="headerlink" href="#string" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">String.jaro_distance/2</span></code> により、名前などの文字列間でジャロ・ウィンクラー距離を計算することができる。Mixにおいてタスクが存在しない場合に “Did you mean?” と表示する機能に使われている。</li>
+<li><code class="docutils literal notranslate"><span class="pre">String.splitter/3</span></code> を追加。文字列をストリームとして分割。</li>
+</ul>
+</div>
+<div class="section" id="stringio">
+<h4>StringIO<a class="headerlink" href="#stringio" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>StringIOデバイスの出力をフラッシュするために <code class="docutils literal notranslate"><span class="pre">StringIO.glush/1</span></code> を追加</li>
+</ul>
+</div>
+<div class="section" id="task">
+<h4>Task<a class="headerlink" href="#task" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>タスクが実行中であるかをチェックし、そうでなければシャットダウンするための、 <code class="docutils literal notranslate"><span class="pre">Task.yield/2</span></code> と <code class="docutils literal notranslate"><span class="pre">Task.shutdown/2</span></code> を導入</li>
+</ul>
+</div>
+<div class="section" id="tuple">
+<h4>Tuple<a class="headerlink" href="#tuple" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Tuple.append/2</span></code> を追加</li>
+</ul>
+</div>
+<div class="section" id="uri">
+<h4>URI<a class="headerlink" href="#uri" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>“ws” 及び “wss” スキーマに対してデフォルトのポートを追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">URI.to_string/1</span></code> を追加</li>
+</ul>
+</div>
+</div>
+<div class="section" id="eex">
+<h3>EEx<a class="headerlink" href="#eex" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>スペース及び改行が前後する場合のみ、 <code class="docutils literal notranslate"><span class="pre">&lt;%</span></code> と <code class="docutils literal notranslate"><span class="pre">%&gt;</span></code> を自動的にトリムするため、 <code class="docutils literal notranslate"><span class="pre">:trim</span></code> を追加。</li>
+</ul>
+</div>
+<div class="section" id="exunit">
+<h3>ExUnit<a class="headerlink" href="#exunit" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">ExUnit</span></code> の出力にスキップされたテストの数を追加</li>
+<li>データ構造をinspectするとき、またはエラーメッセージを取得するとき、ExUnitが全面的にダウンし失敗するバグを修正</li>
+<li><code class="docutils literal notranslate"><span class="pre">assert/refute</span></code> で評価されたコードの意味を変更しないようにした。例えば、今回から、 <code class="docutils literal notranslate"><span class="pre">assert</span> <span class="pre">nil</span> <span class="pre">=</span> <span class="pre">some_expr()</span></code> は、表現としては評価の結果falseな値になるものだが、今回は想定通り例外を上げる。</li>
+<li>doctest の失敗に対して、正しい行番号をレポートする。</li>
+</ul>
+</div>
+<div class="section" id="logger">
+<h3>Logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Logger.log/3</span></code> にメタデータを含めた。メタデータ無しで動作させたい場合は、実行時に限り、 <code class="docutils literal notranslate"><span class="pre">Logger.bare_log/3</span></code> を使うこと。</li>
+</ul>
+</div>
+<div class="section" id="mix">
+<h3>Mix<a class="headerlink" href="#mix" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Elixirのバージョンが正しいことを、インストールをアーカイブ化した後にチェックし、ミスマッチがあった場合にフィードバックを行う。</li>
+<li><code class="docutils literal notranslate"><span class="pre">mix.exs</span></code> &nbsp;でのrebarの依存ライブラリが、Mix でコンパイルされることを可能とした。</li>
+<li><code class="docutils literal notranslate"><span class="pre">:path</span></code> を介して rebar の依存関係を指定することが可能となった</li>
+<li><code class="docutils literal notranslate"><span class="pre">Mix.Project.config_files/0</span></code> で <code class="docutils literal notranslate"><span class="pre">config</span></code> ディレクトリのサブディレクトリも扱えるようになった</li>
+<li>Agent にコンフィグを保管することにより、Mixプロジェクトで動的コンフィギュレーションが可能となった</li>
+<li><code class="docutils literal notranslate"><span class="pre">rebar.config</span></code> ファイル内で、rebar3スタイルのGit参照が可能となった</li>
+<li>Mixプロジェクトのコンパイル時の依存関係については、再コンパイルするのみとした。Elixirプロジェクトにおいて、再コンパイルが高速化される見込みである。</li>
+<li>利用できないアプリケーションを設定しようとしたときに警告する</li>
+<li>コードプロファイリングを容易にするため、 <code class="docutils literal notranslate"><span class="pre">mix</span> <span class="pre">profile.fprof</span></code> を追加</li>
+<li><code class="docutils literal notranslate"><span class="pre">:only</span></code> の定義と競合する依存関係がある場合にアボートする</li>
+<li>Elixir 又は SCM が変更された場合に、プロジェクトを全体的に再コンパイルする</li>
+<li><code class="docutils literal notranslate"><span class="pre">--sha512</span></code> オプションを通すと、アーカイブインストール時にチェックサムを取ることができる</li>
+<li>Hex と Rebar の依存関係のインストールを安全に管理するため、 <code class="docutils literal notranslate"><span class="pre">mix</span> <span class="pre">local.public_keys</span></code> を追加</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>バグフィックス<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h3>Elixir<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h4>CLI<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>コマンドを実行する際にロガーのメッセージが消去されていることを確認</li>
+</ul>
+</div>
+<div class="section" id="code">
+<h4>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">:delegate_locals_to</span></code> が多くのシチュエーションで選択されたモジュールにデリゲートするのに失敗し、大量のスタックトレースを出力していた。そのため、このオプションはimportによって置き換えられた。</li>
+</ul>
+</div>
+<div class="section" id="exception">
+<h4>Exception<a class="headerlink" href="#exception" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>例外メッセージを計算している最中、たとえそのメッセージが不正なものであっても、失敗しないようにした。</li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h4>File<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">File.touch/2</span></code> と <code class="docutils literal notranslate"><span class="pre">File.stat/2</span></code> がUTCを入出力できるようにした。</li>
+</ul>
+</div>
+<div class="section" id="float">
+<h4>Float<a class="headerlink" href="#float" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Float.parse/1</span></code> で完全な科学的記数法をサポート</li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h4>Kernel<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>モジュール本体では <code class="docutils literal notranslate"><span class="pre">in/2</span></code> 引数を展開しないようにした</li>
+<li>未定義の atom/alias シンタックス <code class="docutils literal notranslate"><span class="pre">:foo.Bar</span></code> に対してシンタックスエラーを投げるようにした</li>
+<li>ターゲットのディレクトリに書き込み可能でないためにコンパイルができない場合のエラーメッセージを強化</li>
+<li><code class="docutils literal notranslate"><span class="pre">&amp;and/2</span></code> や <code class="docutils literal notranslate"><span class="pre">&amp;not/1</span></code> その他のような記号でなはない演算子を捕捉できるようにした</li>
+<li>ヒアドキュメントの終端が、エスケープされることなく行の中盤で偶然見つかった場合、例外を上げる</li>
+<li>何もインポートされなかった場合、インポート失敗を警告しないようにした。</li>
+<li>キャプチャー演算子に255を超える数の引数が渡された場合に、例外を上げる。</li>
+</ul>
+</div>
+<div class="section" id="macro">
+<h4>Macro<a class="headerlink" href="#macro" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Macro.to_string/1</span></code> でキャプチャーを正しくコンバートするようにした</li>
+</ul>
+</div>
+<div class="section" id="id12">
+<h4>Module<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Module.split/1</span></code> 内において、Elixirでないモジュール名を許容しないようにした</li>
+</ul>
+</div>
+<div class="section" id="protocol">
+<h4>Protocol<a class="headerlink" href="#protocol" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="range">
+<h4>Range<a class="headerlink" href="#range" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="regex">
+<h4>Regex<a class="headerlink" href="#regex" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id13">
+<h4>Stream<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>EEx<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id15">
+<h3>ExUnit<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id16">
+<h3>Logger<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id17">
+<h3>Mix<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="id18">
+<h2>軽度の廃止 (警告は出ない)<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id19">
+<h3>Elixir<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="behaviour">
+<h4>Behaviour<a class="headerlink" href="#behaviour" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id20">
+<h4>Enum<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id21">
+<h4>Kernel<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id22">
+<h4>Regex<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+</div>
+<div class="section" id="id23">
+<h2>廃止<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="elxiir">
+<h3>Elxiir<a class="headerlink" href="#elxiir" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="access">
+<h4>Access<a class="headerlink" href="#access" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id24">
+<h4>Kernel<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id25">
+<h4>String<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/k14i">My repository</a></h3>
+
+  <h3><a href="../../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../computer_science/index.html">Computer Science</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Elixir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../c/index.html">C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../programming_languages/index.html">Programming Languages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../operation_and_monitoring/index.html">Operation and Monitoring</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../technology/glusterfs/index.html">GlusterFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../technology/docker/index.html">Docker</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/bayesian_statistics/bayes_theorem/index.html">Bayes’ theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data_science/personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../others/sphinx/index.html">Sphinx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../others/presentation/index.html">Presentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reports/2015/strata+hadoop_world_2015/index.html">Strata + Hadoop World 2015</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Versions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="v1.1.0-rc.0.html"
+                        title="next chapter">v1.1.0-rc.0</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/development/elixir/articles/versions/v1.1.0.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="v1.1.0-rc.0.html" title="v1.1.0-rc.0"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Versions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Elixir</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../index.html" >Articles</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="index.html" >Versions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015-2021, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

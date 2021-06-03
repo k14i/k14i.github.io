@@ -1,0 +1,299 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>リストの要素からインデックス位置を返す &#8212; k14i.github.io 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../../../../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../" src="../../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="Dictの値をキーにキーを集計し、集計されたキーに対して任意の関数を実行したDictを返す" href="../make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value/make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value.html" />
+    <link rel="prev" title="ローカルネットワーク経由でノードを接続する" href="../connect_elixir_nodes_via_local_network/connect_elixir_nodes_via_local_network.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../../../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value/make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value.html" title="Dictの値をキーにキーを集計し、集計されたキーに対して任意の関数を実行したDictを返す"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../connect_elixir_nodes_via_local_network/connect_elixir_nodes_via_local_network.html" title="ローカルネットワーク経由でノードを接続する"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Elixir</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../index.html" >Articles</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../../index.html" >Advent Calendar</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="../index.html" accesskey="U">2014</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>リストの要素からインデックス位置を返す<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>Elixir Advent Calendar 2014 15日目。
+今日もライトなネタを。リストの要素からインデックス位置を返したいと思います。</p>
+<div class="section" id="id2">
+<h2>やりたいこと<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>例えば、こういうリストがあるとします。</p>
+<div class="highlight-elixir notranslate"><div class="highlight"><pre><span></span><span class="n">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>リストとリストの要素パラメタを渡すと、インデックス位置のリストを返します。
+例えば、上記リストと1を渡すと、[0, 4] を返します。
+与えられたパラメタがリストに存在しない場合、空のリスト [] を返します。</p>
+<p>ちなみに、余談ですが、Rubyの場合はこんな感じで実装します。</p>
+<div class="highlight-ruby notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Array</span>
+  <span class="k">def</span> <span class="nf">get_index</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+    <span class="nb">self</span>
+      <span class="o">.</span><span class="n">each_with_index</span>
+      <span class="o">.</span><span class="n">select</span><span class="p">{</span><span class="o">|</span><span class="n">x</span><span class="o">|</span> <span class="n">x</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="n">param</span><span class="p">}</span>
+      <span class="o">.</span><span class="n">map</span><span class="p">{</span><span class="o">|</span><span class="n">x</span><span class="o">|</span> <span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>動機<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>ElixirのEnumモジュール及びListモジュールには、インデックス位置を引数に取る関数があります。</p>
+<ul class="simple">
+<li>Enum.at/3</li>
+<li>Enum.fetch/2</li>
+<li>Enum.fetch!/2</li>
+<li>List.delete_at/2</li>
+<li>List.insert_at/3</li>
+<li>List.replace_at/3</li>
+<li>List.update_at/3</li>
+</ul>
+<p>ここで誰もが思うわけです。
+「インデックス位置って、どうやって知るんだっけ？」</p>
+</div>
+<div class="section" id="id4">
+<h2>標準関数を眺めてみる<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>とりあえず、標準関数の処理系を眺めてみます。
+List.keyfind/4、Enum.find/3、Enum.find_index/2 あたりを見ればよいでしょうか？（適当）</p>
+<div class="section" id="list-keyfind-4">
+<h3>List.keyfind/4<a class="headerlink" href="#list-keyfind-4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-elixir notranslate"><div class="highlight"><pre><span></span><span class="na">@spec</span> <span class="n">keyfind</span><span class="p">([</span><span class="n">tuple</span><span class="p">],</span> <span class="n">any</span><span class="p">,</span> <span class="n">non_neg_integer</span><span class="p">,</span> <span class="n">any</span><span class="p">)</span> <span class="o">::</span> <span class="n">any</span>
+<span class="kd">def</span> <span class="n">keyfind</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">default</span> <span class="p">\\</span> <span class="no">nil</span><span class="p">)</span> <span class="k">do</span>
+  <span class="ss">:lists</span><span class="o">.</span><span class="n">keyfind</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">list</span><span class="p">)</span> <span class="o">||</span> <span class="n">default</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>これはイメージと違いますね。Tupled List専用です。</p>
+</div>
+<div class="section" id="enum-find-3">
+<h3>Enum.find/3<a class="headerlink" href="#enum-find-3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-elixir notranslate"><div class="highlight"><pre><span></span><span class="na">@spec</span> <span class="n">find</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span> <span class="o">-&gt;</span> <span class="n">any</span><span class="p">))</span> <span class="o">::</span> <span class="n">element</span> <span class="o">|</span> <span class="n">default</span>
+<span class="kd">def</span> <span class="n">find</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">ifnone</span> <span class="p">\\</span> <span class="no">nil</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+
+<span class="kd">def</span> <span class="n">find</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">ifnone</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span> <span class="ow">when</span> <span class="n">is_list</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">do_find</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">ifnone</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="kd">def</span> <span class="n">find</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">ifnone</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nc">Enumerable</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="p">{</span><span class="ss">:cont</span><span class="p">,</span> <span class="n">ifnone</span><span class="p">},</span> <span class="k">fn</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">ifnone</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="n">fun</span><span class="o">.</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="p">{</span><span class="ss">:halt</span><span class="p">,</span> <span class="n">entry</span><span class="p">},</span> <span class="ss">else</span><span class="p">:</span> <span class="p">{</span><span class="ss">:cont</span><span class="p">,</span> <span class="n">ifnone</span><span class="p">}</span>
+  <span class="k">end</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">elem</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="kd">defp</span> <span class="n">do_find</span><span class="p">([</span><span class="n">h</span><span class="o">|</span><span class="n">t</span><span class="p">],</span> <span class="n">ifnone</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">if</span> <span class="n">fun</span><span class="o">.</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">h</span>
+  <span class="k">else</span>
+    <span class="n">do_find</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">ifnone</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="kd">defp</span> <span class="n">do_find</span><span class="p">([],</span> <span class="n">ifnone</span><span class="p">,</span> <span class="bp">_</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">ifnone</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>Elixirのこういうソースコードはとても美しいと想います。
+関数作って第三引数に渡すなりすれば良さそうだと、ぱっと見は思うのですが、それは間違いです。
+この関数は、funにマッチした最初の要素の値を返します。</p>
+</div>
+<div class="section" id="enum-find-index-2">
+<h3>Enum.find_index/2<a class="headerlink" href="#enum-find-index-2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-elixir notranslate"><div class="highlight"><pre><span></span><span class="na">@spec</span> <span class="n">find_index</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span> <span class="o">-&gt;</span> <span class="n">any</span><span class="p">))</span> <span class="o">::</span> <span class="n">index</span> <span class="o">|</span> <span class="ss">:nil</span>
+<span class="kd">def</span> <span class="n">find_index</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span> <span class="ow">when</span> <span class="n">is_list</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">do_find_index</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="kd">defp</span> <span class="n">do_find_index</span><span class="p">([</span><span class="n">h</span><span class="o">|</span><span class="n">t</span><span class="p">],</span> <span class="n">counter</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">if</span> <span class="n">fun</span><span class="o">.</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">counter</span>
+  <span class="k">else</span>
+    <span class="n">do_find_index</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="kd">defp</span> <span class="n">do_find_index</span><span class="p">([],</span> <span class="bp">_</span><span class="p">,</span> <span class="bp">_</span><span class="p">)</span> <span class="k">do</span>
+  <span class="no">nil</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>関数作って第二引数に渡すなりすれば良さそうだと、ぱっと見は思うのですが、それも間違いです。
+この関数は、funにマッチした最初の要素のインデックス位置しか返しません。
+（Rubyで言うとArray#indexに相当します。）</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>作ってみる<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>無い物は作るのみ。こんな感じでいかがでしょう。</p>
+<div class="highlight-elixir notranslate"><div class="highlight"><pre><span></span><span class="kd">defmodule</span> <span class="nc">EnumX</span> <span class="k">do</span>
+
+  <span class="kd">def</span> <span class="n">get_index</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> <span class="ow">when</span> <span class="n">is_list</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="k">do</span>
+    <span class="nc">Enum</span><span class="o">.</span><span class="n">with_index</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">filter_map</span><span class="p">(</span><span class="k">fn</span> <span class="p">{</span><span class="n">x</span><span class="p">,</span> <span class="bp">_</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">==</span> <span class="n">param</span> <span class="k">end</span><span class="p">,</span> <span class="k">fn</span> <span class="p">{</span><span class="bp">_</span><span class="p">,</span> <span class="n">i</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">i</span> <span class="k">end</span><span class="p">)</span>
+        <span class="k">end</span>
+
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>実行してみます。</p>
+<div class="highlight-elixir notranslate"><div class="highlight"><pre><span></span><span class="n">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">iex</span><span class="o">&gt;</span> <span class="nc">EnumX</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">[]</span>
+<span class="n">iex</span><span class="o">&gt;</span> <span class="nc">EnumX</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">iex</span><span class="o">&gt;</span> <span class="nc">EnumX</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">iex</span><span class="o">&gt;</span> <span class="nc">EnumX</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">iex</span><span class="o">&gt;</span> <span class="nc">EnumX</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="p">[]</span>
+</pre></div>
+</div>
+<p>意図した通りに動作します。</p>
+</div>
+<div class="section" id="id6">
+<h2>まとめ<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>リストの要素からインデックス位置を返す関数が無かったので、作ってみました。
+これでElixirの活用の幅も広がりますね。</p>
+<p>明日は &#64;k1complete さんです。</p>
+<p>参考: <a class="reference external" href="http://stackoverflow.com/questions/18551814/find-indexes-from-list-in-elixir">http://stackoverflow.com/questions/18551814/find-indexes-from-list-in-elixir</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div id="toc" class="sidebarRow">
+  <h3><a href="https://github.com/k14i">My repository</a></h3>
+
+  <h3><a href="../../../../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../computer_science/index.html">Computer Science</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Elixir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../c/index.html">C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../programming_languages/index.html">Programming Languages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../operation_and_monitoring/index.html">Operation and Monitoring</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../technology/glusterfs/index.html">GlusterFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../technology/docker/index.html">Docker</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../data_science/bayesian_statistics/bayes_theorem/index.html">Bayes’ theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../data_science/personal_data_protection/index.html">Personal Data Protection</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../others/sphinx/index.html">Sphinx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../others/presentation/index.html">Presentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../reports/2014/erlang_factory_sf_bay_area_2014/index.html">Erlang Factory SF Bay Area 2014</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../reports/2015/strata+hadoop_world_2015/index.html">Strata + Hadoop World 2015</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../media/twitter/timeline.html">Timeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../media/twitter/favorites.html">Favorite Tweets</a></li>
+</ul>
+
+  
+</div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../connect_elixir_nodes_via_local_network/connect_elixir_nodes_via_local_network.html"
+                        title="previous chapter">ローカルネットワーク経由でノードを接続する</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value/make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value.html"
+                        title="next chapter">Dictの値をキーにキーを集計し、集計されたキーに対して任意の関数を実行したDictを返す</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../../../_sources/development/elixir/articles/advent_calendar/2014/find_indexes_from_a_list/find_indexes_from_a_list.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value/make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value.html" title="Dictの値をキーにキーを集計し、集計されたキーに対して任意の関数を実行したDictを返す"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../connect_elixir_nodes_via_local_network/connect_elixir_nodes_via_local_network.html" title="ローカルネットワーク経由でノードを接続する"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../../index.html">k14i.github.io 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Elixir</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../index.html" >Articles</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../../index.html" >Advent Calendar</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="../index.html" >2014</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015-2021, Keisuke Takahashi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

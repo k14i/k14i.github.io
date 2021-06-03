@@ -1,0 +1,13 @@
+.. _150218_1400_hardcore_data_science_07:
+
+=================================================================
+High Performance Machine Learning through Codesign and Rooflining
+=================================================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38574
+
+-------------
+Similar Slide
+-------------
+
+http://www.eecs.berkeley.edu/Pubs/TechRpts/2014/EECS-2014-169.pdf

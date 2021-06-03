@@ -1,0 +1,30 @@
+====
+2014
+====
+
+.. toctree::
+  :maxdepth: 1
+
+  connect_elixir_nodes_via_local_network/connect_elixir_nodes_via_local_network
+  elixir_and_otp/elixir_and_otp
+  elixir_meets_docker/elixir_meets_docker
+  erlang_factory_sf_bay_area_2014/erlang_factory_sf_bay_area_2014
+  find_indexes_from_a_list/find_indexes_from_a_list
+  gen_event_and_override/gen_event_and_override
+  make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value/make_each_value_a_key_tallying_each_key_and_apply_a_function_to_each_value
+  message_passing/message_passing
+
+..
+  creating_anonymous_functions_via_macros/creating_anonymous_functions_via_macros
+  defdelegate/defdelegate
+  define_a_function_based_on_a_previously_defined_on_a_module/define_a_function_based_on_a_previously_defined_on_a_module
+  get_request_body_in_phoenix/get_request_body_in_phoenix
+  make_elixir_with_mix_a_daemon/make_elixir_with_mix_a_daemon
+  mixed_erlang_elixir_projects/mixed_erlang_elixir_projects
+  parse_binary_data/parse_binary_data
+  pass_a_function_as_a_parameter/pass_a_function_as_a_parameter
+  pass_an_anonymous_function_to_the_pipe/pass_an_anonymous_function_to_the_pipe
+  run_shell_commands/run_shell_commands
+  save_the_output_of_the_iex_shell/save_the_output_of_the_iex_shell
+  using_ampersand_operator/using_ampersand_operator
+  using_phoenix/using_phoenix

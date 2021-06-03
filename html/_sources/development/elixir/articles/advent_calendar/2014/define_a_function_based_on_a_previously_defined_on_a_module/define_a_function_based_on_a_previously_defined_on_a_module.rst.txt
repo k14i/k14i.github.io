@@ -1,0 +1,27 @@
+******************************************
+定義済みの関数をベースに別の関数を定義する
+******************************************
+
+.. code-block:: elixir
+
+  defmodule Test do
+    def my_func(pid, arg1, arg2) do
+      send pid, {arg1, arg2}
+    end
+  
+    quoted = Enum.map Module.definitions_in(__MODULE__, :def), fn {func_name, _arity} ->
+      quote do
+        def unquote(func_name)(arg1, arg2) do
+          pid = :some_pid
+          unquote(func_name)(pid, arg1, arg2)
+        end
+      end
+    end
+    Module.eval_quoted(__MODULE__, quoted)
+  
+    Enum.each Module.definitions_in(__MODULE__, :def), fn {func_name, arity} ->
+      IO.inspect {func_name, arity}
+    end
+  end
+
+参考: http://stackoverflow.com/questions/23977069/how-to-define-a-function-based-on-a-previously-defined-function-on-a-module

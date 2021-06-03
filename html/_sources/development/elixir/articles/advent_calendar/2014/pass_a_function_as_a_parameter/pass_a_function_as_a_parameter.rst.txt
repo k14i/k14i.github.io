@@ -1,0 +1,5 @@
+************************
+関数をパラメタとして渡す
+************************
+
+参考: http://stackoverflow.com/questions/22562192/how-do-you-pass-a-function-as-a-parameter-in-elixir

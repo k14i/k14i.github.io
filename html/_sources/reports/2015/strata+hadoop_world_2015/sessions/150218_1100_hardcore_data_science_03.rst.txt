@@ -1,0 +1,7 @@
+.. _150218_1100_hardcore_data_science_03:
+
+==========================================
+Interpretable Machine Learning in Practice
+==========================================
+
+http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/40196
