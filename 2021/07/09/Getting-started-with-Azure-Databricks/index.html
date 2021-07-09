@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Getting started with Azure Databricks - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2021-07-09T01:33:51.000Z">2021-07-09 10:33:51</time><h1 class="post__title"><a href="/2021/07/09/Getting-started-with-Azure-Databricks/">Getting started with Azure Databricks</a></h1><div class="post__main echo"><p>本記事では、<a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/services/databricks/">Azure Databricks</a> をデプロイする方法を解説します。 Azure Databricks のリソースを作成して Workspace を立ち上げることをゴールとします。</p>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っている</li>
+<li><a target="_blank" rel="noopener" href="https://portal.azure.com/">Azure Portal</a> で操作を行う</li>
+</ul>
+<h1 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h1><ul>
+<li>筆者の環境は英語です。画面が日本語表示になっていない点、ご了承ください。</li>
+</ul>
+<h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><h2 id="リソースの作成を開始する"><a href="#リソースの作成を開始する" class="headerlink" title="リソースの作成を開始する"></a>リソースの作成を開始する</h2><p>既存のリソースグループがある場合は、リソースグループから作成を行うこともできます。以下のスクリーンショットはその方式です。もちろん、リソースグループが無い状態からでもリソースは作成できます。</p>
+<img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00001.png" class="slug">
+<img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00002.png" class="slug">
+
+
+<h2 id="基本項目を入力する"><a href="#基本項目を入力する" class="headerlink" title="基本項目を入力する"></a>基本項目を入力する</h2><p>本記事では <a href="/2021/07/08/Get-Started-with-Azure-Managed-Instance-for-Apache-Cassandra/" title="Get Started with Azure Managed Instance for Apache Cassandra">Get Started with Azure Managed Instance for Apache Cassandra</a> で作成した Azure Managed Instance for Apache Cassandra クラスターと同じリソースグループに、 Azure Databricks を作成します。別の記事で、これらの連携について解説するためです。リージョンも同様に合わせてあります。<br>Azure Databricks 単体で利用する場合は、このような配慮は不要です。</p>
+<img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00003.png" class="slug">
+
+
+<h2 id="ネットワークの項目を入力する"><a href="#ネットワークの項目を入力する" class="headerlink" title="ネットワークの項目を入力する"></a>ネットワークの項目を入力する</h2><p>前項と同様に、 Virtual Network も Azure Managed Instance for Apache Cassandra と同じものを使用します。<br>既存の Virtual Network を利用する場合、 Public/Private Subnet CIDR Range は、それぞれ既存で使われている IPアドレス と衝突しないようにしてください。本記事では、既存で使われている IPアドレスが 10.0.0.x ですので、以下のスクリーンショットのように指定しました。<br>Azure Databricks 単体で利用する場合は、このような配慮は不要です。</p>
+<img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00004.png" class="slug">
+
+<p>Public Subnet Name は <code>public-subnet</code> 、Private Subnet Name は <code>private-subnet</code> とします。初期状態では一見するとフォームに名前の値が既に入っているように見えますが、実際には単なるプレースホルダーですので（文字が微妙にグレーがかっている）、自分で入力する必要があります。</p>
+<h2 id="アドバンスドの項目を設定する（任意）"><a href="#アドバンスドの項目を設定する（任意）" class="headerlink" title="アドバンスドの項目を設定する（任意）"></a>アドバンスドの項目を設定する（任意）</h2><p>本記事では特に設定は行いません。</p>
+<img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00005.png" class="slug">
+
+
+<h2 id="タグを入力する（任意）"><a href="#タグを入力する（任意）" class="headerlink" title="タグを入力する（任意）"></a>タグを入力する（任意）</h2><p>筆者は独自にタグを付与しています。</p>
+<img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00006.png" class="slug">
+
+
+<h2 id="レビューして作成する"><a href="#レビューして作成する" class="headerlink" title="レビューして作成する"></a>レビューして作成する</h2><img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00007.png" class="slug">
+
+
+<h2 id="デプロイ完了"><a href="#デプロイ完了" class="headerlink" title="デプロイ完了"></a>デプロイ完了</h2><p>今回は約3分30秒でデプロイが完了しました。</p>
+<img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00008.png" class="slug">
+
+
+<h2 id="リソースにアクセスする"><a href="#リソースにアクセスする" class="headerlink" title="リソースにアクセスする"></a>リソースにアクセスする</h2><img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00009.png" class="slug">
+
+
+<h2 id="Workspace-を立ち上げる"><a href="#Workspace-を立ち上げる" class="headerlink" title="Workspace を立ち上げる"></a>Workspace を立ち上げる</h2><img src="/2021/07/09/Getting-started-with-Azure-Databricks/Getting-started-with-Azure-Databricks_00010.png" class="slug">
+
+
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>Azure Portal から Azure Databricks のリソースを作成する方法を解説しました。特に難しいことは無いと思いますし、オープンソース版のSparkをIaaSに構築するよりもはるかに簡単であると思います。 IPアドレス に関する基礎的な知識が少し必要ですので、不安な方には IPアドレス について勉強することをお勧めします。</p>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Databricks/">Azure Databricks</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
