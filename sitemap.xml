@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://k14i.github.io/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/</loc>
+    
+    <lastmod>2021-07-09</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2021/07/09/Getting-started-with-Azure-Databricks/</loc>
     
     <lastmod>2021-07-09</lastmod>
@@ -103,6 +110,13 @@
   
   <url>
     <loc>https://k14i.github.io/tags/Azure-Databricks/</loc>
+    <lastmod>2021-07-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://k14i.github.io/tags/Virtual-Network/</loc>
     <lastmod>2021-07-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>

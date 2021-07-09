@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Create Route Tables to get Azure Databricks connected to Azure Managed Instance for Apache Cassandra - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2021-07-09T02:40:54.000Z">2021-07-09 11:40:54</time><h1 class="post__title"><a href="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/">Create Route Tables to get Azure Databricks connected to Azure Managed Instance for Apache Cassandra</a></h1><div class="post__main echo"><p>本記事では、過去の記事でデプロイした Azure Managed Instance for Apache Cassandra （および cqlsh 用の仮想マシン）と Azure Databricks を接続するために、Route Table を作成する方法を解説します。それぞれが使用する2つのサブネット <code>private-subnet</code> と <code>default</code> が相互に通信できるようなルーティングテーブルが作成されていることをゴールとします。<br>既存のリソースの作成方法については、以下の記事をご覧ください。</p>
+<ul>
+<li><a href="/2021/07/08/Get-Started-with-Azure-Managed-Instance-for-Apache-Cassandra/" title="Get Started with Azure Managed Instance for Apache Cassandra">Get Started with Azure Managed Instance for Apache Cassandra</a></li>
+<li><a href="/2021/07/08/Deploying-a-Virtual-Machine-to-issue-CQL-to-Azure-Managed-Instance-for-Apache-Cassandra-using-cqlsh/" title="Deploying a Virtual Machine to issue CQL to Azure Managed Instance for Apache Cassandra using cqlsh">Deploying a Virtual Machine to issue CQL to Azure Managed Instance for Apache Cassandra using cqlsh</a></li>
+<li><a href="/2021/07/09/Getting-started-with-Azure-Databricks/" title="Getting started with Azure Databricks">Getting started with Azure Databricks</a></li>
+</ul>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っている</li>
+<li><a target="_blank" rel="noopener" href="https://portal.azure.com/">Azure Portal</a> で操作を行う</li>
+<li><a href="/2021/07/08/Get-Started-with-Azure-Managed-Instance-for-Apache-Cassandra/" title="Get Started with Azure Managed Instance for Apache Cassandra">Get Started with Azure Managed Instance for Apache Cassandra</a> の手順に沿って Azure Managed Instance for Apache Cassandra クラスターが作成されている</li>
+<li><a href="/2021/07/09/Getting-started-with-Azure-Databricks/" title="Getting started with Azure Databricks">Getting started with Azure Databricks</a> の手順に沿って Azure Databricks リソースが作成されている</li>
+<li>上記手順に沿ってリソースが作成された結果、Azure Managed Instance for Apache Cassandra と Azure Databricks は同一のリソースグループ内の同一の Virtual Network を使用している。</li>
+</ul>
+<h1 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h1><ul>
+<li>筆者の環境は英語です。画面が日本語表示になっていない点、ご了承ください。</li>
+</ul>
+<h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><h2 id="1つ目の-Route-Table-の作成-private-subnet-から-default-へのルーティング"><a href="#1つ目の-Route-Table-の作成-private-subnet-から-default-へのルーティング" class="headerlink" title="1つ目の Route Table の作成 ( private-subnet から default へのルーティング)"></a>1つ目の Route Table の作成 ( <code>private-subnet</code> から <code>default</code> へのルーティング)</h2><h3 id="リソースの作成を開始する"><a href="#リソースの作成を開始する" class="headerlink" title="リソースの作成を開始する"></a>リソースの作成を開始する</h3><p>リソース作成の入り口はいくつかありますが、本記事では既存のリソースグループから作成します。</p>
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00001.png" class="slug">
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00002.png" class="slug">
+
+<h3 id="基本項目を入力する"><a href="#基本項目を入力する" class="headerlink" title="基本項目を入力する"></a>基本項目を入力する</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00003.png" class="slug">
+
+<h3 id="タグを入力する（任意）"><a href="#タグを入力する（任意）" class="headerlink" title="タグを入力する（任意）"></a>タグを入力する（任意）</h3><p>筆者は独自にタグを付与しています。</p>
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00004.png" class="slug">
+
+<h3 id="レビューして作成する"><a href="#レビューして作成する" class="headerlink" title="レビューして作成する"></a>レビューして作成する</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00005.png" class="slug">
+
+<h3 id="デプロイ完了"><a href="#デプロイ完了" class="headerlink" title="デプロイ完了"></a>デプロイ完了</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00006.png" class="slug">
+
+<h3 id="リソースにアクセスする"><a href="#リソースにアクセスする" class="headerlink" title="リソースにアクセスする"></a>リソースにアクセスする</h3><p>初期状態では何も設定されていません。</p>
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00007.png" class="slug">
+
+<h3 id="Subnets-を表示する"><a href="#Subnets-を表示する" class="headerlink" title="Subnets を表示する"></a>Subnets を表示する</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00008.png" class="slug">
+
+<p><code>+ Associate</code> をクリックします。</p>
+<h3 id="Subnet-をアソシエイトする"><a href="#Subnet-をアソシエイトする" class="headerlink" title="Subnet をアソシエイトする"></a>Subnet をアソシエイトする</h3><p>Virtual Network と Subnet を選択します。</p>
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00009.png" class="slug">
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00010.png" class="slug">
+
+<h3 id="Routes-を表示する"><a href="#Routes-を表示する" class="headerlink" title="Routes を表示する"></a>Routes を表示する</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00011.png" class="slug">
+
+<p><code>+ Add</code> をクリックします。</p>
+<h3 id="Route-を追加する"><a href="#Route-を追加する" class="headerlink" title="Route を追加する"></a>Route を追加する</h3><p>ここは <code>private-subnet</code> の設定なので、 <code>default</code> の情報を入力します。</p>
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00012.png" class="slug">
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00013.png" class="slug">
+
+
+<h2 id="2つ目の-Route-Table-の作成-default-から-private-subnet-へのルーティング"><a href="#2つ目の-Route-Table-の作成-default-から-private-subnet-へのルーティング" class="headerlink" title="2つ目の Route Table の作成 ( default から private-subnet へのルーティング)"></a>2つ目の Route Table の作成 ( <code>default</code> から <code>private-subnet</code> へのルーティング)</h2><h3 id="リソースの作成を開始する-1"><a href="#リソースの作成を開始する-1" class="headerlink" title="リソースの作成を開始する"></a>リソースの作成を開始する</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00001.png" class="slug">
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00002.png" class="slug">
+
+<h3 id="基本項目を入力する-1"><a href="#基本項目を入力する-1" class="headerlink" title="基本項目を入力する"></a>基本項目を入力する</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_10000.png" class="slug">
+
+<h3 id="タグを入力する（任意）-1"><a href="#タグを入力する（任意）-1" class="headerlink" title="タグを入力する（任意）"></a>タグを入力する（任意）</h3><p>筆者は独自にタグを付与しています。</p>
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_10001.png" class="slug">
+
+<h3 id="レビューして作成する-1"><a href="#レビューして作成する-1" class="headerlink" title="レビューして作成する"></a>レビューして作成する</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_10002.png" class="slug">
+
+<h3 id="Subnet-をアソシエイトする-1"><a href="#Subnet-をアソシエイトする-1" class="headerlink" title="Subnet をアソシエイトする"></a>Subnet をアソシエイトする</h3><p>Subnet を表示し、 <code>+ Associate</code> をクリックして、Virtual Network と Subnet を選択します。</p>
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_10003.png" class="slug">
+
+<h3 id="Route-を追加する-1"><a href="#Route-を追加する-1" class="headerlink" title="Route を追加する"></a>Route を追加する</h3><p>Routes を表示し、 <code>+ Add</code> をクリックして、ルーティング先の情報を入力します。<br>ここは <code>default</code> の設定なので、 <code>private-subnet</code> の情報を入力します。</p>
+<img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_10004.png" class="slug">
+
+
+<h2 id="完成"><a href="#完成" class="headerlink" title="完成"></a>完成</h2><p>2つのサブネットが相互に通信できるように、 Route Tables を作成しました。それぞれの Overview で確認した上記手順の結果は以下の通りです。</p>
+<h3 id="private-subnet-から-default-への通信をするための-Route-Table"><a href="#private-subnet-から-default-への通信をするための-Route-Table" class="headerlink" title="private-subnet から default への通信をするための Route Table"></a><code>private-subnet</code> から <code>default</code> への通信をするための Route Table</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_20000.png" class="slug">
+
+<h3 id="default-から-private-subnet-への通信をするための-Route-Table"><a href="#default-から-private-subnet-への通信をするための-Route-Table" class="headerlink" title="default から private-subnet への通信をするための Route Table"></a><code>default</code> から <code>private-subnet</code> への通信をするための Route Table</h3><img src="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_20001.png" class="slug">
+
+
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>Azure Managed Instance for Apache Cassandra と Azure Databricks がそれぞれもつサブネットをルーティングするための Route Table の作成方法を解説しました。これで、両者は Virtual Network 内のサブネット間で閉じた通信を行い、機能連携できるようになります。<br>また、これらのサービス以外にも応用ができると思いますので、参考にしてみてください。</p>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Virtual-Network/">Virtual Network</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
