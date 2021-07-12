@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Import data from Azure Open Datasets in Python - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2021-07-12T04:28:27.000Z">2021-07-12 13:28:27</time><h1 class="post__title"><a href="/2021/07/12/Import-data-from-Azure-Open-Datasets-in-Python/">Import data from Azure Open Datasets in Python</a></h1><div class="post__main echo"><p>オープンデータを使って検証をしたり、プロダクト開発をしたりする際に利用できるデータソースとして、 <a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/services/open-datasets/">Azure Open Datasets</a> という選択肢があります。Azure サービスから利用することができ、基本的に無料で利用可能です。技術的なドキュメントは <a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/open-datasets/">こちら</a> で公開されています。<br>本記事では、 Azure Open Datasets のうちの1つのデータセットを対象に、Python でデータをインポートする方法を解説します。</p>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っている</li>
+</ul>
+<h1 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h1><ul>
+<li>筆者の環境は英語です。画面が日本語表示になっていない点、ご了承ください。</li>
+</ul>
+<h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><p>本記事では <a target="_blank" rel="noopener" href="https://www.ncdc.noaa.gov/data-access/model-data/model-datasets/global-forcast-system-gfs">NOAA Global Forecast System (全米海洋大気局 (NOAA) グローバル予測システム (GFS))</a> のデータセットを利用します。Python SDK のドキュメントは <a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/python/api/azureml-opendatasets/azureml.opendatasets.noaagfsweather?view=azure-ml-py">こちら</a> です。</p>
+<p>本データセットが利用できる Azure のサービスは、以下の通りです。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/services/machine-learning/">Azure Machine Learning</a></li>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/services/synapse-analytics/">Azure Synapse Analytics</a></li>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/services/databricks/">Azure Databricks</a></li>
+</ul>
+<p>つまり <a target="_blank" rel="noopener" href="https://jupyter.org/">Jupyter Notebook</a> が利用可能なサービスから Azure Open Datasets を利用できるということで、いずれかの環境を用意した上で、以下の手順を実行します。</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>Azure ML の SDK をインストールします。シェルから pip でインストールする方法は以下の通りになります。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install azureml-opendatasets</span><br></pre></td></tr></table></figure>
+
+<p>それ以外の方法として、例えば Azure Databricks ではクラスターのライブラリを GUI でインストールしますが、その際には PyPI から azureml-opendatasets をインストールするように設定します。</p>
+<h2 id="コードを書く"><a href="#コードを書く" class="headerlink" title="コードを書く"></a>コードを書く</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> azureml.opendatasets <span class="keyword">import</span> NoaaGfsWeather</span><br><span class="line"><span class="keyword">from</span> dateutil <span class="keyword">import</span> parser</span><br><span class="line"></span><br><span class="line">start_date = parser.parse(<span class="string">&quot;2018-12-20&quot;</span>)</span><br><span class="line">end_date = parser.parse(<span class="string">&quot;2018-12-20&quot;</span>)</span><br><span class="line">gfs = NoaaGfsWeather(start_date, end_date)</span><br><span class="line">gfs_df = gfs.to_spark_dataframe()</span><br></pre></td></tr></table></figure>
+
+<p>コンストラクタ <code>NoaaGfsWeather()</code> が生成するインスタンス（変数 <code>gfs</code> の中身）は <a target="_blank" rel="noopener" href="https://parquet.apache.org/">Apache Parquet</a> 形式です。これに対して <code>to_spark_dataframe()</code> 関数をコールすることで、 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/dotnet/api/microsoft.spark.sql.dataframe?view=spark-dotnet">Spark の DataFrame</a> 形式に変換しています（変数 <code>gfs_df</code> の中身）。</p>
+<p>NoaaGfsWeather のデータセット全体は非常に巨大です。上記のコードでは1日分のデータのみを取得していますが、それでも概算で約1GB程度のデータ量となることに注意してください。</p>
+<p>DataFrame のスキーマは以下の通りになっています。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">currentDatetime:timestamp</span><br><span class="line">forecastHour:integer</span><br><span class="line">latitude:double</span><br><span class="line">longitude:double</span><br><span class="line">precipitableWaterEntireAtmosphere:double</span><br><span class="line">seaLvlPressure:double</span><br><span class="line">snowDepthSurface:double</span><br><span class="line">temperature:double</span><br><span class="line">windSpeedGustSurface:double</span><br><span class="line">totalCloudCoverConvectiveCloud:double</span><br><span class="line">year:integer</span><br><span class="line">month:integer</span><br><span class="line">day:integer</span><br></pre></td></tr></table></figure>
+
+<h2 id="データを表示する"><a href="#データを表示する" class="headerlink" title="データを表示する"></a>データを表示する</h2><p>Notebook からの実行であれば、テーブルでデータを表示することができます。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">display(gfs_df.limit(<span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/07/12/Import-data-from-Azure-Open-Datasets-in-Python/Import-data-from-Azure-Open-Datasets-in-Python_00001.png" class="slug">
+
+
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>Python を使って Azure Open Datasets からデータをインポートする方法について解説しました。SDK として利用できるため、ファイルや Web API 等の形式に比べて非常に扱いやすいと思います。<br>Azure Open Datasets では他にも様々なデータが提供されています。ぜひ活用をして、検証やAI開発などに役立てていきましょう。</p>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Python/">Python</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Open-Datasets/">Azure Open Datasets</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
