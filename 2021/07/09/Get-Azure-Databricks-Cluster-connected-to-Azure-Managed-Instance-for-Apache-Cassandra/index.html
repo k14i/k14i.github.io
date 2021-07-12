@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Get Azure Databricks Cluster connected to Azure Managed Instance for Apache Cassandra - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2021-07-09T08:26:09.000Z">2021-07-09 17:26:09</time><h1 class="post__title"><a href="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/">Get Azure Databricks Cluster connected to Azure Managed Instance for Apache Cassandra</a></h1><div class="post__main echo"><p>本記事では、過去の記事でデプロイした Azure Managed Instance for Apache Cassandra に対して同じくデプロイ済みの Azure Databricks から接続をする方法を解説します。 Azure Databricks の Notebook で Cassandra に接続して CQL を発行し、それが正しく実行されていることをゴールとします。</p>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っている</li>
+<li><a target="_blank" rel="noopener" href="https://portal.azure.com/">Azure Portal</a> で操作を行う</li>
+<li><a href="/2021/07/08/Get-Started-with-Azure-Managed-Instance-for-Apache-Cassandra/" title="Get Started with Azure Managed Instance for Apache Cassandra">Get Started with Azure Managed Instance for Apache Cassandra</a> の手順に沿って Azure Managed Instance for Apache Cassandra クラスターが作成されている</li>
+<li><a href="/2021/07/08/Deploying-a-Virtual-Machine-to-issue-CQL-to-Azure-Managed-Instance-for-Apache-Cassandra-using-cqlsh/" title="Deploying a Virtual Machine to issue CQL to Azure Managed Instance for Apache Cassandra using cqlsh">Deploying a Virtual Machine to issue CQL to Azure Managed Instance for Apache Cassandra using cqlsh</a> の手順に沿って Azure Managed Instance for Apache Cassandra クラスターに対して CQL を発行できる</li>
+<li><a href="/2021/07/09/Getting-started-with-Azure-Databricks/" title="Getting started with Azure Databricks">Getting started with Azure Databricks</a> の手順に沿って Azure Databricks リソースが作成されている</li>
+<li><a href="/2021/07/09/Create-Route-Tables-to-get-Azure-Databricks-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/" title="Create Route Tables to get Azure Databricks connected to Azure Managed Instance for Apache Cassandra">Create Route Tables to get Azure Databricks connected to Azure Managed Instance for Apache Cassandra</a> の手順に沿って Azure Managed Instance for Apache Cassandra のサブネットと Azure Databricks のサブネットが相互にルーティングしている</li>
+</ul>
+<h1 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h1><ul>
+<li>筆者の環境は英語です。画面が日本語表示になっていない点、ご了承ください。</li>
+<li>スクリーンショット内で文字列に赤の波線が引かれている部分は、ブラウザの校正機能によるものであり、記事の内容とは関係ありません。</li>
+</ul>
+<h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><h2 id="Azure-Databricks-にクラスターを作成する"><a href="#Azure-Databricks-にクラスターを作成する" class="headerlink" title="Azure Databricks にクラスターを作成する"></a>Azure Databricks にクラスターを作成する</h2><p>Azure Databricks の Workspace を開き、サイドバーの <code>+</code> アイコンからクラスターの作成を行います。その際、以下の設定を行ってください。</p>
+<ul>
+<li><code>Databricks Runtime Version</code> は <code>6.4 Extended Support (Scala 2.11, Spark 2.4.5)</code> を選択します。これは Cassandra ライブラリとの互換性のために必要です。</li>
+<li><code>Spark Config</code> に Cassandra の各種情報を記述します。項目は以下の通りです。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spark.cassandra.connection.host $&#123;CassandraクラスターのIPアドレス(カンマ区切り)&#125;</span><br><span class="line">spark.cassandra.auth.password $&#123;Cassandraクラスター作成時に指定したパスワード&#125;</span><br><span class="line">spark.cassandra.connection.port $&#123;CassandraクラスターのTCPポート番号 (デフォルト:9042)&#125;</span><br><span class="line">spark.cassandra.auth.username $&#123;Cassandraクラスターのユーザー (デフォルト:cassandra)&#125;</span><br><span class="line">spark.cassandra.connection.ssl.enabled $&#123;SSL有効化の有無 (true必須)&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00001.png" class="slug">
+
+<p>本記事の場合、クラスターの作成は約4分で完了しました。</p>
+<h2 id="クラスター作成完了後、クラスターの設定画面に移動する"><a href="#クラスター作成完了後、クラスターの設定画面に移動する" class="headerlink" title="クラスター作成完了後、クラスターの設定画面に移動する"></a>クラスター作成完了後、クラスターの設定画面に移動する</h2><img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00002.png" class="slug">
+
+<h2 id="spark-cassandra-connector-をインストールする"><a href="#spark-cassandra-connector-をインストールする" class="headerlink" title="spark-cassandra-connector をインストールする"></a>spark-cassandra-connector をインストールする</h2><p>Spark から Cassandra に接続するためのライブラリをインストールします。まずは Libraries タブをクリックします。</p>
+<img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00003.png" class="slug">
+
+<p><code>Install New</code> ボタンをクリックすると、ライブラリのインストールのためのモーダルが表示されます。初期状態では Library Source が <code>Upload</code> タブにフォーカスされています。これを <code>Maven</code> に切り替えてください。</p>
+<img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00004.png" class="slug">
+
+<p>Coordinates に <code>spark-cassandra-connector</code> と入力して Search Packages リンクをクリックすることで、 datastax のライブラリを入力します。</p>
+<img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00005.png" class="slug">
+
+<p><code>Install</code> ボタンをクリックすると、指定したライブラリが Azure Databricks クラスターにインストールされます。</p>
+<img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00006.png" class="slug">
+
+<h2 id="その他必要なライブラリをインストールする（任意）"><a href="#その他必要なライブラリをインストールする（任意）" class="headerlink" title="その他必要なライブラリをインストールする（任意）"></a>その他必要なライブラリをインストールする（任意）</h2><p>他に使いたいライブラリがあれば同様にインストールすることができます。</p>
+<img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00007.png" class="slug">
+
+<h2 id="Notebook-を作成する"><a href="#Notebook-を作成する" class="headerlink" title="Notebook を作成する"></a>Notebook を作成する</h2><p>クラスターの <code>Notebooks</code> タブから Notebook を作成します。本記事では言語に Python を使用します。</p>
+<img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00008.png" class="slug">
+
+<h2 id="コードを記述して実行する"><a href="#コードを記述して実行する" class="headerlink" title="コードを記述して実行する"></a>コードを記述して実行する</h2><p>以下のスクリーンショットのようにコードを記述して、各セルを実行していきます。</p>
+<img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00009.png" class="slug">
+
+<p>Cmd 3 で Azure Managed Instance for Apache Cassandra クラスターに対して CQL を実行し、 <code>release_version</code> を表示しています。</p>
+<h2 id="実行結果が正しいことを確認する"><a href="#実行結果が正しいことを確認する" class="headerlink" title="実行結果が正しいことを確認する"></a>実行結果が正しいことを確認する</h2><p>上記 <code>release_version</code> が正しいことを、仮想マシンから cqlsh 経由で同じ CQL を実行して検証します。</p>
+<img src="/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra_00010.png" class="slug">
+
+<p>同じ値が取得できました。</p>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>Azure Databricks クラスターから Azure Managed Instance for Apache Cassandra クラスターに接続して CQL を発行するための、 Azure Databricks クラスター構築手順を解説しました。今回は正しく接続できることをゴールとしており、より踏み込んだ利用方法については別途解説したいと思います。</p>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Managed-Instance-for-Apache-Cassandra/">Azure Managed Instance for Apache Cassandra</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Databricks/">Azure Databricks</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
