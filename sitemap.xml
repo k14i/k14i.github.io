@@ -2,7 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://k14i.github.io/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/</loc>
+    
+    <lastmod>2021-07-13</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2021/07/13/Insert-data-into-Azure-Managed-Instance-for-Apache-Cassandra-on-Azure-Databricks-in-Python/</loc>
+    
+    <lastmod>2021-07-13</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://k14i.github.io/2021/07/13/Transform-and-load-data-into-Azure-Managed-Instance-for-Apache-Cassandra-on-Azure-Databricks-in-Python/</loc>
     
     <lastmod>2021-07-13</lastmod>
     
@@ -24,13 +38,6 @@
   
   <url>
     <loc>https://k14i.github.io/2021/07/12/Ensure-network-connectivity-on-Azure-Databricks-Cluster-to-Azure-Managed-Instance-for-Apache-Cassandra-Cluster/</loc>
-    
-    <lastmod>2021-07-12</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://k14i.github.io/2021/07/09/Get-Azure-Databricks-Cluster-connected-to-Azure-Managed-Instance-for-Apache-Cassandra/</loc>
     
     <lastmod>2021-07-12</lastmod>
     
