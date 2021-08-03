@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>How to connect a remote Jupyter server running as a Docker container from Visual Studio Code - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2021-08-03T06:37:39.000Z">2021-08-03 15:37:39</time><h1 class="post__title"><a href="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/">How to connect a remote Jupyter server running as a Docker container from Visual Studio Code</a></h1><div class="post__main echo"><p>Jupyter を Visual Studio Code から利用することはあると思いますが、基本はローカル端末上で動作する Jupyter またはローカル端末上で動作する Docker コンテナ上で動作する Jupyter を利用する形態かと思います。<br>Jupyter はサーバ・クライアント構成であるため、クライアントとなる Web アプリケーションや Visual Studio Code は、リモートの Jupyter サーバに接続して、そちらに計算処理をさせることもできます。これは、リモートにより高スペックなマシンがある場合に有効です。</p>
+<p>今回は、そのやり方について解説します。</p>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><h2 id="ローカル・リモート共通"><a href="#ローカル・リモート共通" class="headerlink" title="ローカル・リモート共通"></a>ローカル・リモート共通</h2><ul>
+<li>Docker がインストールされている</li>
+<li><code>jupyter/datascience-notebook</code> の Docker コンテナが動作している</li>
+</ul>
+<h2 id="ローカル端末のみ"><a href="#ローカル端末のみ" class="headerlink" title="ローカル端末のみ"></a>ローカル端末のみ</h2><ul>
+<li>Visual Studio Code がインストールされている</li>
+<li>Visual Studio Code に 以下のエクステンションがインストールされている<ul>
+<li>Python</li>
+<li>Remote - Containers</li>
+</ul>
+</li>
+<li>Visual Studio Code から Remote - Containers エクステンションを利用して Docker コンテナに接続できている</li>
+<li>リモート端末の TCP 8888 番にアクセスできる</li>
+</ul>
+<h1 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h1><ul>
+<li>シングルユーザーしかいないローカルネットワークでの構築を想定しています。リモート端末の Jupyter の構成に関して、手順の簡単化のため、以下の通りとします。<ul>
+<li>SSL は使用しません。構成によってはセキュリティのため SSL を構成する必要があります。</li>
+<li>Token も設定しません。Token かパスワード認証の設定を検討すべき場合もあります。</li>
+<li>XSRF 対策を無効にします。無効にせず、APIアクセスで Cookie を使用できるようにした方が本来はベターです。</li>
+</ul>
+</li>
+</ul>
+<h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><h2 id="リモート端末側のセットアップ"><a href="#リモート端末側のセットアップ" class="headerlink" title="リモート端末側のセットアップ"></a>リモート端末側のセットアップ</h2><h3 id="リモート端末の-Jupyter-にブラウザでアクセスする"><a href="#リモート端末の-Jupyter-にブラウザでアクセスする" class="headerlink" title="リモート端末の Jupyter にブラウザでアクセスする"></a>リモート端末の Jupyter にブラウザでアクセスする</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_00001.png" class="slug">
+
+<h3 id="Terminal-を起動する"><a href="#Terminal-を起動する" class="headerlink" title="Terminal を起動する"></a>Terminal を起動する</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_00002.png" class="slug">
+
+<h3 id="jupyter-jupyter-notebook-config-py-をエディタで開く"><a href="#jupyter-jupyter-notebook-config-py-をエディタで開く" class="headerlink" title=".jupyter/jupyter_notebook_config.py をエディタで開く"></a>.jupyter/jupyter_notebook_config.py をエディタで開く</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_00003.png" class="slug">
+
+<h3 id="c-NotebookApp-disable-check-xsrf-False-の行を見つける"><a href="#c-NotebookApp-disable-check-xsrf-False-の行を見つける" class="headerlink" title="c.NotebookApp.disable_check_xsrf = False の行を見つける"></a>c.NotebookApp.disable_check_xsrf = False の行を見つける</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_00004.png" class="slug">
+
+<h3 id="c-NotebookApp-disable-check-xsrf-True-に書き換える"><a href="#c-NotebookApp-disable-check-xsrf-True-に書き換える" class="headerlink" title="c.NotebookApp.disable_check_xsrf = True に書き換える"></a>c.NotebookApp.disable_check_xsrf = True に書き換える</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_00005.png" class="slug">
+
+<h3 id="コンテナを再起動する"><a href="#コンテナを再起動する" class="headerlink" title="コンテナを再起動する"></a>コンテナを再起動する</h3><h2 id="ローカル端末側のセットアップ"><a href="#ローカル端末側のセットアップ" class="headerlink" title="ローカル端末側のセットアップ"></a>ローカル端末側のセットアップ</h2><h3 id="Visual-Studio-Code-で適当な-Notebook-を開く"><a href="#Visual-Studio-Code-で適当な-Notebook-を開く" class="headerlink" title="Visual Studio Code で適当な Notebook を開く"></a>Visual Studio Code で適当な Notebook を開く</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_10001.png" class="slug">
+
+<h3 id="画面右下の-Jupyter-Server-local-をクリックする"><a href="#画面右下の-Jupyter-Server-local-をクリックする" class="headerlink" title="画面右下の Jupyter Server: local をクリックする"></a>画面右下の Jupyter Server: local をクリックする</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_10002.png" class="slug">
+
+<p><code>Existing</code> をクリックします。</p>
+<h3 id="リモート端末の-Jupyter-Server-の-URI-を入力する"><a href="#リモート端末の-Jupyter-Server-の-URI-を入力する" class="headerlink" title="リモート端末の Jupyter Server の URI を入力する"></a>リモート端末の Jupyter Server の URI を入力する</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_10003.png" class="slug">
+
+<p>画面右下の表示が Jupyter Server: Remote に変化したことを確認します。</p>
+<h3 id="プロンプトに従って-Reload-する"><a href="#プロンプトに従って-Reload-する" class="headerlink" title="プロンプトに従って Reload する"></a>プロンプトに従って Reload する</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_10004.png" class="slug">
+<img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_10005.png" class="slug">
+
+
+<h2 id="ローカル端末側での動作確認"><a href="#ローカル端末側での動作確認" class="headerlink" title="ローカル端末側での動作確認"></a>ローカル端末側での動作確認</h2><h3 id="Jupyter-Server-がリモートになっていることを確認する"><a href="#Jupyter-Server-がリモートになっていることを確認する" class="headerlink" title="Jupyter Server がリモートになっていることを確認する"></a>Jupyter Server がリモートになっていることを確認する</h3><p>画面右下の Jupyter Server: Remote をクリックし、入力フォームのプレースホルダーが <code>Current: &#123;リモート端末上の Jupyter の URI&#125;</code> となっていることを確認します。</p>
+<img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_10008.png" class="slug">
+
+<h3 id="適当な-Python-コードを書いたセルを実行する"><a href="#適当な-Python-コードを書いたセルを実行する" class="headerlink" title="適当な Python コードを書いたセルを実行する"></a>適当な Python コードを書いたセルを実行する</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_10006.png" class="slug">
+
+<h3 id="Python-のインタプリタを指定する"><a href="#Python-のインタプリタを指定する" class="headerlink" title="Python のインタプリタを指定する"></a>Python のインタプリタを指定する</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_10007.png" class="slug">
+
+<p>Python 3 (ipykernel) を選択します。</p>
+<h3 id="実行結果を確認する"><a href="#実行結果を確認する" class="headerlink" title="実行結果を確認する"></a>実行結果を確認する</h3><img src="/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code_10009.png" class="slug">
+
+<p>正常に完了したことを確認します。</p>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>Visual Studio Code からリモート端末上の Jupyter に接続し、コードを実行する方法を解説しました。<br>筆者は仕事で Intel CPU の MacBook Pro を使用していますが、プライベートでの主力端末は M1 Mac mini です。この方法をとることで、仕事用の Mac 上での Deep Learning 処理を高速化できることが期待されます。</p>
+<h1 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://qiita.com/sho-hata/items/02ad47f67bce6816a69a">Docker + VSCode + Remote Containerで作る快適Jupyter Lab(Python)分析環境 - Qiita</a></li>
+<li><a target="_blank" rel="noopener" href="https://qiita.com/ao_log/items/5438f2aaf5c2b46d2ccb">Docker で JupyterLab を起動し、token 入力なしでアクセスする - Qiita.mhtml</a></li>
+<li><a target="_blank" rel="noopener" href="https://ja.stackoverflow.com/questions/48489/jupyter-notebook%E3%81%A7%E3%81%AE%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6-xsrf-argument-missing-from-post">jupyter notebookでのエラーについて: ‘_xsrf’ argument missing from POST</a></li>
+<li><a target="_blank" rel="noopener" href="https://note.com/dakedai_note/n/n6321b7d83869">Jupyter NotebookをREST API経由で動かそうとした時に _xsrf argument missing from postのエラーが出た話｜だけだい！｜note</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Docker/">Docker</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Jupyter/">Jupyter</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Visual-Studio-Code/">Visual Studio Code</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
