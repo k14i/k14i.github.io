@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Fix module name resolving problem when importing Python modules on Visual Studio Code with Jupyter Docker Container - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2021-08-03T16:03:14.000Z">2021-08-04 01:03:14</time><h1 class="post__title"><a href="/2021/08/04/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container/">Fix module name resolving problem when importing Python modules on Visual Studio Code with Jupyter Docker Container</a></h1><div class="post__main echo"><p>Jupyter の Docker コンテナ <code>jupyter/datascience-notebook</code> を動作させ、 Visual Studio Code から利用する際に、 IDE 上の Problem が発生するケースがあります。本記事ではこの問題の解決方法を解説します。</p>
+<h1 id="問題"><a href="#問題" class="headerlink" title="問題"></a>問題</h1><p>Python の <code>import</code> 文を記述すると、黄色の波線の表示が出ます。</p>
+<img src="/2021/08/04/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container_00001.png" class="slug">
+
+<p>マウスカーソルを合わせると <code>Import &quot;pandas&quot; could not be resolved from source Pylance</code> といった内容が表示されます。コード実行上の問題はありませんが、問題の放置は別の問題を見過ごすことにもつながるため、対処したいと思います。</p>
+<h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><h2 id="ターミナルを開く"><a href="#ターミナルを開く" class="headerlink" title="ターミナルを開く"></a>ターミナルを開く</h2><img src="/2021/08/04/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container_00002.png" class="slug">
+
+<p>例えば <code>import pandas</code> で上記エラーが出ている場合、 <code>pip show pandas</code> を実行します。その標準出力からライブラリの Location を取得します。</p>
+<h2 id="vscode-settings-json-を開く"><a href="#vscode-settings-json-を開く" class="headerlink" title=".vscode/settings.json を開く"></a>.vscode/settings.json を開く</h2><img src="/2021/08/04/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container_00003.png" class="slug">
+
+
+<h2 id="settings-json-に追記する"><a href="#settings-json-に追記する" class="headerlink" title="settings.json に追記する"></a>settings.json に追記する</h2><img src="/2021/08/04/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container_00004.png" class="slug">
+
+<p>取得したパスをもとに、 <code>python.analysis.extraPaths</code> を追記します。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;python.analysis.extraPaths&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;/opt/conda/lib/python3.9/site-packages&quot;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h2 id="問題が解消する"><a href="#問題が解消する" class="headerlink" title="問題が解消する"></a>問題が解消する</h2><img src="/2021/08/04/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container_00005.png" class="slug">
+
+
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>Jupyter の Docker コンテナ <code>jupyter/datascience-notebook</code> を動作させ、 Visual Studio Code から利用する際に、 IDE 上の Problem が発生するケースに対して、解決方法を解説しました。<br>些細な問題ですが、Visual Studio Code で同様のプロジェクトを作成する度に対処が必要となるので、やり方を覚えておくと有益でしょう。</p>
+<h1 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://aburi6800.hatenablog.com/entry/2020/11/15/015329">【VSCode】importで未解決の警告（import ～ could not be resolved）が出る問題の対策方法 - aburi6800のブログ</a></li>
+<li><a target="_blank" rel="noopener" href="https://qiita.com/keisukesato-ac/items/6213925bb167c25cc37c">VSCodeワークスペースのルート != PythonエントリーポイントのときのIntelliSense設定 - Qiita</a></li>
+<li><a target="_blank" rel="noopener" href="https://dev.classmethod.jp/articles/vscode_python_import_error/">VSCodeで自作モジュールのimportエラーを解消してみた | DevelopersIO</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Python/">Python</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Jupyter/">Jupyter</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Visual-Studio-Code/">Visual Studio Code</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>

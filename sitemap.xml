@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://k14i.github.io/2021/08/04/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container/</loc>
+    
+    <lastmod>2021-08-03</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2021/08/03/How-to-connect-a-remote-Jupyter-server-running-as-a-Docker-container-from-Visual-Studio-Code/</loc>
     
     <lastmod>2021-08-03</lastmod>
