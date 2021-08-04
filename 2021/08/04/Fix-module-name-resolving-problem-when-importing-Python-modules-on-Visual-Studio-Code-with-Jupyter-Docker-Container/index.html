@@ -10,7 +10,7 @@
 <h1 id="問題"><a href="#問題" class="headerlink" title="問題"></a>問題</h1><p>Python の <code>import</code> 文を記述すると、黄色の波線の表示が出ます。</p>
 <img src="/2021/08/04/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container_00001.png" class="slug">
 
-<p>マウスカーソルを合わせると <code>Import &quot;pandas&quot; could not be resolved from source Pylance</code> といった内容が表示されます。コード実行上の問題はありませんが、問題の放置は別の問題を見過ごすことにもつながるため、対処したいと思います。</p>
+<p>例えば <code>pandas</code> の部分にマウスカーソルを合わせると <code>Import &quot;pandas&quot; could not be resolved from source Pylance</code> といった内容が表示されます。ここでは pandas は既にインストールされていることもあり、コードの記述および実行において問題はありません。しかし、これではライブラリが本当に存在しないケースと見分けがつきませんし、そもそも問題の放置は別の問題を見過ごすことにもつながるため、対処したいと思います。</p>
 <h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><h2 id="ターミナルを開く"><a href="#ターミナルを開く" class="headerlink" title="ターミナルを開く"></a>ターミナルを開く</h2><img src="/2021/08/04/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container/Fix-module-name-resolving-problem-when-importing-Python-modules-on-Visual-Studio-Code-with-Jupyter-Docker-Container_00002.png" class="slug">
 
 <p>例えば <code>import pandas</code> で上記エラーが出ている場合、 <code>pip show pandas</code> を実行します。その標準出力からライブラリの Location を取得します。</p>
