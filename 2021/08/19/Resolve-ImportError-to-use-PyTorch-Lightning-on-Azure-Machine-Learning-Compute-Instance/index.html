@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Resolve ImportError to use PyTorch Lightning on Azure Machine Learning Compute Instance - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2021-08-18T16:51:46.000Z">2021-08-19 01:51:46</time><h1 class="post__title"><a href="/2021/08/19/Resolve-ImportError-to-use-PyTorch-Lightning-on-Azure-Machine-Learning-Compute-Instance/">Resolve ImportError to use PyTorch Lightning on Azure Machine Learning Compute Instance</a></h1><div class="post__main echo"><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/machine-learning/">Azure Machine Learning</a> の <a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/machine-learning/concept-compute-instance">Compute Instance</a> には様々な Machine Learning / Deep Learning 用のライブラリがインストールされていますが、 <a target="_blank" rel="noopener" href="https://chainer.org/">Chainer</a> や <a target="_blank" rel="noopener" href="https://www.pytorchlightning.ai/">PyTorch Lightning</a> を利用する場合、シェルを使用して手動でインストールする必要があります。</p>
+<p>このインストールは <code>conda install pytorch-lightning -c conda-forge</code> で完了させることができますが、 PyTorch Lightning のインポート時にエラーが発生します。本記事ではこの問題の解決方法を解説します。</p>
+<h1 id="問題"><a href="#問題" class="headerlink" title="問題"></a>問題</h1><h2 id="発生状況"><a href="#発生状況" class="headerlink" title="発生状況"></a>発生状況</h2><ul>
+<li>Azure Machine Learning Compute Instance に PyTorch Lightning をインストール<ul>
+<li>Ubuntu 18.04.5 LTS</li>
+<li>Anaconda</li>
+</ul>
+</li>
+<li>Jupyter で PyTorch Lightning を import<ul>
+<li><code>import pytorch_lightning as pl</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="エラー1"><a href="#エラー1" class="headerlink" title="エラー1"></a>エラー1</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ImportError: /anaconda/envs/azureml_py38/lib/python3.8/site-packages/horovod/torch/mpi_lib_v2.cpython-38-x86_64-linux-gnu.so: undefined symbol: _ZNK2at6Tensor6deviceEv</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://horovod.readthedocs.io/en/stable/summary_include.html">horovod</a> は、 TensorFlow, Keras, PyTorch, Apache MXNet 用の分散学習フレームワークです。<br>上記エラーは、 <a target="_blank" rel="noopener" href="https://horovod.readthedocs.io/en/stable/pytorch.html">horovod.torch</a> が使用する CPython の Shared Object の1つに、未定義のシンボルが存在するために発生しています。</p>
+<h1 id="解決手順"><a href="#解決手順" class="headerlink" title="解決手順"></a>解決手順</h1><h2 id="解決手順-エラー1"><a href="#解決手順-エラー1" class="headerlink" title="解決手順(エラー1)"></a>解決手順(エラー1)</h2><p>horovod を再インストールします。その前段で、 GNU C Compiler と GNU C++ Compiler のアクティベーション・スクリプトをインストールします。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip uninstall horovod</span><br><span class="line">conda install gcc_linux-64 gxx_linux-64</span><br><span class="line">conda run pip install --no-cache-dir horovod</span><br></pre></td></tr></table></figure>
+
+<h2 id="エラー2"><a href="#エラー2" class="headerlink" title="エラー2"></a>エラー2</h2><p><code>conda run pip install --no-cache-dir horovod</code> が失敗します。エラーは以下の通りです。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ModuleNotFoundError: No module named &#x27;_sysconfigdata_x86_64_conda_linux_gnu&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>この名前のライブラリが、少なくとも Python の Library path には存在しないということです。</p>
+<h2 id="解決手順-エラー2"><a href="#解決手順-エラー2" class="headerlink" title="解決手順(エラー2)"></a>解決手順(エラー2)</h2><p><code>_sysconfigdata_x86_64_conda_linux_gnu</code> を探して Python の Library path に配置し、その上で再度 horovod のインストールを行います。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo updatedb</span><br><span class="line">locate _sysconfigdata_x86_64_conda_ | grep -v <span class="string">&quot;__pycache__&quot;</span> | grep <span class="string">&quot;azureml_py38&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>updatedb</code> は、ファイルシステム上のデータに関するデータベースを更新します。そのデータベースを使用する <code>locate</code> により、ファイル等を高速に検索することができます。<br><code>grep</code> での絞り込みの際に指定している <code>azureml_py38</code> は、エラー1を参考にしたものです。<br>上記 <code>locate</code> コマンドの出力は以下の通りです。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/anaconda/envs/azureml_py38/lib/python3.8/_sysconfigdata_x86_64_conda_cos6_linux_gnu.py</span><br></pre></td></tr></table></figure>
+
+<p><code>ModuleNotFoundError</code> となっていたライブラリは、 Library path 上に異なる名前のファイルとして存在していました。これを horovod のインストール時に必要なファイル名で配置します。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EXISTING_PATH=<span class="string">&quot;/anaconda/envs/azureml_py38/lib/python3.8/_sysconfigdata_x86_64_conda_cos6_linux_gnu.py&quot;</span></span><br><span class="line">REQUIRED_PATH=<span class="string">&quot;/anaconda/envs/azureml_py38/lib/python3.8/_sysconfigdata_x86_64_conda_linux_gnu.py&quot;</span></span><br><span class="line"></span><br><span class="line">cp -p <span class="variable">$&#123;EXISTING_PATH&#125;</span> <span class="variable">$&#123;REQUIRED_PATH&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>解説を見やすくするために冗長な記述をしました。実際には環境変数を使わずに <code>cp</code> の引数に直接指定する形で結構です。</p>
+<h2 id="解決手順-エラー1-contd"><a href="#解決手順-エラー1-contd" class="headerlink" title="解決手順(エラー1)(contd.)"></a>解決手順(エラー1)(contd.)</h2><p>上記が完了したら、再度 horovod をインストールします。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install --no-cache-dir horovod</span><br></pre></td></tr></table></figure>
+
+<p>今度は成功するはずです。</p>
+<p>horovod の再インストールに成功したら、 Jupyter kernel を restart して完了です。</p>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>Azure Machine Learning の Compute Instance で PyTorch Lightning を利用する際に直面するエラーの解決について解説しました。少し手間ですが、 PyTorch Lightning は実装の上で有用なライブラリですので、 Azure Machine Learning と併せて試してみてください。</p>
+<h1 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/horovod/horovod/issues/431#issuecomment-493030517">mpi_lib.so: undefined symbol: _ZNK10tensorflow8OpKernel4nameEv on  CPU nodes · Issue #431 · horovod/horovod</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/68261254/conda-error-sysconfigdata-x86-64-conda-linux-gnu">Conda ERROR _sysconfigdata_x86_64_conda_linux_gnu</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/PyTorch-Lightning/">PyTorch Lightning</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Machine-Learning/">Azure Machine Learning</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
