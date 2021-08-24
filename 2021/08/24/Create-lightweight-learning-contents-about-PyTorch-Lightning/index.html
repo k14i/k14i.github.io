@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Create lightweight learning contents about PyTorch Lightning - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2021-08-24T00:46:00.000Z">2021-08-24 09:46:00</time><h1 class="post__title"><a href="/2021/08/24/Create-lightweight-learning-contents-about-PyTorch-Lightning/">Create lightweight learning contents about PyTorch Lightning</a></h1><div class="post__main echo"><p>先日、社内での小規模な勉強会にて、 <a target="_blank" rel="noopener" href="https://www.pytorchlightning.ai/">PyTorch Lightning</a> について発表を行いました。そして、その時に使用した資料をベースに、簡単な学習用コンテンツを起こし、<a target="_blank" rel="noopener" href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero v1.0 Universal</a> ライセンスで GitHub に公開しました。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/k14i/LearningPyTorchLightning">LearningPyTorchLightning: Lightweight learning contents about PyTorch Lightning written in Japanese and Python</a></p>
+<h1 id="ねらい"><a href="#ねらい" class="headerlink" title="ねらい"></a>ねらい</h1><p>社内勉強会での資料を再利用し、より広くノウハウを共有することを目的としています。</p>
+<h1 id="工夫したこと"><a href="#工夫したこと" class="headerlink" title="工夫したこと"></a>工夫したこと</h1><p>学習の順序を工夫しました。</p>
+<ol>
+<li>PyTorch Lightning の公式説明（和訳）と、それに対する解説を読む</li>
+<li>PyTorch Lightning による MNIST のコードを読む</li>
+<li>PyTorch, Keras, Chainer の MNIST のコードを読んで、従来の Deep Learning ライブラリとの違いを把握する</li>
+<li>インストール方法を知り、自分で書いて動かせるようにする</li>
+<li>パブリッククラウドサービス (Microsoft Azure) を利用し、より大きな計算リソースで PyTorch Lightning のコードを実行できるようにする</li>
+</ol>
+<p>つまり、まずは自然言語とコードで読み物を読んで PyTorch Lightning を知り、その後に手を動かして実行できるようにし、そしてクラウドでの応用を図るという順序です。一般的な技術系コンテンツと比較すると、インストールに至るまでのプロセスにウェイトを置いていると言えます。読み手のモチベーションを高め、 PyTorch Lightning の利用につなげるために、このような構成にしてみました。</p>
+<h1 id="どれくらい軽量-lightweight-なコンテンツなのか"><a href="#どれくらい軽量-lightweight-なコンテンツなのか" class="headerlink" title="どれくらい軽量(lightweight)なコンテンツなのか"></a>どれくらい軽量(lightweight)なコンテンツなのか</h1><p>社内勉強会では、コードの部分はポイントを絞って説明したため、解説自体は45分程度で終わりました。</p>
+<h1 id="結局-PyTorch-Lightning-を使うメリットは何なのか"><a href="#結局-PyTorch-Lightning-を使うメリットは何なのか" class="headerlink" title="結局 PyTorch Lightning を使うメリットは何なのか"></a>結局 PyTorch Lightning を使うメリットは何なのか</h1><p>それは各自が見いだすものであると考えているため、当該コンテンツ内では触れていないテーマです。勉強会では私見を口頭で述べました。</p>
+<h2 id="データサイエンティストにとってのメリット"><a href="#データサイエンティストにとってのメリット" class="headerlink" title="データサイエンティストにとってのメリット"></a>データサイエンティストにとってのメリット</h2><p>機械学習の本質ではない処理の記述（epochをforループで回すなど、当該コンテンツ内では「エンジニアリングのためのコード」と呼んでいる）を減らし、アルゴリズム実装により集中できるのがメリットであると考えます。</p>
+<h2 id="データサイエンスチームにとってのメリット"><a href="#データサイエンスチームにとってのメリット" class="headerlink" title="データサイエンスチームにとってのメリット"></a>データサイエンスチームにとってのメリット</h2><p>データサイエンティストとソフトウェア開発者とのコラボレーションがより簡単になります。まず、データサイエンティストは <code>LightningModule</code> を継承したクラス内だけを実装すればよく、当該クラス以外の実装をソフトウェア開発者に委ねることができます。</p>
+<p>一方、ソフトウェア開発者はそのクラスをインスタンス化して <code>Trainer</code> クラスのメソッドに与えるだけなので、Deep Learning アルゴリズム実装を想定通りに動作させるためにどのようなプログラムを書けば良いか、深く考える必要はありません。つまり、ソフトウェア開発者もまたプログラムやシステムとしての実装に集中できるのです。ハイパーパラメータについてはデータサイエンティストとソフトウェア開発者との間のコミュニケーションで上手く扱えるでしょう。</p>
+<p>このように、コードの中でそれぞれが担当する箇所が明確に分かれるため、並行で作業をしつつもコンフリクトを避けることができ、Git 等でのソースコード管理が容易になります。</p>
+<p>また、 <code>LightningModule</code> によるカプセル化のおかげで、ソフトウェアテストもやりやすくなります。Python なので <a target="_blank" rel="noopener" href="https://ja.wikipedia.org/wiki/%E4%BE%9D%E5%AD%98%E6%80%A7%E3%81%AE%E6%B3%A8%E5%85%A5">DI (Dependency Injection)</a> をするには少し工夫が必要ではありますが、この形であればテストは本当に書きやすいと思います。テストを充実させることができれば、ソフトウェアとしての信頼性も高まりますし、リファクタリングも格段にやりやすくなります。</p>
+<p>そして、PyTorch Lightning を使うことで、複数の Deep Learning プロジェクト間でのコードの一貫性を高めることができます。何をどのような順序で実行するか、従来はその部分のコードがプロジェクトごとに個別最適化されていた、あるいは属人化していたのではないでしょうか。PyTorch Lightning ではそういった部分を <code>Trainer</code> が隠蔽しているため、個別最適化を解消し、コードに一貫性を持たせることができます。一貫性のあるコードは保守や引き継ぎを楽にしてくれます。</p>
+<h2 id="Deep-Learning-初学者にとってのメリット"><a href="#Deep-Learning-初学者にとってのメリット" class="headerlink" title="Deep Learning 初学者にとってのメリット"></a>Deep Learning 初学者にとってのメリット</h2><p>Deep Learning のプログラムを書くには、データサイエンスの経験とソフトウェア開発の経験の両方が必要です。初学者にとって、学ぶべきものに集中できるという点で、より明確な道筋を示してくれる、あるいはガイドを行ってくれる PyTorch Lightning は、Deep Learning 実装の学習時間を短縮してくれる存在であると言えるのではないでしょうか。</p>
+<h1 id="デメリットは？"><a href="#デメリットは？" class="headerlink" title="デメリットは？"></a>デメリットは？</h1><p>現状は PyTorch ほどには普及しておらず、どの環境でもすぐに使えるというわけではないということだと思います。とはいえ、 PyTorch との互換性が高く、現時点で直近2年間の Google トレンドも明確に右肩上がりとなっているため、今後普及していくポテンシャルはあると考えられます。</p>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p><a target="_blank" rel="noopener" href="https://github.com/k14i/LearningPyTorchLightning">LearningPyTorchLightning: Lightweight learning contents about PyTorch Lightning written in Japanese and Python</a> というコンテンツを公開しました。社内勉強会ベースの資料で、あまり手間暇をかけていられず、不完全な部分も多いと思いますが、 <em><a target="_blank" rel="noopener" href="https://www.wired.com/2012/02/zuck-letter/">Done is better than perfect</a></em> ということで、ひとまず公開した次第です。<br>PyTorch Lightning は個人やチームに様々なベネフィットを与えてくれます。そしてその性質上、多くのプロジェクトに適用可能であると思われますので、当該コンテンツが普及の一助になれば幸いです。</p>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/PyTorch-Lightning/">PyTorch Lightning</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/GitHub/">GitHub</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
