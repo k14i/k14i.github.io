@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://k14i.github.io/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/</loc>
+    
+    <lastmod>2022-02-18</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2021/12/05/Recap-my-posts-about-Azure-Managed-Instance-for-Apache-Cassandra-in-2021/</loc>
     
     <lastmod>2021-12-05</lastmod>
@@ -158,7 +165,7 @@
 
   <url>
     <loc>https://k14i.github.io/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -166,119 +173,126 @@
   
   <url>
     <loc>https://k14i.github.io/tags/Azure/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Azure-Synapse-Analytics/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Azure-Managed-Instance-for-Apache-Cassandra/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Azure-Virtual-Machines/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Linux/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Azure-Databricks/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Virtual-Network/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Python/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Azure-Open-Datasets/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/PySpark/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Docker/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Jupyter/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Visual-Studio-Code/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/PyTorch-Lightning/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Azure-Machine-Learning/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/GitHub/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://k14i.github.io/tags/Advent-Calendar-2021/</loc>
-    <lastmod>2021-12-05</lastmod>
+    <lastmod>2022-02-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://k14i.github.io/tags/Excel/</loc>
+    <lastmod>2022-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>

@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Import Excel files into Azure Synapse Analytics Dedicated SQL Pool using Mapping Data Flow - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-02-18T18:02:33.000Z">2022-02-19 03:02:33</time><h1 class="post__title"><a href="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/">Import Excel files into Azure Synapse Analytics Dedicated SQL Pool using Mapping Data Flow</a></h1><div class="post__main echo"><p>本記事では、Excel ファイル (拡張子 .xlsx)　を <a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/">Azure Synapse Analytics</a> の <a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-overview-what-is">専用SQLプール</a> に取り込む方法をご紹介します。<br>今回の処理は基本的に Synapse Studio 上で行います。Synapse Studio は Azure Synapse Analytics のリソースから起動することができます。</p>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っている</li>
+<li><a target="_blank" rel="noopener" href="https://portal.azure.com/">Azure Portal</a> で操作を行う</li>
+<li>Azure Synapse Analytics および <a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/blog/a-closer-look-at-azure-data-lake-storage-gen2/">Azure Data Lake Storage Gen2</a> のリソースが作成されている</li>
+<li>インポートする Excel ファイルが用意されている</li>
+</ul>
+<h1 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h1><ul>
+<li>今回使用する Excel ファイルは User Local さんの <a target="_blank" rel="noopener" href="https://testdata.userlocal.jp/">個人情報テストデータジェネレーター</a> を利用して作成しました。</li>
+</ul>
+<h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><h2 id="データと環境の準備"><a href="#データと環境の準備" class="headerlink" title="データと環境の準備"></a>データと環境の準備</h2><h3 id="Azure-Data-Lake-Storage-Gen2-上に-Excel-ファイルをアップロードする"><a href="#Azure-Data-Lake-Storage-Gen2-上に-Excel-ファイルをアップロードする" class="headerlink" title="Azure Data Lake Storage Gen2 上に Excel ファイルをアップロードする"></a>Azure Data Lake Storage Gen2 上に Excel ファイルをアップロードする</h3><img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00001.png" class="slug">
+
+<p>今回は Azure Portal 上からアップロードしました。</p>
+<h3 id="Azure-Data-Lake-Storage-Gen2-を-Azure-Synapse-Analytics-にリンクする"><a href="#Azure-Data-Lake-Storage-Gen2-を-Azure-Synapse-Analytics-にリンクする" class="headerlink" title="Azure Data Lake Storage Gen2 を Azure Synapse Analytics にリンクする"></a>Azure Data Lake Storage Gen2 を Azure Synapse Analytics にリンクする</h3><p><code>Synapse Studio &gt; 管理 &gt; 外部接続　&gt; リンクサービス &gt; ＋新規</code> から、当該 Azure Data Lake Storage Gen2 をリンクします。</p>
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00002.png" class="slug">
+
+<h3 id="当該-Excel-ファイルの統合データセットを作成する"><a href="#当該-Excel-ファイルの統合データセットを作成する" class="headerlink" title="当該 Excel ファイルの統合データセットを作成する"></a>当該 Excel ファイルの統合データセットを作成する</h3><p><code>Synapse Studio &gt; データ &gt; ＋ &gt; リンク済み &gt; 統合データセット &gt; Azure Data Lake Storage Gen2 &gt; Excel</code> から、リンクされたサービスである当該 Azure Data Lake Storage Gen2 上の Excel ファイルを統合データセットとして取り込みます。</p>
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00003.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00004.png" class="slug">
+
+<h3 id="専用SQLプールを作成する"><a href="#専用SQLプールを作成する" class="headerlink" title="専用SQLプールを作成する"></a>専用SQLプールを作成する</h3><p><code>Synapse Studio &gt; 管理 &gt; Analytics プール &gt; SQL プール &gt; ＋新規</code> から、専用SQLプールを作成します。</p>
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00005.png" class="slug">
+
+
+<h2 id="マッピングデータフローの作成"><a href="#マッピングデータフローの作成" class="headerlink" title="マッピングデータフローの作成"></a>マッピングデータフローの作成</h2><p><code>Synapse Studio &gt; 開発 &gt; ＋ &gt; データフロー</code> から、マッピングデータフローを作成します。</p>
+<h3 id="ソースに当該-Excel-ファイルの統合データセットを指定する"><a href="#ソースに当該-Excel-ファイルの統合データセットを指定する" class="headerlink" title="ソースに当該 Excel ファイルの統合データセットを指定する"></a>ソースに当該 Excel ファイルの統合データセットを指定する</h3><img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00006.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00007.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00008.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00009.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00010.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00011.png" class="slug">
+
+<h3 id="取り込むカラムを選択してカラム名を指定する"><a href="#取り込むカラムを選択してカラム名を指定する" class="headerlink" title="取り込むカラムを選択してカラム名を指定する"></a>取り込むカラムを選択してカラム名を指定する</h3><p>データベースに取り込む必要のあるカラムを残して、他を削除します。今回はデモとして4カラムだけ残しました。<br>また、今回のデータは先頭行がカラム名になっており、日本語です。データベースのテーブル定義は普通はマルチバイト文字を使わないので、ASCIIのカラム名を指定します。</p>
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00012.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00013.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00014.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00015.png" class="slug">
+
+<h3 id="専用SQLプールにシンクする設定をする"><a href="#専用SQLプールにシンクする設定をする" class="headerlink" title="専用SQLプールにシンクする設定をする"></a>専用SQLプールにシンクする設定をする</h3><img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00016.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00017.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00018.png" class="slug">
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00019.png" class="slug">
+
+
+<h2 id="実行の準備"><a href="#実行の準備" class="headerlink" title="実行の準備"></a>実行の準備</h2><h3 id="パイプラインを作成する"><a href="#パイプラインを作成する" class="headerlink" title="パイプラインを作成する"></a>パイプラインを作成する</h3><p><code>Synapse Studio &gt; 統合 &gt; ＋</code> からパイプラインを作成します。このパイプラインは上記のマッピングデータフローを実行するだけのものです。</p>
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00020.png" class="slug">
+
+<h3 id="専用SQLプール上にスキーマを作成する"><a href="#専用SQLプール上にスキーマを作成する" class="headerlink" title="専用SQLプール上にスキーマを作成する"></a>専用SQLプール上にスキーマを作成する</h3><p>実行する前に、専用SQLプールにスキーマを作成しておきます。</p>
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00021.png" class="slug">
+
+
+<h2 id="実行（デバッグ実行）"><a href="#実行（デバッグ実行）" class="headerlink" title="実行（デバッグ実行）"></a>実行（デバッグ実行）</h2><p>今回はデバッグ実行をしました。成功しています。</p>
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00022.png" class="slug">
+
+<p>専用SQLプールに対して SELECT 文を発行して、データが取り込まれていることを確認します。</p>
+<img src="/2022/02/19/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow/Import-Excel-files-into-Azure-Synapse-Analytics-Dedicated-SQL-Pool-using-Mapping-Data-Flow00023.png" class="slug">
+
+<p>結果のアイテムが ?? 等となっていますが、照合順序の設定ミスかもしれません。とはいえ、データは取り込まれているように見受けられます。</p>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>Excel ファイルを Azure Synapse Analytics の 専用SQLプールに取り込む方法をご紹介しました。<br>例えば、業務用の Excel ファイルを Sharepoint / OneDrive 等に保存し、<a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/logic-apps/">Azure Logic Apps</a> を使って Azure Data Lake Storage Gen2 上に取り込み、Azure Data Factory / Azure Synapse Analytics パイプラインを使って定期的にデータベースやデータウェアハウスに取り込むといった流れが実現可能になります。<br>SQL Server 系のデータベースに Excel ファイルをインポートする方法はいくつかありますが、定期自動実行する場合は Azure Data Factory / Azure Synapse Analytics が便利です。<br>ぜひ試してみてください。</p>
+<h1 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/data-factory/format-excel">Azure Data Factory での Excel 形式 - Azure Data Factory &amp; Azure Synapse | Microsoft Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/sql/relational-databases/security/authentication-access/create-a-database-schema">データベース スキーマの作成 - SQL Server | Microsoft Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-ver15">照合順序と Unicode のサポート - SQL Server | Microsoft Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/data-factory/tutorial-data-flow">マッピング データ フローを使用してデータを変換する - Azure Data Factory | Microsoft Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/best-practices-dedicated-sql-pool">Best practices for dedicated SQL pools - Azure Synapse Analytics | Microsoft Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/sql/relational-databases/import-export/import-data-from-excel-to-sql">Excel から SQL にデータをインポートする - SQL Server | Microsoft Docs</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Synapse-Analytics/">Azure Synapse Analytics</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Excel/">Excel</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2022 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
