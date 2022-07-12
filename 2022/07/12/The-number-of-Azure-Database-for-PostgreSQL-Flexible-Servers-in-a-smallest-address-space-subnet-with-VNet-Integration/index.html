@@ -22,7 +22,7 @@
 
 <img src="/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration_00003.png" class="slug">
 
-<h3 id="検証"><a href="#検証" class="headerlink" title="検証"></a>検証</h3><p>作成した委任サブネットに、ゾーン冗長構成のフレキシブルサーバーを新規デプロイしていきます。</p>
+<h2 id="検証"><a href="#検証" class="headerlink" title="検証"></a>検証</h2><p>作成した委任サブネットに、ゾーン冗長構成のフレキシブルサーバーを新規デプロイしていきます。</p>
 <img src="/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration_00004.png" class="slug">
 
 <p>4台目をデプロイ中に、エラーが発生しました。</p>
@@ -34,7 +34,7 @@
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;status&quot;</span>: <span class="string">&quot;Failed&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;error&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;code&quot;</span>: <span class="string">&quot;ServerGroupDropping&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;message&quot;</span>: <span class="string">&quot;Operations on a server group in dropping state are not allowed.&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>したがって、/28 の委任サブネットにデプロイできる Azure Database for PostgreSQL フレキシブルサーバーは、 3台ということになります。<br>時間が経ったらいずれかのサーバーに問題が発生する（委任サブネットとの紐付けが解除される等）というのも想定していたのですが、6時間以上経っても、午前0時(但しJST)をまたいでも、問題は起きていません。</p>
-<h3 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h3><ul>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><ul>
 <li>最小のアドレス空間を持つ VNet 統合サブネットにデプロイできる Azure Database for PostgreSQL フレキシブルサーバーの数は 3 であることがわかりました。</li>
 <li>公式ドキュメントの説明からすると 3台目でデプロイ失敗することが予想されましたが、3台目のデプロイは成功し、4台目で失敗しました。</li>
 <li>3台デプロイできるものの、やはり公式ドキュメントの説明からすると委任サブネット内の IP アドレスが足りていないはずですので、おすすめはできません。</li>
