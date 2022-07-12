@@ -6,7 +6,7 @@
 <script src="/js/jquery-3.1.1.min.js"></script>
 
 <script src="/js/fancybox/jquery.fancybox.min.js"></script>
-<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-07-11T08:32:23.000Z">2022-07-11 17:32:23</time><h1 class="post__title"><a href="/2022/07/11/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop/">Set up VNet Data Gateway and get data from Azure Data Lake Storage Gen2 inside virtual network from Power BI Desktop</a></h1><div class="post__main echo"><p>本記事では、<a target="_blank" rel="noopener" href="https://docs.microsoft.com/data-integration/vnet/overview">仮想ネットワーク (VNet) データ ゲートウェイ</a> (以下 VNetデータゲートウェイという) を経由して、<a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/virtual-network/virtual-networks-overview">Azure の仮想ネットワーク</a> (以下 VNet という) 内にデプロイされた <a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-introduction">Azure Data Lake Storage Gen2</a> (以下 ADLS という) に対して、<a target="_blank" rel="noopener" href="https://docs.microsoft.com/power-bi/fundamentals/desktop-getting-started">Power BI Desktop</a> から接続する手順を説明します。</p>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-07-11T08:32:23.000Z">2022-07-11 17:32:23</time><h1 class="post__title"><a href="/2022/07/11/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop/">Set up VNet Data Gateway and get data from Azure Data Lake Storage Gen2 inside virtual network from Power BI Desktop</a></h1><div class="post__main echo"><h1 id="仮想ネットワーク内の-Azure-Data-Lake-Storage-Gen2-に対して-Power-BI-Desktop-から接続する仮想ネットワークデータゲートウェイの設定方法"><a href="#仮想ネットワーク内の-Azure-Data-Lake-Storage-Gen2-に対して-Power-BI-Desktop-から接続する仮想ネットワークデータゲートウェイの設定方法" class="headerlink" title="仮想ネットワーク内の Azure Data Lake Storage Gen2 に対して Power BI Desktop から接続する仮想ネットワークデータゲートウェイの設定方法"></a>仮想ネットワーク内の Azure Data Lake Storage Gen2 に対して Power BI Desktop から接続する仮想ネットワークデータゲートウェイの設定方法</h1><p>本記事では、<a target="_blank" rel="noopener" href="https://docs.microsoft.com/data-integration/vnet/overview">仮想ネットワーク (VNet) データ ゲートウェイ</a> (以下 VNetデータゲートウェイという) を経由して、<a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/virtual-network/virtual-networks-overview">Azure の仮想ネットワーク</a> (以下 VNet という) 内にデプロイされた <a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-introduction">Azure Data Lake Storage Gen2</a> (以下 ADLS という) に対して、<a target="_blank" rel="noopener" href="https://docs.microsoft.com/power-bi/fundamentals/desktop-getting-started">Power BI Desktop</a> から接続する手順を説明します。</p>
 <p>従来、Power BI から VNet 内へのリソースに接続する方法としては、以下の方法がありました。</p>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/power-bi/connect-data/service-gateway-onprem">オンプレミス データ ゲートウェイ</a> を設置する</li>
@@ -15,7 +15,7 @@
 <p>オンプレミス データ ゲートウェイ はこれまでの定石となっていました。ただ、元々オンプレミス環境にあるサーバーにゲートウェイをインストールして Power BI から接続するものであり、 Azure の VNet 内にあるリソースに Power BI から接続する場合は、当該 VNet 内に VM を構築する必要があります。VM は IaaS であり、OS およびそれより上のレイヤーについてはユーザー自身による管理・運用が必要です。やりたいことは単に Power BI からデータソースに接続するだけであるというのに、少々大がかりなものとなっていました。</p>
 <p>一方、ファイアウォールを設定することで、Power BI からアクセスする方法もあります。ただ、Power BI のソース IP アドレスはダイナミックであり、 IP アドレスの変更に伴って接続ができなくなり、再設定が必要となります。また、Power BI のソース IP アドレスを特定する際にも、リソースの診断設定を有効にし、Power BI からアクセスを試行し、ソース IP アドレスを特定する必要があります。これらの理由から、継続的にこの方法で運用するのは難しいです。</p>
 <p>VNetデータゲートウェイは、上記2つの方式に代わる、よりシンプルでスマートなソリューションです。本記事でその利用手順を説明します。</p>
-<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っており、かつ、所有者のロールが割り当てられている</li>
 <li><a target="_blank" rel="noopener" href="https://portal.azure.com/">Azure Portal</a> で操作を行う</li>
 <li>ADLS のストレージ アカウントが作成されている<ul>
@@ -30,15 +30,21 @@
 <li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/power-bi/consumer/end-user-license">Power BI のライセンス</a> は <a target="_blank" rel="noopener" href="https://docs.microsoft.com/power-bi/enterprise/service-premium-what-is">Premium</a> (Gen1 の場合) または <a target="_blank" rel="noopener" href="https://docs.microsoft.com/power-bi/enterprise/service-premium-per-user-faq">Premium Per User (PPU)</a> (Gen2 の場合) である</li>
 <li>Windows PC に Power BI Desktop がインストールされている</li>
 </ul>
-<h1 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h1><ul>
+<h2 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h2><ul>
 <li>本記事執筆時点では、VNetデータゲートウェイはパブリックプレビューです。</li>
 </ul>
-<h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><h2 id="Microsoft-Docs-に従って-VNetデータゲートウェイ-を作成する"><a href="#Microsoft-Docs-に従って-VNetデータゲートウェイ-を作成する" class="headerlink" title="Microsoft Docs に従って VNetデータゲートウェイ を作成する"></a>Microsoft Docs に従って VNetデータゲートウェイ を作成する</h2><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/data-integration/vnet/create-data-gateways">仮想ネットワーク (VNet) データ ゲートウェイの作成 | Microsoft Docs</a></p>
+<h2 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h2><p>手順は 3ステップです。</p>
+<ol>
+<li>Microsoft Docs に従って VNetデータゲートウェイ を作成する</li>
+<li>VNetデータゲートウェイを介したデータソースを作成する</li>
+<li>Power BI Desktop からデータソースに接続する</li>
+</ol>
+<h3 id="Microsoft-Docs-に従って-VNetデータゲートウェイ-を作成する"><a href="#Microsoft-Docs-に従って-VNetデータゲートウェイ-を作成する" class="headerlink" title="Microsoft Docs に従って VNetデータゲートウェイ を作成する"></a>Microsoft Docs に従って VNetデータゲートウェイ を作成する</h3><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/data-integration/vnet/create-data-gateways">仮想ネットワーク (VNet) データ ゲートウェイの作成 | Microsoft Docs</a></p>
 <p>この時点で、 <code>[Power BI マイ ワークスペース]</code> &gt; <code>[設定 (ページヘッダーの歯車アイコン)]</code> &gt; <code>[ゲートウェイの管理]</code> &gt; <code>[データ (プレビュー)]</code> &gt; <code>[仮想ネットワーク データ ゲートウェイ]</code> タブ配下に、アイテムが作成されています。状態がオンラインであることを確認してください。</p>
 <img src="/2022/07/11/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop_00001.png" class="slug">
 
 
-<h2 id="データソースを作成する"><a href="#データソースを作成する" class="headerlink" title="データソースを作成する"></a>データソースを作成する</h2><p>同じく <code>[データ (プレビュー)]</code> 配下、<code>[データソース]</code> タブ配下に、データソースを作成します。画面上部の <code>[＋新規]</code> をクリックします。</p>
+<h3 id="VNetデータゲートウェイを介したデータソースを作成する"><a href="#VNetデータゲートウェイを介したデータソースを作成する" class="headerlink" title="VNetデータゲートウェイを介したデータソースを作成する"></a>VNetデータゲートウェイを介したデータソースを作成する</h3><p>同じく <code>[データ (プレビュー)]</code> 配下、<code>[データソース]</code> タブ配下に、データソースを作成します。画面上部の <code>[＋新規]</code> をクリックします。</p>
 <img src="/2022/07/11/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop_00002.png" class="slug">
 
 <p>例えば ADLS の URL が <code>https://MY_STORAGE_ACCOUNT_NAME.dfs.core.windows.net/</code> 、コンテナー名が <code>MY_CONTAINER_NAME</code> である場合、また、認証に ADLS のアカウントキーを用いる場合、新規作成するデータソースは以下の通りになります。</p>
@@ -88,7 +94,7 @@
 <img src="/2022/07/11/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop_00004.png" class="slug">
 
 
-<h2 id="Power-BI-Desktop-からデータを取得する"><a href="#Power-BI-Desktop-からデータを取得する" class="headerlink" title="Power BI Desktop からデータを取得する"></a>Power BI Desktop からデータを取得する</h2><p><code>[データを取得]</code> &gt; <code>[詳細...]</code> &gt; <code>[Azure]</code> から、 <code>[Azure Data Lake Storage Gen2]</code> を選択して接続をクリックします。</p>
+<h3 id="Power-BI-Desktop-からデータソースに接続する"><a href="#Power-BI-Desktop-からデータソースに接続する" class="headerlink" title="Power BI Desktop からデータソースに接続する"></a>Power BI Desktop からデータソースに接続する</h3><p><code>[データを取得]</code> &gt; <code>[詳細...]</code> &gt; <code>[Azure]</code> から、 <code>[Azure Data Lake Storage Gen2]</code> を選択して接続をクリックします。</p>
 <img src="/2022/07/11/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop_00005.png" class="slug">
 
 <img src="/2022/07/11/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop_00006.png" class="slug">
@@ -123,12 +129,12 @@
 <img src="/2022/07/11/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop_00009.png" class="slug">
 
 <p>以降、アクセス許可をクリアするか認証方法が変更されるまでの間、データソースへの認証は求められません。</p>
-<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><ul>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><ul>
 <li>VNet 配下にある ADLS に対して Power BI から接続する、本記事執筆時点で最もシンプルでスマートなソリューション、 VNetデータゲートウェイ について、設定手順を解説しました。</li>
 <li>他の方式に比べれば、VNetデータゲートウェイ の設定は非常に簡単です。ADLS 等のデータソースが VNet 内にある場合は、これを使っていきましょう。</li>
 <li>VNetデータゲートウェイ を利用するためには Power BI の ライセンスが Premium である必要があります。他にも Premium のベネフィットはたくさんありますので、ぜひ Premium を利用しましょう。</li>
 </ul>
-<h1 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h1><ul>
+<h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/data-integration/vnet/data-gateway-architecture">仮想ネットワーク (VNet) データ ゲートウェイのアーキテクチャ | Microsoft Docs</a></li>
 </ul>
 </div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Virtual-Network/">Virtual Network</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Data-Lake-Storage-Gen2/">Azure Data Lake Storage Gen2</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Power-BI/">Power BI</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2022 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
