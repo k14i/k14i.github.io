@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>The number of Azure Database for PostgreSQL Flexible Servers in a smallest address space subnet with VNet Integration - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 5.4.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-07-12T12:37:01.000Z">2022-07-12 21:37:01</time><h1 class="post__title"><a href="/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/">The number of Azure Database for PostgreSQL Flexible Servers in a smallest address space subnet with VNet Integration</a></h1><div class="post__main echo"><h1 id="最小のアドレス空間を持つ-VNet-統合サブネットにデプロイできる-Azure-Database-for-PostgreSQL-フレキシブルサーバーの数"><a href="#最小のアドレス空間を持つ-VNet-統合サブネットにデプロイできる-Azure-Database-for-PostgreSQL-フレキシブルサーバーの数" class="headerlink" title="最小のアドレス空間を持つ VNet 統合サブネットにデプロイできる Azure Database for PostgreSQL フレキシブルサーバーの数"></a>最小のアドレス空間を持つ VNet 統合サブネットにデプロイできる Azure Database for PostgreSQL フレキシブルサーバーの数</h1><p>Azure Database for PostgreSQL フレキシブルサーバー は、リソースをデプロイする際に <code>[ネットワーク]</code> &gt; <code>[ネットワーク接続]</code> &gt; <code>[接続方法]</code> で <code>プライベート アクセス (VNET 統合)</code> を選ぶことができます。</p>
+<img src="/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration_00001.png" class="slug">
+
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-networking#private-access-vnet-integration">プライベート アクセス (VNet 統合)</a> を利用すると、フレキシブルサーバーはパブリックなエンドポイントを持たず、プライベートな仮想ネットワーク内に接続を限定することができ、データベースのネットワークをよりセキュアにすることができます。</p>
+<p>このとき、サブネットは <code>Microsoft.DBforPostgreSQL/flexibleServers</code> に委任されることとなり、Azure Database for PostgreSQL フレキシブルサーバーのみがそのサブネットを使用できるよう管理されます。</p>
+<p>ここで、委任されたサブネットについて、<a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-networking#virtual-network-concepts">ネットワークの概要 - Azure Database for PostgreSQL - フレキシブル サーバー | Microsoft Docs &gt; 仮想ネットワークの概念</a> には以下の様な説明があります。</p>
+<blockquote>
+<p>サブネットに指定できる最小 CIDR 範囲は /28 で 14 個の IP アドレスが得られますが、ネットワークまたはサブネット内の最初と最後のアドレスは、個々のホストに割り当てることができません。 5 つの IP は、Azure ネットワークで内部的に利用するために予約されています。ホストに割り当てることのできない前述の 2 つの IP もそこに含まれます。 その結果、/28 の CIDR 範囲で使用可能な IP アドレスは 11 個残りますが、高可用性機能を備えた 1 つのフレキシブル サーバーでは 4 つのアドレスが使用されます。</p>
+</blockquote>
+<p>すなわち、 VNet 統合 において、サブネットの CIDR 範囲が最小の /28 である場合、フレキシブルサーバーが使用できる IP アドレスは 11 個であり、ゾーン冗長構成のフレキシブルサーバー 1台が使用する IP アドレスは 4つであるということです。<br>単純計算で、この場合にサブネット内にデプロイできるゾーン冗長構成のフレキシブルサーバーの数は 2 ということになりますが、実際に検証して確認を行いました。</p>
+<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><p>3</p>
+<h2 id="検証環境構築"><a href="#検証環境構築" class="headerlink" title="検証環境構築"></a>検証環境構築</h2><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/postgresql/flexible-server/how-to-manage-virtual-network-portal">操作方法ガイド</a> に従い、プライベート アクセス (VNet 統合) を構築します。<br>構築した VNet に対して、新規の委任サブネットを /28 で作成します。</p>
+<img src="/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration_00002.png" class="slug">
+
+<img src="/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration_00003.png" class="slug">
+
+<h3 id="検証"><a href="#検証" class="headerlink" title="検証"></a>検証</h3><p>作成した委任サブネットに、ゾーン冗長構成のフレキシブルサーバーを新規デプロイしていきます。</p>
+<img src="/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration_00004.png" class="slug">
+
+<p>4台目をデプロイ中に、エラーが発生しました。</p>
+<img src="/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration_00005.png" class="slug">
+
+<p>プロビジョニングに失敗しています。</p>
+<img src="/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration_00006.png" class="slug">
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;status&quot;</span>: <span class="string">&quot;Failed&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;error&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;code&quot;</span>: <span class="string">&quot;ServerGroupDropping&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;message&quot;</span>: <span class="string">&quot;Operations on a server group in dropping state are not allowed.&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>したがって、/28 の委任サブネットにデプロイできる Azure Database for PostgreSQL フレキシブルサーバーは、 3台ということになります。<br>時間が経ったらいずれかのサーバーに問題が発生する（委任サブネットとの紐付けが解除される等）というのも想定していたのですが、6時間以上経っても、午前0時(但しJST)をまたいでも、問題は起きていません。</p>
+<h3 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h3><ul>
+<li>最小のアドレス空間を持つ VNet 統合サブネットにデプロイできる Azure Database for PostgreSQL フレキシブルサーバーの数は 3 であることがわかりました。</li>
+<li>公式ドキュメントの説明からすると 3台目でデプロイ失敗することが予想されましたが、3台目のデプロイは成功し、4台目で失敗しました。</li>
+<li>3台デプロイできるものの、やはり公式ドキュメントの説明からすると委任サブネット内の IP アドレスが足りていないはずですので、おすすめはできません。</li>
+<li>あるいは「高可用性機能を備えた 1 つのフレキシブル サーバーでは 4 つのアドレスが使用されます」という公式の説明が正しくない可能性も考えられますが、真相は不明です。</li>
+<li>公式ドキュメントの説明に反して 3台デプロイされる場合は、自己責任でお願いします。</li>
+</ul>
+<h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-networking#private-access-vnet-integration">ネットワークの概要 - Azure Database for PostgreSQL - フレキシブル サーバー | Microsoft Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/postgresql/flexible-server/how-to-manage-virtual-network-portal">仮想ネットワークを管理する - Azure portal - Azure Database for PostgreSQL - フレキシブル サーバー | Microsoft Docs</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Virtual-Network/">Virtual Network</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Database-for-PostgreSQL/">Azure Database for PostgreSQL</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Database-for-PostgreSQL-Flexible-Server/">Azure Database for PostgreSQL Flexible Server</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2022 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>

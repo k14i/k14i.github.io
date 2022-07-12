@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://k14i.github.io/2022/07/12/The-number-of-Azure-Database-for-PostgreSQL-Flexible-Servers-in-a-smallest-address-space-subnet-with-VNet-Integration/</loc>
+    
+    <lastmod>2022-07-12</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2022/07/11/Set-up-VNet-Data-Gateway-and-get-data-from-Azure-Data-Lake-Storage-Gen2-inside-virtual-network-from-Power-BI-Desktop/</loc>
     
     <lastmod>2022-07-12</lastmod>
@@ -313,6 +320,20 @@
   
   <url>
     <loc>https://k14i.github.io/tags/Power-BI/</loc>
+    <lastmod>2022-07-12</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://k14i.github.io/tags/Azure-Database-for-PostgreSQL/</loc>
+    <lastmod>2022-07-12</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://k14i.github.io/tags/Azure-Database-for-PostgreSQL-Flexible-Server/</loc>
     <lastmod>2022-07-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
