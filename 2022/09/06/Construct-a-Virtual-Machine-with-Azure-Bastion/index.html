@@ -6,8 +6,51 @@
 <script src="/js/jquery-3.1.1.min.js"></script>
 
 <script src="/js/fancybox/jquery.fancybox.min.js"></script>
-<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-09-06T00:53:10.000Z">2022-09-06 09:53:10</time><h1 class="post__title"><a href="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/">Construct a Virtual Machine with Azure Bastion</a></h1><div class="post__main echo"><p>本記事では、Azure の Windows 仮想マシンを仮想ネットワーク内にデプロイし、Azure Bastion を使って</p>
-<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><h2 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h2><h2 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h2><h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2></div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Virtual-Machine/">Virtual Machine</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Bastion/">Azure Bastion</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2022 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-09-06T00:53:10.000Z">2022-09-06 09:53:10</time><h1 class="post__title"><a href="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/">Construct a Virtual Machine with Azure Bastion</a></h1><div class="post__main echo"><p>本記事では、Azure の Windows 仮想マシンを仮想ネットワーク内にデプロイし、Azure Bastion を利用してブラウザから Remote Desktop 接続する方法について解説します。</p>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っており、かつ、所有者のロールが割り当てられている</li>
+<li>リソースグループが既に作成されている</li>
+<li>2つ前の記事 (<a href="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/" title="Construct Azure Synapse Analytics without Public Network Access">Construct Azure Synapse Analytics without Public Network Access</a>) に基づき Azure Syanpse Analytics が パブリックネットワークアクセス無効 で構築されている</li>
+<li>2つ前の記事に基づき 仮想ネットワーク が構築されている</li>
+<li>前の記事 (<a href="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/" title="Attach Virtual Network on Azure Synapse Analytics using Private Endpoint and Private Link Hubs">Attach Virtual Network on Azure Synapse Analytics using Private Endpoint and Private Link Hubs</a>) に基づき Azure Synapse Analytics が プライベートエンドポイントおよびプライベートリンクハブ経由で仮想ネットワークに接続されている</li>
+</ul>
+<h2 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h2><ul>
+<li>本手順は Azure Portal からの操作によるものです。</li>
+</ul>
+<h2 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h2><h3 id="Bastion-の作成"><a href="#Bastion-の作成" class="headerlink" title="Bastion の作成"></a>Bastion の作成</h3><img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20001.jpeg" class="slug">
+
+<p>Bastion の作成画面の中で、仮想ネットワークおよびサブネットを指定する項目があります。<br>仮想ネットワークは前回までに作成したものを使用しますが、サブネットに関して、Bastion 用には「Azure Bastion Subnet という名前の &#x2F;26 以上のサブネット」が必要です。前回までの手順の中でそれを作成していないため、ここで作成します。</p>
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20002.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20003.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20004.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20005.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20006.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20007.jpeg" class="slug">
+
+<h3 id="仮想マシンの作成"><a href="#仮想マシンの作成" class="headerlink" title="仮想マシンの作成"></a>仮想マシンの作成</h3><img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20008.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20010.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20011.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20012.jpeg" class="slug">
+
+<p>仮想マシンのネットワーク構成を定義します。仮想ネットワークおよびサブネットともに、前回までに作成・使用したものを指定します。</p>
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20013.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20014.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20015.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20016.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20017.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20018.jpeg" class="slug">
+
+<h3 id="ブラウザと-Bastion-を使った-Remote-Desktop"><a href="#ブラウザと-Bastion-を使った-Remote-Desktop" class="headerlink" title="ブラウザと Bastion を使った Remote Desktop"></a>ブラウザと Bastion を使った Remote Desktop</h3><p>[接続] &gt; [Bastion] より、仮想マシン作成時に指定したユーザー名・パスワードで接続します。</p>
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20019.jpeg" class="slug">
+<img src="/2022/09/06/Construct-a-Virtual-Machine-with-Azure-Bastion/SynapseWithinPrivateNetwork-20020.jpeg" class="slug">
+
+
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Azure の Windows 仮想マシンを仮想ネットワーク内にデプロイし、Azure Bastion を利用してブラウザから Remote Desktop 接続する方法について解説しました。<br>仮想ネットワークに閉じたシステムに対してクライアントから接続するパターンはいくつかありますが、新規の環境であれば 仮想マシン＋Bastion は非常に手軽です。ぜひ試してみてください。</p>
+<h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/virtual-machines/windows/quick-create-portal">クイック スタート - Azure Portal で Windows VM を作成する - Azure Virtual Machines | Microsoft Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/bastion/quickstart-host-portal">クイック スタート: 既定の設定で Bastion をデプロイする - Azure Bastion | Microsoft Docs</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Virtual-Machine/">Virtual Machine</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Bastion/">Azure Bastion</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2022 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
 ga('create','G-9XBBR7M7V2');
 ga('send','pageview');</script>
 <script src="/js/scroller.js"></script>
