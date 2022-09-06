@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://k14i.github.io/tags/index.html</loc>
+    
+    <lastmod>2022-09-06</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2022/09/06/Wrap-up-How-to-run-a-Synapse-Spark-Notebook-within-a-Virtual-Network-without-Public-Network-Access/</loc>
     
     <lastmod>2022-09-06</lastmod>
@@ -255,15 +264,6 @@
   
   <url>
     <loc>https://k14i.github.io/links/index.html</loc>
-    
-    <lastmod>2021-06-03</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://k14i.github.io/tags/index.html</loc>
     
     <lastmod>2021-06-03</lastmod>
     
