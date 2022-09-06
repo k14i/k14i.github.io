@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Attach Virtual Network on Azure Synapse Analytics using Private Endpoint and Private Link Hubs - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-09-06T00:30:48.000Z">2022-09-06 09:30:48</time><h1 class="post__title"><a href="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/">Attach Virtual Network on Azure Synapse Analytics using Private Endpoint and Private Link Hubs</a></h1><div class="post__main echo"><h1 id="プライベートエンドポイント-と-プライベートリンクハブ-を使って-Azure-Synapse-Analytics-を仮想ネットワークに接続する"><a href="#プライベートエンドポイント-と-プライベートリンクハブ-を使って-Azure-Synapse-Analytics-を仮想ネットワークに接続する" class="headerlink" title="プライベートエンドポイント と プライベートリンクハブ を使って Azure Synapse Analytics を仮想ネットワークに接続する"></a>プライベートエンドポイント と プライベートリンクハブ を使って Azure Synapse Analytics を仮想ネットワークに接続する</h1><p>本記事では、Azure Synapse Analytics を仮想ネットワークに接続する方法を示します。方式としては、プライベートリンクハブ に接続された プライベートエンドポイントに Synapse Studio を接続し、Synapse を構成するサービス間でネットワーク・リーチャブルにする形です。</p>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っており、かつ、所有者のロールが割り当てられている</li>
+<li>リソースグループが既に作成されている</li>
+<li>前の記事 (<a href="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/" title="Construct Azure Synapse Analytics without Public Network Access">Construct Azure Synapse Analytics without Public Network Access</a>) に基づき Azure Syanpse Analytics が パブリックネットワークアクセス無効 で構築されている</li>
+<li>前の記事に基づき 仮想ネットワーク が構築されている</li>
+</ul>
+<h2 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h2><ul>
+<li>本手順は Azure Portal からの操作によるものです。</li>
+</ul>
+<h2 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h2><h3 id="Azure-Synapse-Analytics-Private-link-hubs-の作成"><a href="#Azure-Synapse-Analytics-Private-link-hubs-の作成" class="headerlink" title="Azure Synapse Analytics Private link hubs の作成"></a>Azure Synapse Analytics Private link hubs の作成</h3><img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10001.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10002.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10003.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10004.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10005.jpeg" class="slug">
+
+<h3 id="Private-link-hubs-側のプライベートエンドポイントの作成"><a href="#Private-link-hubs-側のプライベートエンドポイントの作成" class="headerlink" title="Private link hubs 側のプライベートエンドポイントの作成"></a>Private link hubs 側のプライベートエンドポイントの作成</h3><img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10006.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10007.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10008.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10009.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10010.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10011.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10012.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10013.jpeg" class="slug">
+
+<h3 id="Synapse-ワークスペース側のプライベートエンドポイントの作成"><a href="#Synapse-ワークスペース側のプライベートエンドポイントの作成" class="headerlink" title="Synapse ワークスペース側のプライベートエンドポイントの作成"></a>Synapse ワークスペース側のプライベートエンドポイントの作成</h3><img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10014.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10015.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10016.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10017.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10018.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10019.jpeg" class="slug">
+<img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10020.jpeg" class="slug">
+
+<h3 id="確認"><a href="#確認" class="headerlink" title="確認"></a>確認</h3><img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10021.jpeg" class="slug">
+
+<p>実際に Synapse Studio に接続して動作させるためには、仮想ネットワーク経由で Synapse Studio を利用する必要があります。こちらに関しては次の記事で例を示します。</p>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Azure Synapse Analytics を仮想ネットワークに接続する方法を示しました。方式としては、プライベートリンクハブ に接続された プライベートエンドポイントに Synapse Studio を接続することで、Synapse を構成するサービス間でネットワーク・リーチャブルになります。</p>
+<p>本記事では動作確認まではしておりません。次の記事で、動作確認のための環境構築も含めて解説します。</p>
+<h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/security/how-to-connect-to-workspace-from-restricted-network">制限されたネットワークから Azure Synapse Analytics Studio のワークスペース リソースに接続する - Azure Synapse Analytics | Microsoft Docs</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Synapse-Analytics/">Azure Synapse Analytics</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Virtual-Network/">Virtual Network</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2022 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>

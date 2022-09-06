@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Construct Azure Synapse Analytics without Public Network Access - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-09-06T00:04:00.000Z">2022-09-06 09:04:00</time><h1 class="post__title"><a href="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/">Construct Azure Synapse Analytics without Public Network Access</a></h1><div class="post__main echo"><h1 id="Azure-Syanpse-Analytics-を-パブリックネットワークアクセス無効-で構築する"><a href="#Azure-Syanpse-Analytics-を-パブリックネットワークアクセス無効-で構築する" class="headerlink" title="Azure Syanpse Analytics を パブリックネットワークアクセス無効 で構築する"></a>Azure Syanpse Analytics を パブリックネットワークアクセス無効 で構築する</h1><p>本記事では、Azure Synapse Analytics を パブリックネットワークアクセス無効 で構築する手順を説明します。</p>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っており、かつ、所有者のロールが割り当てられている</li>
+<li>リソースグループが既に作成されている</li>
+</ul>
+<h2 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h2><ul>
+<li>本手順は Azure Portal からの操作によるものです。</li>
+</ul>
+<h2 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h2><h3 id="Synapse-ワークスペースの作成"><a href="#Synapse-ワークスペースの作成" class="headerlink" title="Synapse ワークスペースの作成"></a>Synapse ワークスペースの作成</h3><p>以下の手順に沿って、Synapse ワークスペースを作成します。特に「ネットワーク」タブにおける設定が今回重要なポイントです。</p>
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00001.jpeg" class="slug">
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00002.jpeg" class="slug">
+
+<p>マネージド仮想ネットワークを有効に、ワークスペースのエンドポイントへのパブリックネットワークアクセスを無効に、それぞれ設定します。</p>
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00003.jpeg" class="slug">
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00004.jpeg" class="slug">
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00005.jpeg" class="slug">
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00006.jpeg" class="slug">
+
+
+<h3 id="仮想ネットワークの作成"><a href="#仮想ネットワークの作成" class="headerlink" title="仮想ネットワークの作成"></a>仮想ネットワークの作成</h3><p>続いて、仮想ネットワークを作成します。Synapse ワークスペースの作成との間の順序は順不同です。</p>
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00007.jpeg" class="slug">
+
+<p>IP アドレス空間とサブネットの設定です。今回は適当に以下のように設定しました。</p>
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00008.jpeg" class="slug">
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00009.jpeg" class="slug">
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00010.jpeg" class="slug">
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00011.jpeg" class="slug">
+
+
+<h3 id="確認"><a href="#確認" class="headerlink" title="確認"></a>確認</h3><p>作成したリソースの確認を行います。</p>
+<p>リソースグループは以下のような状態です。</p>
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00012.jpeg" class="slug">
+
+<p>Synapse ワークスペースの状態は以下の通りです。</p>
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00013.jpeg" class="slug">
+
+<p>ここで Synapse Studio を開くと、以下のように大量のエラーが発生します。</p>
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00014.jpeg" class="slug">
+<img src="/2022/09/06/Construct-Azure-Synapse-Analytics-without-Public-Network-Access/SynapseWithinPrivateNetwork-00015.jpeg" class="slug">
+
+<p>原因としては、Azure Synapse Analytics を構成するサービス群と Synapse Studio との間でネットワーク接続ができていないことです。原因はパブリックネットワークアクセス無効にあります。<br>次の記事で解決法を示します。</p>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Azure Synapse Analytics を パブリックネットワークアクセス無効 で構築する手順を説明しました。リソースの作成自体はうまくいきますが、パブリックネットワークアクセス無効が原因で、まだ動作しません。次の記事で解決法を示していきます。</p>
+<h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/synapse-analytics/get-started-create-workspace">クイックスタート: 概要 - Synapse ワークスペースを作成する - Azure Synapse Analytics | Microsoft Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/virtual-network/quick-create-portal">クイック スタート: 仮想ネットワークを作成する - Azure portal - Azure Virtual Network | Microsoft Docs</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Synapse-Analytics/">Azure Synapse Analytics</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Virtual-Network/">Virtual Network</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2022 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
