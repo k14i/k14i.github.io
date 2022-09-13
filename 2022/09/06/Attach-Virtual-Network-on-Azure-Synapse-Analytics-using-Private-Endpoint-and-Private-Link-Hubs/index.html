@@ -16,7 +16,15 @@
 <h2 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h2><ul>
 <li>本手順は Azure Portal からの操作によるものです。</li>
 </ul>
-<h2 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h2><h3 id="Azure-Synapse-Analytics-Private-link-hubs-の作成"><a href="#Azure-Synapse-Analytics-Private-link-hubs-の作成" class="headerlink" title="Azure Synapse Analytics Private link hubs の作成"></a>Azure Synapse Analytics Private link hubs の作成</h3><img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10001.jpeg" class="slug">
+<h2 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h2><p>全体的な流れは以下の通りになります。</p>
+<ol>
+<li>Azure Synapse Analytics Private link hubs の作成</li>
+<li>Private link hubs 側のプライベートエンドポイントの作成</li>
+<li>Synapse ワークスペース側のプライベートエンドポイントの作成</li>
+<li>確認</li>
+</ol>
+<p>3 については、1, 2 との依存関係は無いため、これらと前後しても構いません。</p>
+<h3 id="Azure-Synapse-Analytics-Private-link-hubs-の作成"><a href="#Azure-Synapse-Analytics-Private-link-hubs-の作成" class="headerlink" title="Azure Synapse Analytics Private link hubs の作成"></a>Azure Synapse Analytics Private link hubs の作成</h3><img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10001.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10002.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10003.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10004.jpeg" class="slug">
@@ -25,6 +33,8 @@
 <h3 id="Private-link-hubs-側のプライベートエンドポイントの作成"><a href="#Private-link-hubs-側のプライベートエンドポイントの作成" class="headerlink" title="Private link hubs 側のプライベートエンドポイントの作成"></a>Private link hubs 側のプライベートエンドポイントの作成</h3><img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10006.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10007.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10008.jpeg" class="slug">
+
+<p>リソースの種類 に <code>Microsoft.Synapse/privateLinkHubs</code> を指定するのがポイントです。<br>対象サブリソースには <code>Web</code> を指定します。</p>
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10009.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10010.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10011.jpeg" class="slug">
@@ -34,6 +44,33 @@
 <h3 id="Synapse-ワークスペース側のプライベートエンドポイントの作成"><a href="#Synapse-ワークスペース側のプライベートエンドポイントの作成" class="headerlink" title="Synapse ワークスペース側のプライベートエンドポイントの作成"></a>Synapse ワークスペース側のプライベートエンドポイントの作成</h3><img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10014.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10015.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10016.jpeg" class="slug">
+
+<p>先述した Private link hubs 側のプライベートエンドポイントとは異なり、リソースの種類には <code>Microsoft.Synapse/workspaces</code> を、対象サブリソースには <code>Dev</code> を指定します。</p>
+<p>本記事では ノートブックによる開発を行うため、このようにしていますが、 Azure Synapse Analytics 内のサブリソースごとに [対象サブリソース] は異なります。</p>
+<table>
+<thead>
+<tr>
+<th>利用するサブリソース</th>
+<th>指定する [対象サブリソース]</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-overview-what-is?context=/azure/synapse-analytics/context/context">専用 SQL プール</a></td>
+<td>Sql</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/synapse-analytics/sql/on-demand-workspace-overview">サーバーレス SQL プール</a></td>
+<td>SqlOnDemand</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.microsoft.com/azure/synapse-analytics/data-explorer/data-explorer-overview">Data Explorer</a> プール</td>
+<td>Kusto</td>
+</tr>
+<tr>
+<td>Azure Synapse Analytics Studio ワークスペース内における、その他すべてのリソース</td>
+<td>Dev</td>
+</tr>
+</tbody></table>
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10017.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10018.jpeg" class="slug">
 <img src="/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/SynapseWithinPrivateNetwork-10019.jpeg" class="slug">
