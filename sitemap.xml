@@ -11,6 +11,15 @@
   </url>
   
   <url>
+    <loc>https://k14i.github.io/2022/09/26/Specific-permission-to-allow-a-user-only-to-write-and-execute-Synapse-Notebooks/</loc>
+    
+    <lastmod>2022-09-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2022/09/06/Attach-Virtual-Network-on-Azure-Synapse-Analytics-using-Private-Endpoint-and-Private-Link-Hubs/</loc>
     
     <lastmod>2022-09-12</lastmod>
