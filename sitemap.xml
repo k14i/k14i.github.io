@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://k14i.github.io/2022/09/26/Specific-permission-to-enable-Synapse-Apache-Spark-Pool-configuration/</loc>
+    <loc>https://k14i.github.io/2022/09/26/Specific-permission-to-allow-a-user-only-to-write-and-execute-Synapse-Notebooks/</loc>
     
     <lastmod>2022-09-26</lastmod>
     
@@ -11,7 +11,7 @@
   </url>
   
   <url>
-    <loc>https://k14i.github.io/2022/09/26/Specific-permission-to-allow-a-user-only-to-write-and-execute-Synapse-Notebooks/</loc>
+    <loc>https://k14i.github.io/2022/09/26/Specific-permission-to-enable-Synapse-Apache-Spark-Pool-configuration/</loc>
     
     <lastmod>2022-09-26</lastmod>
     
