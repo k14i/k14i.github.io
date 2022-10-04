@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://k14i.github.io/2022/09/06/Run-a-Notebook-with-Synapse-Spark-Pool-within-the-Virtual-Network-via-Synapse-Studio-using-Windows-Virtual-Machine-and-Bastion/</loc>
+    
+    <lastmod>2022-10-04</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2022/10/04/Differences-between-Azure-Virtual-Network-and-Azure-Synapse-Analytics-Managed-Virtual-Network/</loc>
     
     <lastmod>2022-10-04</lastmod>
@@ -48,15 +57,6 @@
   
   <url>
     <loc>https://k14i.github.io/2022/09/06/Wrap-up-How-to-run-a-Synapse-Spark-Notebook-within-a-Virtual-Network-without-Public-Network-Access/</loc>
-    
-    <lastmod>2022-09-06</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://k14i.github.io/2022/09/06/Run-a-Notebook-with-Synapse-Spark-Pool-within-the-Virtual-Network-via-Synapse-Studio-using-Windows-Virtual-Machine-and-Bastion/</loc>
     
     <lastmod>2022-09-06</lastmod>
     
@@ -516,13 +516,6 @@
   
   <url>
     <loc>https://k14i.github.io/tags/Azure-Bastion/</loc>
-    <lastmod>2022-10-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://k14i.github.io/tags/Azure-Synapase-Analytics/</loc>
     <lastmod>2022-10-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
