@@ -51,7 +51,7 @@
 
 <p>ユーザーが作成・管理する仮想ネットワークは、図左端の「Customer VNet」にあたります。Customer VNet と Synapse ワークスペースとの間の通信は プライベートリンクハブ および プライベートエンドポイント を経由して行われますが、ワークスペース内部ではマネージド仮想ネットワーク内の各リソースへとルーティングされます。</p>
 <p>したがって、マネージド仮想ネットワーク自体はユーザーが作成・管理する仮想ネットワークとは異なるものですし、例えば既存の仮想ネットワークからワークスペースに接続できるようにしたとしても、既存の仮想ネットワークへの影響はありません。もちろん、既存の仮想ネットワークが Azure Synapse Analytics による管理となり、管理者の意図に反した変更が行われ、既存のユーザーの利用に支障が出るようなこともありません。</p>
-<p>なお、マネージド仮想ネットワークは通常の仮想ネットワーク (Customer VNet) との<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/virtual-network/virtual-network-peering-overview">ピアリング</a>もできません。その意味でも「Synapse によって完全な管理が行われる独自の仮想ネットワーク」であると言えます。</p>
+<p>なお、マネージド仮想ネットワークは通常の仮想ネットワーク (Customer VNet) との<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/virtual-network/virtual-network-peering-overview">ピアリング</a>もできません。その点においても「Synapse によって完全な管理が行われる独自の仮想ネットワーク」であると言えます。</p>
 <h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Azure 仮想ネットワーク と Azure Synapse Analytics の マネージド仮想ネットワーク との違いについて説明しました。パブリックネットワークアクセスを無効にする際にはマネージド仮想ネットワークを有効にすることになりますが、これを活用することで、Azure Synapse Analytics のネットワークセキュリティを簡単に高めることができます。</p>
 <p>マネージド仮想ネットワークを有効にしても Azure Synapse Analytics 上からは 有効&#x2F;無効 しか確認できず、それらしいネットワーク項目が見当たらないことから、ドキュメントを精査しないと、どのようなものか分かりづらい機能であると思います。上記説明が参考になれば幸いです。</p>
 <h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
