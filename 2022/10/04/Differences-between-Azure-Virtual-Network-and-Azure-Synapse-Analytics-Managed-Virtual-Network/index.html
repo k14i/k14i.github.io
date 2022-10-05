@@ -6,11 +6,11 @@
 <script src="/js/jquery-3.1.1.min.js"></script>
 
 <script src="/js/fancybox/jquery.fancybox.min.js"></script>
-<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-10-04T00:25:58.000Z">2022-10-04 09:25:58</time><h1 class="post__title"><a href="/2022/10/04/Differences-between-Azure-Virtual-Network-and-Azure-Synapse-Analytics-Managed-Virtual-Network/">Differences between Azure Virtual Network and Azure Synapse Analytics Managed Virtual Network</a></h1><div class="post__main echo"><h1 id="Azure-仮想ネットワーク-と-Azure-Synapse-Analytics-の-マネージド仮想ネットワーク-との違い"><a href="#Azure-仮想ネットワーク-と-Azure-Synapse-Analytics-の-マネージド仮想ネットワーク-との違い" class="headerlink" title="Azure 仮想ネットワーク と Azure Synapse Analytics の マネージド仮想ネットワーク との違い"></a>Azure 仮想ネットワーク と Azure Synapse Analytics の マネージド仮想ネットワーク との違い</h1><p>Azure Synapse Analytics には マネージド仮想ネットワーク (マネージド ワークスペース仮想ネットワーク) という機能があります。これは、Synapse ワークスペースの作成段階におけるネットワークの設定から有効&#x2F;無効を選択できます。</p>
+<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2022-10-04T00:25:58.000Z">2022-10-04 09:25:58</time><h1 class="post__title"><a href="/2022/10/04/Differences-between-Azure-Virtual-Network-and-Azure-Synapse-Analytics-Managed-Virtual-Network/">Differences between Azure Virtual Network and Azure Synapse Analytics Managed Virtual Network</a></h1><div class="post__main echo"><h1 id="Azure-仮想ネットワーク-と-Azure-Synapse-Analytics-の-マネージド仮想ネットワーク-との違い"><a href="#Azure-仮想ネットワーク-と-Azure-Synapse-Analytics-の-マネージド仮想ネットワーク-との違い" class="headerlink" title="Azure 仮想ネットワーク と Azure Synapse Analytics の マネージド仮想ネットワーク との違い"></a>Azure 仮想ネットワーク と Azure Synapse Analytics の マネージド仮想ネットワーク との違い</h1><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/">Azure Synapse Analytics</a> には <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/security/synapse-workspace-managed-vnet">マネージド仮想ネットワーク (マネージド ワークスペース仮想ネットワーク)</a> という機能があります。これは、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/overview-terminology#synapse-workspace">Synapse ワークスペース</a>の<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/quickstart-create-workspace">作成</a>段階におけるネットワークの設定から有効&#x2F;無効を選択できます。</p>
 <img src="/2022/10/04/Differences-between-Azure-Virtual-Network-and-Azure-Synapse-Analytics-Managed-Virtual-Network/Differences-between-Azure-Virtual-Network-and-Azure-Synapse-Analytics-Managed-Virtual-Network-00001.png" class="slug">
 <img src="/2022/10/04/Differences-between-Azure-Virtual-Network-and-Azure-Synapse-Analytics-Managed-Virtual-Network/Differences-between-Azure-Virtual-Network-and-Azure-Synapse-Analytics-Managed-Virtual-Network-00002.png" class="slug">
 
-<p>そして、パブリックネットワークアクセスを無効とする場合、マネージド仮想ネットワークを有効にしなければなりません。パブリックネットワークアクセスを無効とする場合、プライベートリンクハブ と プライベートエンドポイント を使用して 仮想ネットワーク経由で Synapse ワークスペース を利用する形になるため、この時点においてユーザーは「仮想ネットワーク」と「マネージド仮想ネットワーク」の 2つのネットワークを認識していることになります。</p>
+<p>そして、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-network-security#public-network-access-and-firewall-rules">パブリックネットワークアクセスを無効</a>とする場合、マネージド仮想ネットワークを有効にしなければなりません。パブリックネットワークアクセスを無効とする場合、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/security/synapse-private-link-hubs#azure-private-link-hubs">プライベートリンクハブ</a> と <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/security/synapse-workspace-managed-private-endpoints">プライベートエンドポイント</a> を使用して 仮想ネットワーク経由で Synapse ワークスペース を利用する形になるため、この時点においてユーザーは「仮想ネットワーク」と「マネージド仮想ネットワーク」の 2つのネットワークを認識していることになります。</p>
 <p>これらは、実体としては同じものなのでしょうか？それとも異なるものなのでしょうか？異なるものであるとしたら、マネージド仮想ネットワークとはどのようなものなのでしょうか？そして Synapse ワークスペースと紐付ける既存の仮想ネットワークには影響するものなのでしょうか？</p>
 <p>本記事では、これらの疑問に回答していきます。</p>
 <h2 id="マネージド仮想ネットワークとは"><a href="#マネージド仮想ネットワークとは" class="headerlink" title="マネージド仮想ネットワークとは"></a>マネージド仮想ネットワークとは</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-network-security#managed-vnet">Azure Synapse Analytics のセキュリティに関するホワイト ペーパー: ネットワークのセキュリティ - Azure Synapse Analytics | Microsoft Learn</a> によると、以下のようなものであることが分かります。</p>
@@ -18,20 +18,20 @@
 <li>Synapse によって完全な管理が行われる独自の仮想ネットワーク。</li>
 <li>複数の Synapse ワークスペース間のネットワーク分離を実現するためのネットワークセキュリティ機能。</li>
 <li>ネットワーク分離の対象となるリソースは以下の通り。<ul>
-<li>パイプライン (およびデータフロー) のコンピューティングリソース</li>
-<li>Apache Spark プールのコンピューティングリソース</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/concepts-pipelines-activities">パイプライン</a> (および<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/concepts-data-flow-overview">データフロー</a>) のコンピューティングリソース</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/spark/apache-spark-overview">Apache Spark</a> <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/spark/apache-spark-pool-configurations">プール</a> のコンピューティングリソース</li>
 </ul>
 </li>
 <li>ネットワーク分離の対象と <strong>ならない</strong> (マルチテナントサービスの) リソースは以下の通り。<ul>
-<li>専用 SQL プール</li>
-<li>サーバーレス SQL プール</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-overview-what-is">専用 SQL プール</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/sql/on-demand-workspace-overview">サーバーレス SQL プール</a></li>
 </ul>
 </li>
-<li>Spark クラスターについては、単一の Synapse ワークスペース内においても、クラスターごとにネットワークが分離される。</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/spark/apache-spark-concepts">Spark</a> クラスターについては、単一の Synapse ワークスペース内においても、クラスターごとにネットワークが分離される。</li>
 <li>ワークスペースの作成時にのみ構成することが可能。</li>
 <li>ユーザーからは見えない。</li>
 </ul>
-<h3 id="マネージド仮想ネットワークの目的"><a href="#マネージド仮想ネットワークの目的" class="headerlink" title="マネージド仮想ネットワークの目的"></a>マネージド仮想ネットワークの目的</h3><p>目的は、 Azure Synapse Analytics ワークスペースにおけるデータ流出の防止です。例えば以下のようなセキュリティを実現することができます。</p>
+<h3 id="マネージド仮想ネットワークの目的"><a href="#マネージド仮想ネットワークの目的" class="headerlink" title="マネージド仮想ネットワークの目的"></a>マネージド仮想ネットワークの目的</h3><p>目的は、 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/security/workspace-data-exfiltration-protection">Azure Synapse Analytics ワークスペースにおけるデータ流出の防止</a>です。例えば以下のようなセキュリティを実現することができます。</p>
 <ul>
 <li>パブリックネットワークアクセスを無効にすることで、インターネット側から Synapse ワークスペースに対して不正にアクセスされてしまった場合でも、Synapse の各機能が利用できないようにすることができる。</li>
 <li>承認されたターゲットへの送信データトラフィックのみを許可することで、悪意のある内部関係者が Synapse ワークスペースから外部 (他の Syanpse ワークスペースも含む) にデータを送信しようとしても失敗に終わらせることができる。</li>
@@ -39,10 +39,10 @@
 <h3 id="アーキテクチャ上の位置づけ"><a href="#アーキテクチャ上の位置づけ" class="headerlink" title="アーキテクチャ上の位置づけ"></a>アーキテクチャ上の位置づけ</h3><p><a target="_blank" rel="noopener" href="https://techcommunity.microsoft.com/t5/azure-architecture-blog/understanding-azure-synapse-private-endpoints/ba-p/2281463">Understanding Azure Synapse Private Endpoints - Microsoft Tech Community</a> によると、マネージド仮想ネットワークを有効にした場合の Azure Synapse Analytics ワークスペース内のアーキテクチャは以下のようになります。</p>
 <img src="/2022/10/04/Differences-between-Azure-Virtual-Network-and-Azure-Synapse-Analytics-Managed-Virtual-Network/synapse-workspace.png" class="slug">
 
-<p>先述の通り、Synapse ワークスペース内にマネージド仮想ネットワークが構築され、パイプライン (およびデータフロー)、そして Apache Spark Pool のコンピューティングリソースがその内部にデプロイされます。これらのリソースは、マネージドプライベートエンドポイント経由で外部と通信します。</p>
+<p>先述の通り、Synapse ワークスペース内にマネージド仮想ネットワークが構築され、パイプライン (およびデータフロー)、そして <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/spark/apache-spark-concepts#spark-pools">Apache Spark プール</a> のコンピューティングリソースがその内部にデプロイされます。これらのリソースは、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/security/synapse-workspace-managed-private-endpoints">マネージドプライベートエンドポイント</a>経由で外部と通信します。</p>
 <h3 id="何がどのようにマネージドとなるのか"><a href="#何がどのようにマネージドとなるのか" class="headerlink" title="何がどのようにマネージドとなるのか"></a>何がどのようにマネージドとなるのか</h3><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/security/synapse-workspace-managed-vnet">マネージド仮想ネットワーク - Azure Synapse Analytics | Microsoft Learn</a> によると、マネージド仮想ネットワークは以下の管理を、ユーザーに代わって行います。</p>
 <ul>
-<li>インバウンド (Synapse ワークスペース外部から) の NSG (Network Security Group) ルール管理</li>
+<li>インバウンド (Synapse ワークスペース外部から) の <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview">NSG (Network Security Group)</a> ルール管理</li>
 <li>Spark クラスターのネットワーク負荷をコントロールするためのサブネット管理</li>
 </ul>
 <h2 id="Azure-における-仮想ネットワーク-との関係"><a href="#Azure-における-仮想ネットワーク-との関係" class="headerlink" title="Azure における 仮想ネットワーク との関係"></a>Azure における 仮想ネットワーク との関係</h2><p>これまでの説明からも明らかな通り、Azure Synapse Analytics のマネージド仮想ネットワークは、Azure においてユーザーが作成・管理する仮想ネットワークとは異なるものです。</p>
@@ -51,11 +51,13 @@
 
 <p>ユーザーが作成・管理する仮想ネットワークは、図左端の「Customer VNet」にあたります。Customer VNet と Synapse ワークスペースとの間の通信は プライベートリンクハブ および プライベートエンドポイント を経由して行われますが、ワークスペース内部ではマネージド仮想ネットワーク内の各リソースへとルーティングされます。</p>
 <p>したがって、マネージド仮想ネットワーク自体はユーザーが作成・管理する仮想ネットワークとは異なるものですし、例えば既存の仮想ネットワークからワークスペースに接続できるようにしたとしても、既存の仮想ネットワークへの影響はありません。もちろん、既存の仮想ネットワークが Azure Synapse Analytics による管理となり、管理者の意図に反した変更が行われ、既存のユーザーの利用に支障が出るようなこともありません。</p>
+<p>なお、マネージド仮想ネットワークは通常の仮想ネットワーク (Customer VNet) との<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/virtual-network/virtual-network-peering-overview">ピアリング</a>もできません。その意味でも「Synapse によって完全な管理が行われる独自の仮想ネットワーク」であると言えます。</p>
 <h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Azure 仮想ネットワーク と Azure Synapse Analytics の マネージド仮想ネットワーク との違いについて説明しました。パブリックネットワークアクセスを無効にする際にはマネージド仮想ネットワークを有効にすることになりますが、これを活用することで、Azure Synapse Analytics のネットワークセキュリティを簡単に高めることができます。</p>
 <p>マネージド仮想ネットワークを有効にしても Azure Synapse Analytics 上からは 有効&#x2F;無効 しか確認できず、それらしいネットワーク項目が見当たらないことから、ドキュメントを精査しないと、どのようなものか分かりづらい機能であると思います。上記説明が参考になれば幸いです。</p>
 <h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
 <li><a href="/2022/09/06/Wrap-up-How-to-run-a-Synapse-Spark-Notebook-within-a-Virtual-Network-without-Public-Network-Access/" title="Wrap up: How to run a Synapse Spark Notebook within a Virtual Network without Public Network Access">Wrap up: How to run a Synapse Spark Notebook within a Virtual Network without Public Network Access</a></li>
 <li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/security/workspace-data-exfiltration-protection">Azure Synapse Analytics ワークスペースでのデータ流出の防止 - Azure Synapse Analytics | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/managed-virtual-network-private-endpoint">マネージド仮想ネットワークとマネージド プライベート エンドポイント - Azure Data Factory | Microsoft Learn</a></li>
 </ul>
 </div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Synapse-Analytics/">Azure Synapse Analytics</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Virtual-Network/">Virtual Network</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2022 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
 ga('create','G-9XBBR7M7V2');
