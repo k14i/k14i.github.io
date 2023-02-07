@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Create a Date-formatted string from a datetime string in a query for Azure Stream Analytics - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2023-02-07T01:48:22.000Z">2023-02-07 10:48:22</time><h1 class="post__title"><a href="/2023/02/07/Create-a-Date-formatted-string-from-a-datetime-string-in-a-query-for-Azure-Stream-Analytics/">Create a Date-formatted string from a datetime string in a query for Azure Stream Analytics</a></h1><div class="post__main echo"><h1 id="Azure-Stream-Analytics-のクエリ内で-DateTime-フォーマットの文字列から-Date-フォーマットの文字列を生成する"><a href="#Azure-Stream-Analytics-のクエリ内で-DateTime-フォーマットの文字列から-Date-フォーマットの文字列を生成する" class="headerlink" title="Azure Stream Analytics のクエリ内で DateTime フォーマットの文字列から Date フォーマットの文字列を生成する"></a>Azure Stream Analytics のクエリ内で DateTime フォーマットの文字列から Date フォーマットの文字列を生成する</h1><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/stream-analytics/">Azure Stream Analytics</a> で入力から出力にデータを受け渡す際に、入力データを加工して新たな列を作りたいことがあります。よくある例としては、いわゆる <code>DateTime</code> 型の文字列(<code>yyyy-MM-ddTHH:mm:ss</code>) から <code>Date</code> 型の文字列 (<code>yyyy-MM-dd</code>) を生成することが挙げられると思います。<br>しかしながら、 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/stream-analytics-query-language-reference#stream-analytics-query-language-a-subset-of-t-sql-syntax">T-SQL 構文のサブセット</a> である <a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/built-in-functions-azure-stream-analytics">Stream Analytics クエリ言語</a> としては、 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/sql/t-sql/functions/cast-and-convert-transact-sql?view=sql-server-ver16">CONVERT 関数</a> をサポートしていないことに注意が必要です。<br>そこで、 Stream Analytics のクエリ内で上記を行いたい場合にどのような書き方ができるかを、以下に紹介します。</p>
+<h2 id="書き方"><a href="#書き方" class="headerlink" title="書き方"></a>書き方</h2><p>説明の前提として、 <code>record.arrayvalue.time</code> から いわゆる <code>DateTime</code> 型のフォーマットの文字列を取得することができるものとします。</p>
+<h3 id="LEFT-関数"><a href="#LEFT-関数" class="headerlink" title="LEFT 関数"></a>LEFT 関数</h3><p>最もシンプルに記述することができます。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">LEFT</span>(record.arrayvalue.time, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注意点としては以下の通りです。</p>
+<ul>
+<li><code>record.arrayvalue.time</code> について、先頭の10文字が いわゆる <code>Date</code> 型のフォーマット (<code>yyyy-MM-dd</code>) であること<ul>
+<li>これを満たさない場合、当然ですが、予期せぬ文字列が生成されます。</li>
+</ul>
+</li>
+</ul>
+<p>以下は気にしなくて構いません。</p>
+<ul>
+<li><code>record.arrayvalue.time</code> が文字列であるかどうか<ul>
+<li>数値であっても、エラーにはならず、文字列に変換して処理してくれます。<ul>
+<li>そもそも文字列でなかったら <code>DateTime</code> 型になりませんが。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="SUBSTRING-関数"><a href="#SUBSTRING-関数" class="headerlink" title="SUBSTRING 関数"></a>SUBSTRING 関数</h3><p><code>LEFT</code> 関数の別解です。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">SUBSTRING</span>(record.arrayvalue.time, <span class="number">1</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注意点等は <code>LEFT</code> 関数と同じです。</p>
+<h3 id="CONCAT-または-CONCAT-WS-関数"><a href="#CONCAT-または-CONCAT-WS-関数" class="headerlink" title="CONCAT または CONCAT_WS 関数"></a>CONCAT または CONCAT_WS 関数</h3><p>上記に挙げた方法と比較すると非常に冗長ですが、一つのやり方として示します。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONCAT_WS(<span class="string">&#x27;-&#x27;</span>,</span><br><span class="line">    <span class="keyword">RIGHT</span>(REPLICATE(<span class="string">&#x27;0&#x27;</span>, <span class="number">4</span>) <span class="operator">+</span> TRY_CAST(<span class="keyword">YEAR</span>(record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">4</span>),</span><br><span class="line">    <span class="keyword">RIGHT</span>(REPLICATE(<span class="string">&#x27;0&#x27;</span>, <span class="number">2</span>) <span class="operator">+</span> TRY_CAST(<span class="keyword">MONTH</span>(record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">2</span>),</span><br><span class="line">    <span class="keyword">RIGHT</span>(REPLICATE(<span class="string">&#x27;0&#x27;</span>, <span class="number">2</span>) <span class="operator">+</span> TRY_CAST(<span class="keyword">DAY</span>(record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">2</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>他に以下のような書き方も可能です。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONCAT_WS(<span class="string">&#x27;-&#x27;</span>,</span><br><span class="line">    <span class="keyword">RIGHT</span>(<span class="string">&#x27;0000&#x27;</span> <span class="operator">+</span> TRY_CAST(<span class="keyword">YEAR</span>(record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">4</span>),</span><br><span class="line">    <span class="keyword">RIGHT</span>(<span class="string">&#x27;00&#x27;</span> <span class="operator">+</span> TRY_CAST(<span class="keyword">MONTH</span>(record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">2</span>),</span><br><span class="line">    <span class="keyword">RIGHT</span>(<span class="string">&#x27;00&#x27;</span> <span class="operator">+</span> TRY_CAST(<span class="keyword">DAY</span>(record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">2</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONCAT_WS(<span class="string">&#x27;-&#x27;</span>,</span><br><span class="line">    <span class="keyword">RIGHT</span>(REPLICATE(<span class="string">&#x27;0&#x27;</span>, <span class="number">4</span>) <span class="operator">+</span> TRY_CAST(<span class="keyword">YEAR</span>(record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">4</span>),</span><br><span class="line">    <span class="keyword">RIGHT</span>(REPLICATE(<span class="string">&#x27;0&#x27;</span>, <span class="number">2</span>) <span class="operator">+</span> TRY_CAST(<span class="keyword">MONTH</span>(record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">2</span>),</span><br><span class="line">    <span class="keyword">RIGHT</span>(REPLICATE(<span class="string">&#x27;0&#x27;</span>, <span class="number">2</span>) <span class="operator">+</span> TRY_CAST(<span class="keyword">DAY</span>(record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">2</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONCAT_WS(<span class="string">&#x27;-&#x27;</span>,</span><br><span class="line">    <span class="keyword">RIGHT</span>(REPLICATE(<span class="string">&#x27;0&#x27;</span>, <span class="number">4</span>) <span class="operator">+</span> TRY_CAST(DATEPART(<span class="keyword">year</span>, record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">4</span>),</span><br><span class="line">    <span class="keyword">RIGHT</span>(REPLICATE(<span class="string">&#x27;0&#x27;</span>, <span class="number">2</span>) <span class="operator">+</span> TRY_CAST(DATEPART(<span class="keyword">month</span>, record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">2</span>),</span><br><span class="line">    <span class="keyword">RIGHT</span>(REPLICATE(<span class="string">&#x27;0&#x27;</span>, <span class="number">2</span>) <span class="operator">+</span> TRY_CAST(DATEPART(<span class="keyword">day</span>, record.arrayvalue.time) <span class="keyword">AS</span> nvarchar(max)), <span class="number">2</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>注意点としては、以下の通りです。</p>
+<ul>
+<li><code>record.arrayvalue.time</code> について、いわゆる <code>DateTime</code> 型のフォーマット (<code>yyyy-MM-ddTHH:mm:ss</code>) の文字列であること<ul>
+<li>エラーハンドリングのため <code>TRY</code> ではなく <code>TRY_CAST</code> を使い、 <code>TRY</code> ではエラーになる状況で <code>TRY_CAST</code> で <code>NULL</code> にするようにしていますが、そもそも <code>record.arrayvalue.time</code> が <code>nvarchar(max)</code> にすらキャストできない何かだとしたら、使用している他の関数等でエラーになります。</li>
+</ul>
+</li>
+</ul>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Azure Stream Analytics のクエリ内で、いわゆる <code>DateTime</code> フォーマットの文字列から <code>Date</code> フォーマットの文字列を生成する方法を 3つ紹介しました。<br>原則、 <code>LEFT</code> 関数を使うのが最も短くシンプルに記述できます。<br>もし Azure Stream Analytics への入力データが <code>DateTime</code> フォーマットではない日付である可能性があるのであれば、 <code>CONCAT_WS</code> 関数を使ったやり方が良いケースもあるでしょう。</p>
+<h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://ja.wikipedia.org/wiki/ISO_8601">ISO 8601 - Wikipedia</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/left-azure-stream-analytics">LEFT (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/substring-azure-stream-analytics">SUBSTRING (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/concat-ws-azure-stream-analytics">CONCAT_WS (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/try-cast-azure-stream-analytics">TRY_CAST (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/replicate-azure-stream-analytics">レプリケート (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/right-azure-stream-analytics">RIGHT (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/year-azure-stream-analytics">YEAR (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/month-azure-stream-analytics">MONTH (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/day-azure-stream-analytics">DAY (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/stream-analytics-query/datepart-azure-stream-analytics">DATEPART (Azure Stream Analytics) - Stream Analytics Query | Microsoft Learn</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Stream-Analytics/">Azure Stream Analytics</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2023 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
