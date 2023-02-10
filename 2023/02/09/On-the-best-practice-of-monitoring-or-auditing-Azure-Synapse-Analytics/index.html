@@ -1,0 +1,391 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>On the best practice of monitoring or auditing Azure Synapse Analytics - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2023-02-09T03:16:46.000Z">2023-02-09 12:16:46</time><h1 class="post__title"><a href="/2023/02/09/On-the-best-practice-of-monitoring-or-auditing-Azure-Synapse-Analytics/">On the best practice of monitoring or auditing Azure Synapse Analytics</a></h1><div class="post__main echo"><h1 id="Azure-Synapse-Analytics-の監視または監査のベストプラクティスについて"><a href="#Azure-Synapse-Analytics-の監視または監査のベストプラクティスについて" class="headerlink" title="Azure Synapse Analytics の監視または監査のベストプラクティスについて"></a>Azure Synapse Analytics の監視または監査のベストプラクティスについて</h1><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/overview-what-is">Azure Synapse Analytics</a> に関する監視や監査のベストプラクティスについて、直接的な解はありません。言い換えれば、どのような状況のユーザーにも適用できるベストプラクティスを指し示す特定のドキュメントはありません。</p>
+<p>ただ、Azure や Synapse に関する様々な情報を集約し総合することで、それが見えてくるはずです。<br>本記事ではそのようなアプローチで、一般適用可能なベストプラクティスを模索していきます。</p>
+<p>前もって、以下に参考文献を示しておきます。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/overview">Azure 向けの Microsoft Cloud 導入フレームワーク (CAF)</a><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/strategy/define-security-strategy">セキュリティ戦略を定義する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/strategy/monitoring-strategy">クラウド監視戦略</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/manage/monitor/cloud-models-monitor-overview">クラウド デプロイ モデルの監視戦略</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/manage/monitor/platform-overview">クラウド監視プラットフォームの概要</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/manage/monitor/suggested-skills">クラウド監視のためのスキルの準備</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/decision-guides/logging-and-reporting/">ログとレポートの意思決定ガイド</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/">Azure のセキュリティの基礎に関するドキュメント</a><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/overview">Azure セキュリティの概要</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/threat-detection">Azure の脅威の防止</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/log-audit">Azure のセキュリティのログと監査</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/management-monitoring-overview">管理および監視セキュリティ機能</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/management">Azure でのリモート管理セキュリティの強化</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/operational-overview">Azure で運用可能なセキュリティの概要</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/identity-management-best-practices">Azure の ID とアクセスのセキュリティ保護に関するベスト プラクティス</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/network-best-practices">ネットワーク セキュリティのベスト プラクティス</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/operational-best-practices">Azure 資産のセキュリティに関するベスト プラクティス</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/operational-checklist">Azure で運用可能なセキュリティのチェックリスト</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/">Microsoft Azure Well-Architected Framework (WAF)</a><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/security/">セキュリティのドキュメント</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/">Azure アーキテクチャ センター</a><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/best-practices/monitoring">監視と診断のガイダンス</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/security/benchmark/azure/">Microsoft クラウド セキュリティ ベンチマーク (MCSB)</a> (旧 Azure セキュリティ ベンチマーク (ASB))<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/security/benchmark/azure/baselines/synapse-analytics-workspace-security-baseline">Synapse Analytics ワークスペース用の Azure セキュリティ ベースライン</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/">Azure Synapse Analytics</a><ul>
+<li>全般<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/implementation-success-overview">設計による Azure Synapse の実装の成功</a><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/implementation-success-perform-monitoring-review">Synapse 実装の成功手法: 監視レビューを実行する</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-introduction">Azure Synapse Analytics のセキュリティに関するホワイト ペーパー</a></li>
+</ul>
+</li>
+<li>ワークスペース<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/get-started-monitor">Synapse ワークスペースを監視する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/how-to-monitor-using-azure-monitor">Azure Monitor を使用して Synapse Analytics を監視する方法</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-network-security">Azure Synapse Analytics のセキュリティに関するホワイト ペーパー: ネットワークのセキュリティ</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/security-controls-policy">Azure Synapse Analytics 用の Azure Policy 規制コンプライアンス コントロール</a></li>
+</ul>
+</li>
+<li>SQL プール<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/azure-sql/database/auditing-overview">Azure SQL Database および Azure Synapse Analytics の Azure SQL 監査</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/azure-sql/database/data-discovery-and-classification-overview">データの検出と分類</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-concept-resource-utilization-query-activity">管理と監視 - クエリ アクティビティ、リソース使用状況</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-threat-protection">Azure Synapse Analytics のセキュリティに関するホワイト ペーパー: 脅威の検出</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/how-to-monitor-sql-requests">Synapse Studio で SQL 要求を監視する方法</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/sql/best-practices-dedicated-sql-pool">専用 SQL プールのベスト プラクティス</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/sql/best-practices-serverless-sql-pool">サーバーレス SQL プールのベスト プラクティス</a></li>
+</ul>
+</li>
+<li>Data Explorer プール<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/data-explorer/data-explorer-monitor-pools">Synapse Studio を使用して Data Explorer プールを監視する (プレビュー)</a></li>
+</ul>
+</li>
+<li>Apache Spark プール &#x2F; アプリケーション<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/how-to-monitor-spark-pools">Synapse Studio で Apache Spark プールを監視する方法</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/apache-spark-applications">Synapse Studio を使用して Apache Spark アプリケーションを監視する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/spark/apache-spark-azure-log-analytics">Azure Log Analytics を使用して Apache Spark アプリケーションを監視する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/spark/use-prometheus-grafana-to-monitor-apache-spark-application-level-metrics">Prometheus と Grafana を使用して Apache Spark アプリケーションのメトリックを監視する</a></li>
+</ul>
+</li>
+<li>パイプライン<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/how-to-monitor-pipeline-runs">Synapse Studio を使用してパイプラインの実行を監視する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/copy-activity-monitoring">コピー アクティビティの監視</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/concepts-data-flow-monitoring">マッピング データ フローの監視</a></li>
+</ul>
+</li>
+<li>Synapse Link<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/synapse-link/sql-database-synapse-link#monitoring">Azure Synapse Link for SQL の監視</a></li>
+</ul>
+</li>
+<li>セルフホステッド統合ランタイム<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/monitor-shir-in-azure">Azure でセルフホステッド統合ランタイム (SHIR) 仮想マシンを監視する</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/sentinel/overview">Microsoft Sentinel</a><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/sentinel/connect-azure-windows-microsoft-services">Microsoft Sentinel を Azure、Windows、および Microsoft サービスに接続する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/sentinel/connect-defender-for-cloud">Microsoft Defender for Cloud アラートを Microsoft Sentinel に接続する</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="Azure-向けの-Microsoft-Cloud-導入フレームワーク-CAF"><a href="#Azure-向けの-Microsoft-Cloud-導入フレームワーク-CAF" class="headerlink" title="Azure 向けの Microsoft Cloud 導入フレームワーク (CAF)"></a>Azure 向けの Microsoft Cloud 導入フレームワーク (CAF)</h2><p>Microsoft のドキュメントは、クラウド導入以前のフェーズからカバーしています。</p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/overview">CAF</a> がどのようなものであるかは、以下のように説明されています。</p>
+<blockquote>
+<p>Azure 向けの Microsoft クラウド導入フレームワークは、クラウド アーキテクト、IT プロフェッショナル、ビジネスの意思決定者がクラウドの導入目標を達成できるようにする完全なライフサイクル フレームワークです。 これは、クラウド向けのビジネス戦略とテクノロジ戦略の作成と実装に役立つベスト プラクティス、ドキュメント、ツールを提供します。</p>
+</blockquote>
+<blockquote>
+<p>クラウド導入フレームワークには、Microsoft の従業員、パートナー、顧客からのクラウド導入のベスト プラクティスがまとめられています。</p>
+</blockquote>
+<p>CAF に沿ってクラウドを導入すれば、ベストな状態でスタートできる。言い換えれば、今をスタート地点としたときに、CAF と現状とを照らし合わせることで、ベストな状態とどれくらい乖離があるかが見えてきます。</p>
+<p>Azure Synapse Analytics に限らず、Azure サービスの監視・監査を考えたときに、まず根本的に必要なのが、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/strategy/define-security-strategy">セキュリティ戦略</a> です。<br>それに基づき <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/strategy/monitoring-strategy">クラウド監視戦略</a> および <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/manage/monitor/cloud-models-monitor-overview">クラウド デプロイ モデルの監視戦略</a> を策定し、それを実現するための <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/manage/monitor/platform-overview">クラウド監視プラットフォーム</a> 利用を計画します。<br>監視プラットフォームの利用計画が具体化したら、必要な<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/manage/monitor/suggested-skills">スキル</a>を準備します。<br>プラットフォームとスキルが準備できたら、何をどう監視し、意思決定のために<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/decision-guides/logging-and-reporting/">どのようなログやレポートを出すかを決定</a>します。</p>
+<p>上記は CAF のうち、監視・監査に関わる部分の要約です。既にクラウドを利用している企業は、そもそもこのベースができていることを今一度確認しておくべきでしょう。</p>
+<hr>
+<h2 id="Azure-のセキュリティの基礎に関するドキュメント"><a href="#Azure-のセキュリティの基礎に関するドキュメント" class="headerlink" title="Azure のセキュリティの基礎に関するドキュメント"></a>Azure のセキュリティの基礎に関するドキュメント</h2><p>クラウドを適用するための条件が揃ってはじめて、言い換えれば土台があってはじめて、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/">Azure のセキュリティに関する基礎知識</a> が活きると言って過言ではありません。</p>
+<p>言うまでもないですが、 Azure Synapse Analytics は Azure のサービスのひとつです。このドキュメントで解説されている知識やベスト プラクティスは、Azure Synapse Analytics のセキュリティについて理解し、正しく運用する上での一助となります。</p>
+<p>一通り目を通されることをオススメします。</p>
+<hr>
+<h2 id="Microsoft-Azure-Well-Architected-Framework-WAF"><a href="#Microsoft-Azure-Well-Architected-Framework-WAF" class="headerlink" title="Microsoft Azure Well-Architected Framework (WAF)"></a>Microsoft Azure Well-Architected Framework (WAF)</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/">WAF のドキュメント</a> には</p>
+<blockquote>
+<p>Azure Well-Architected Framework は、ワークロードの品質向上に使用できる一連の基本原則です。</p>
+</blockquote>
+<p>とあります。すなわち、WAF はクラウド導入・運用開始後の品質向上に役立つフレームワークです。</p>
+<p>本記事では監視・監査がテーマとなっていますので、WAF の 5つの柱のうち、特に <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/security/">セキュリティ</a> に着目したいと思います。</p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/security/overview">概要</a> 内でセキュリティの柱で説明される領域&#x2F;トピックが 9項目挙げられています。</p>
+<blockquote>
+<ul>
+<li>セキュリティ設計原則</li>
+<li>ガバナンス、リスク、およびコンプライアンス</li>
+<li>規制コンプライアンス</li>
+<li>管理</li>
+<li>アプリケーションとサービス</li>
+<li>ID 管理とアクセス管理</li>
+<li>情報の保護とストレージ</li>
+<li>ネットワーク セキュリティと封じ込め</li>
+<li>セキュリティ運用</li>
+</ul>
+</blockquote>
+<p>いずれも、監視・監査の対象となり得るトピックです。内容を把握し、よりベストに近づきたいところです。</p>
+<h3 id="WAF-におけるセキュリティ監視のチェックリスト"><a href="#WAF-におけるセキュリティ監視のチェックリスト" class="headerlink" title="WAF におけるセキュリティ監視のチェックリスト"></a>WAF におけるセキュリティ監視のチェックリスト</h3><p>WAF において、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/security/monitor#checklist">セキュリティ監視のチェックリスト</a> が示されています。8項目ありますが、このうち (組織やその活動ではなく) 技術に関する項目は以下の 5項目です。</p>
+<blockquote>
+<ol>
+<li>Azure のネイティブ ツールを使用して、ワークロード リソースと実行インフラストラクチャを監視します。</li>
+<li>セグメント間のトラフィック、アクセス要求、アプリケーション通信を監視します。</li>
+<li>一般的なリスクを検出および修復して、Microsoft Defender for Cloud でのセキュリティ スコアを向上させます。</li>
+<li>分析のために中央のセキュリティ ログ管理にログとアラートを送信します。</li>
+<li>実際の攻撃に基づくテスト ケースを使用して、セキュリティ設計と実装を定期的にテストします。</li>
+</ol>
+</blockquote>
+<h4 id="1-Azure-のネイティブ-ツールを使用して、ワークロード-リソースと実行インフラストラクチャを監視します。"><a href="#1-Azure-のネイティブ-ツールを使用して、ワークロード-リソースと実行インフラストラクチャを監視します。" class="headerlink" title="1. Azure のネイティブ ツールを使用して、ワークロード リソースと実行インフラストラクチャを監視します。"></a>1. Azure のネイティブ ツールを使用して、ワークロード リソースと実行インフラストラクチャを監視します。</h4><p><code>ネイティブ ツール</code> に関しては <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/security/monitor-tools">Azure セキュリティ監視ツール</a> のページで列挙されています。</p>
+<p>7項目ありますが、 Azure Synapse Analytics の監視に関連するものは以下の 1項目です。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/defender-for-cloud/defender-for-cloud-introduction">Microsoft Defender for Cloud</a><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/azure-sql/database/azure-defender-for-sql?view=azuresql">Microsoft Defender for SQL</a><blockquote>
+<p>Microsoft Defender for SQL は、Azure Synapse と専用 SQL プール (旧称 SQL DW) に適用されます。 サーバーレス SQL プールまたは Apache Spark プールには適用されません。</p>
+</blockquote>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/defender-for-cloud/defender-for-sql-introduction">Microsoft Defender for Azure SQL - 利点と機能</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/defender-for-cloud/sql-azure-vulnerability-assessment-find?tabs=express">Microsoft Defender for Cloud を使用して、Azure SQL データベースの脆弱性を見つける</a></li>
+<li><a target="_blank" rel="noopener" href="https://techcommunity.microsoft.com/t5/azure-synapse-analytics-blog/security-alerts-for-synapse-analytics-in-azure-security-center/ba-p/1643052">Security Alerts For Synapse Analytics In Azure Security Center - Microsoft Community Hub</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/sql/relational-databases/security/sql-vulnerability-assessment?view=sql-server-ver16">SQL 脆弱性評価</a><blockquote>
+<p>SQL 脆弱性評価は、Azure Synapse と専用 SQL プール (旧称 SQL DW) に適用されます。 サーバーレス SQL プールまたは Apache Spark プールには適用されません。</p>
+</blockquote>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/defender-for-cloud/sql-azure-vulnerability-assessment-overview">Microsoft Defender for Cloud を使用して、Azure SQL データベースの脆弱性をスキャンする</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>ちなみに、 <a target="_blank" rel="noopener" href="https://techcommunity.microsoft.com/t5/itops-talk-blog/azure-security-product-name-changes-microsoft-ignite-november/ba-p/3004418?WT.mc_id=modinfra-48365-socuff">Microsoft Defender for Cloud は、以前は Microsoft Security Center という名称でした</a>。Web 上の一般記事には旧名称のままとなっているケースもありますので、このことは頭の片隅に置いておいてください。</p>
+<h4 id="2-セグメント間のトラフィック、アクセス要求、アプリケーション通信を監視します。"><a href="#2-セグメント間のトラフィック、アクセス要求、アプリケーション通信を監視します。" class="headerlink" title="2. セグメント間のトラフィック、アクセス要求、アプリケーション通信を監視します。"></a>2. セグメント間のトラフィック、アクセス要求、アプリケーション通信を監視します。</h4><p>Azure Synapse Analytics におけるネットワークのセキュリティに関しては、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-network-security">ホワイトペーパー</a> を確認してください。</p>
+<h4 id="3-一般的なリスクを検出および修復して、Microsoft-Defender-for-Cloud-でのセキュリティ-スコアを向上させます。"><a href="#3-一般的なリスクを検出および修復して、Microsoft-Defender-for-Cloud-でのセキュリティ-スコアを向上させます。" class="headerlink" title="3. 一般的なリスクを検出および修復して、Microsoft Defender for Cloud でのセキュリティ スコアを向上させます。"></a>3. 一般的なリスクを検出および修復して、Microsoft Defender for Cloud でのセキュリティ スコアを向上させます。</h4><p>こちらは前述の Microsoft Defender for Cloud でカバーできています。</p>
+<h4 id="4-分析のために中央のセキュリティ-ログ管理にログとアラートを送信します。"><a href="#4-分析のために中央のセキュリティ-ログ管理にログとアラートを送信します。" class="headerlink" title="4. 分析のために中央のセキュリティ ログ管理にログとアラートを送信します。"></a>4. 分析のために中央のセキュリティ ログ管理にログとアラートを送信します。</h4><p>WAF における <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/security/monitor-logs-alerts">Azure でのセキュリティ アラート</a> において、概要が示されています。</p>
+<p>「中央のセキュリティ ログ管理」としては、以下の 4つが示されています。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/azure-monitor/logs/log-analytics-overview">Log Analytics ワークスペース</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/storage/common/storage-account-overview">ストレージ アカウント</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/event-hubs/event-hubs-about">Event Hubs</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/sentinel/overview">Microsoft Sentinel</a></li>
+</ul>
+<p>分析とアラート送信に関しては <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/azure-monitor/overview">Azure Monitor</a> を使用しますが、 Azure Monitor で Azure Synapse Analytics を監視する方法が <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/how-to-monitor-using-azure-monitor">こちら</a> で示されています。</p>
+<h4 id="5-実際の攻撃に基づくテスト-ケースを使用して、セキュリティ設計と実装を定期的にテストします。"><a href="#5-実際の攻撃に基づくテスト-ケースを使用して、セキュリティ設計と実装を定期的にテストします。" class="headerlink" title="5. 実際の攻撃に基づくテスト ケースを使用して、セキュリティ設計と実装を定期的にテストします。"></a>5. 実際の攻撃に基づくテスト ケースを使用して、セキュリティ設計と実装を定期的にテストします。</h4><p>概要は WAF 内の <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/security/monitor-test">Azure セキュリティ テストのプラクティス</a> で解説されています。<br>「重要なポイント」を引用します。</p>
+<blockquote>
+<ul>
+<li>現実的で、実際の攻撃に基づくテスト ケースを定義します。</li>
+<li>攻撃を防止および検出するため、コストが最も低い方法を特定してカタログ化します。</li>
+<li>侵入テストを 1 回限りの攻撃として使用し、セキュリティ防御を検証します。</li>
+<li>長期間続く攻撃については、Red Team を使用して攻撃をシミュレートします。</li>
+<li>攻撃者が環境内でリソースの悪用のターゲットとする潜在的な攻撃対象領域を測定し、削減します。</li>
+<li>攻撃者が使用する可能性のあるさまざまな手段について、適切なフォローアップを行ってユーザーを教育します。</li>
+</ul>
+</blockquote>
+<p>このドキュメントの中で、侵入テスト関連の情報へのリンクが 2つ示されているので、参考にしてください。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/pen-testing">侵入テスト | Learn &#x2F; Azure &#x2F; セキュリティ &#x2F; 基礎</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/security/monitor-test#penetration-testing-pentesting">侵入テスト | Learn &#x2F; Microsoft Azure Well-Architected Framework &#x2F; セキュリティ &#x2F; 監視 - 修復 &#x2F; Azure セキュリティ テストのプラクティス</a></li>
+</ul>
+<p>テストの実施方針としては、 Azure Synapse Analytics の各 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-introduction#security-layers">セキュリティ層</a> に対して、攻撃をシミュレートしたテストを実行し、セキュリティの設計と実装が正しいことを確認します。</p>
+<p>Azure Synapse Analytics におけるセキュリティ層は 5層あります。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-data-protection">データ保護</a><blockquote>
+<p>機密データを識別して分類し、保存データと移動中のデータを暗号化する</p>
+</blockquote>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-access-control">アクセス制御</a><blockquote>
+<p>ユーザーがデータを操作する権限を決定する</p>
+</blockquote>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-authentication">認証</a><blockquote>
+<p>ユーザーとアプリケーションの ID を証明する</p>
+</blockquote>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-network-security">ネットワークのセキュリティ</a><blockquote>
+<p>プライベート エンドポイントと仮想プライベート ネットワークでネットワーク トラフィックを分離する</p>
+</blockquote>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-threat-protection">脅威の防止</a><blockquote>
+<p>異常なアクセスの場所、SQL インジェクション攻撃、認証攻撃など、潜在的なセキュリティ上の脅威を識別する</p>
+</blockquote>
+</li>
+</ul>
+<p>テストのためのツールとしてよく使用されるのは <a target="_blank" rel="noopener" href="https://learn.microsoft.com/microsoft-365/security/office-365-security/attack-simulation-training-get-started?view=o365-worldwide">Office 365 攻撃シミュレーター</a> であるとのことです。</p>
+<hr>
+<h2 id="Azure-アーキテクチャ-センター"><a href="#Azure-アーキテクチャ-センター" class="headerlink" title="Azure アーキテクチャ センター"></a>Azure アーキテクチャ センター</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/">Azure アーキテクチャ センター</a> は、確立されたパターンと手法を使用して Azure でソリューションを設計するためのガイダンスです。</p>
+<p>Azure Synapse Analytics は分析プラットフォームであり、その分析結果を用いるアプリケーションなり BI なりがあるはずです。特にそれらも含めて監視・監査を考えるにあたって、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/best-practices/index-best-practices">クラウド アプリケーションのベスト プラクティス</a> として解説されている <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/best-practices/monitoring">監視と診断のガイダンス</a> は有用です。</p>
+<hr>
+<h2 id="Microsoft-クラウド-セキュリティ-ベンチマーク-MCSB"><a href="#Microsoft-クラウド-セキュリティ-ベンチマーク-MCSB" class="headerlink" title="Microsoft クラウド セキュリティ ベンチマーク (MCSB)"></a>Microsoft クラウド セキュリティ ベンチマーク (MCSB)</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/security/benchmark/azure/">MCSB</a> は、セキュリティに関する推奨事項のコレクションです。これには、考え方として <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/overview">CAF</a> や <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/">WAF</a> も内包しています。</p>
+<p>監視・監査のためのログ記録と脅威検出については、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/security/benchmark/azure/mcsb-logging-threat-detection">こちら</a> で解説されています。<br>以下に LT-1 から LT-7 まで、項目を引用・列挙します。</p>
+<blockquote>
+<ul>
+<li>LT-1: 脅威検出機能を有効にする</li>
+<li>LT-2: ID およびアクセス管理の脅威検出を有効にする</li>
+<li>LT-3: セキュリティ調査のためのログを有効にする</li>
+<li>LT-4: セキュリティ調査のためのネットワーク ログを有効にする</li>
+<li>LT-5: セキュリティ ログの管理と分析を一元化する</li>
+<li>LT-6: ログの保持期間を構成する</li>
+<li>LT-7: 承認された時刻同期ソースを使用する</li>
+</ul>
+</blockquote>
+<p>また、監査の一環としての脆弱性評価に関しては、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/security/benchmark/azure/mcsb-posture-vulnerability-management#pv-5-perform-vulnerability-assessments">こちら</a> で解説されています。<br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/defender-for-cloud/defender-for-cloud-introduction">Microsoft Defender for Cloud</a> をベースとするのが基本方針になります。</p>
+<p>MCSB が示す基本方針を確認したら、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/security/benchmark/azure/baselines/synapse-analytics-workspace-security-baseline">Azure Synapse Analytics に関するセキュリティ ベースライン</a>も確認します。<br>項目を以下に引用・列挙します。</p>
+<blockquote>
+<ul>
+<li>ネットワークのセキュリティ</li>
+<li>ID 管理</li>
+<li>特権アクセス</li>
+<li>データ保護</li>
+<li>アセット管理</li>
+<li>ログと脅威検出</li>
+<li>体制と脆弱性の管理</li>
+<li>エンドポイント セキュリティ</li>
+<li>バックアップと回復</li>
+</ul>
+</blockquote>
+<p>これら Azure Synapse Analytics のサービス ベースラインが推奨する構成に従い、 Azure Synapse Analytics のセキュリティ機能を有効にしていきます。</p>
+<hr>
+<h2 id="Azure-Synapse-Analytics"><a href="#Azure-Synapse-Analytics" class="headerlink" title="Azure Synapse Analytics"></a>Azure Synapse Analytics</h2><p>ここまできてやっと、 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/">Azure Synapse Analytics</a> の監視・監査について、具体的な話ができるようになりました。</p>
+<p>Azure Synapse Analytics は、分析に必要なさまざまな機能がひとつになったサービスです。したがって、監視・監査は機能ごとに考えることになります。</p>
+<p>ここで扱うトピックは以下の通りです。</p>
+<ol>
+<li>全般</li>
+<li>ワークスペース</li>
+<li>SQL プール</li>
+<li>Data Explorer プール</li>
+<li>Apache Spark プール &#x2F; アプリケーション</li>
+<li>パイプライン</li>
+<li>Synapse Link</li>
+<li>セルフホステッド統合ランタイム</li>
+</ol>
+<h3 id="1-全般の監視・監査"><a href="#1-全般の監視・監査" class="headerlink" title="1. 全般の監視・監査"></a>1. 全般の監視・監査</h3><p>まず、Azure Synapse Analytics の実装を成功させるための記事、それが <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/implementation-success-overview">設計による Azure Synapse の実装の成功シリーズ</a> です。</p>
+<p>ここでは以下のように記述されています。</p>
+<blockquote>
+<p>この手法では、戦略的チェックポイント アプローチを使用して、プロジェクトの進行状況を評価および監視します。 これらのチェックポイントの目標は次のとおりです。</p>
+<ul>
+<li>考えられる問題と障害を事前に特定します。</li>
+<li>ソリューションがユース ケースに適合することを継続的に検証します。</li>
+<li>運用環境へのデプロイを成功させます。</li>
+<li>運用開始後のスムーズな運用と監視を実現します。</li>
+</ul>
+</blockquote>
+<p>これらは、分析プロジェクト中における以下の各チェックポイントと対応関係にあります。</p>
+<blockquote>
+<ol>
+<li>プロジェクトの計画</li>
+<li>ソリューションの開発</li>
+<li>運用開始前</li>
+<li>運用開始後</li>
+</ol>
+</blockquote>
+<p>特に重要なのは、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/implementation-success-overview#post-go-live-checkpoint">運用開始後チェックポイント</a> における <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/implementation-success-perform-monitoring-review">監視レビュー</a> です。<br>詳しくはドキュメントを参照してください。</p>
+<p>このプロセスを経て、正しく Azure Synapse Analytics の運用を開始することで、適切な監視ができるようになるということです。</p>
+<h3 id="2-ワークスペースの監視・監査"><a href="#2-ワークスペースの監視・監査" class="headerlink" title="2. ワークスペースの監視・監査"></a>2. ワークスペースの監視・監査</h3><p>続いて、 Azure Synapse Analytics ワークスペース全般の監視・監査について触れていきます。</p>
+<p>Azure Synapse Analytics に限らず、Azure における構成や設計に関わるものとしてインパクトが大きいのは、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/governance/policy/overview">Azure Policy</a> の <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/governance/policy/concepts/regulatory-compliance">規制コンプライアンス</a> です。システム監査の観点から、どのコンプライアンス標準に対応する必要があるのかは、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/overview">CAF</a> を適用している時点で既に把握できているはずです。<br>Azure Synapse Analytics に特化して記述された <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/security-controls-policy">こちらのドキュメント</a> を参照し、適用するポリシーを確認してください。なお、言及されているコンプライアンス標準は以下の通りです。</p>
+<blockquote>
+<ul>
+<li>CMMC レベル 3</li>
+<li>FedRAMP High</li>
+<li>FedRAMP Moderate</li>
+<li>NIST SP 800-53 Rev. 5</li>
+<li>インド準備銀行 - NBFC 向けの IT フレームワーク</li>
+</ul>
+</blockquote>
+<p>対応するコンプライアンス標準、あるいは <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/overview">CAF</a> で定めた<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/strategy/define-security-strategy">セキュリティ戦略</a> によっては、例えば <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/private-link/private-link-overview">プライベート リンク</a> を使用する必要がある場合があります。その場合、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-network-security#private-link-hubs-for-synapse-studio">Synapse プライベート リンク ハブ</a> を設置して各機能が連携できるようにするのが、Azure Synapse Analytics における プライベート リンク構成の特徴です。</p>
+<p>上記を含め、Azure Synapse Analytics で登場するネットワーク セキュリティの概念は、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-network-security">ホワイトペーパー</a>で確認しましょう。<br>トピックは以下の通りとなっており、網羅的に紹介されています。</p>
+<blockquote>
+<ul>
+<li>ネットワーク セキュリティの用語</li>
+<li>パブリック ネットワーク アクセスとファイアウォール規則</li>
+<li>プライベート エンドポイント</li>
+<li>マネージド VNet</li>
+<li>マネージド プライベート エンドポイント接続</li>
+<li>高度な Spark セキュリティ</li>
+<li>データ流出防止</li>
+<li>Synapse Studio のプライベート リンク ハブ</li>
+<li>専用 SQL プール (旧称 SQL DW)</li>
+<li>ネットワーク セキュリティ機能のマトリックス</li>
+</ul>
+</blockquote>
+<p>続いて、ワークスペースの監視について言及します。</p>
+<p>監視の第一歩は、Synapse Studio から始められます。<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/get-started-monitor">チュートリアル</a> を参照してください。</p>
+<p>ただ、実際の監視には Azure Monitor を用いることを、既に方針として決めているのではないでしょうか。<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/how-to-monitor-using-azure-monitor">操作方法ガイド</a> にその詳細が解説されていますので、参考にしてください。</p>
+<h3 id="3-SQL-プールの監視・監査"><a href="#3-SQL-プールの監視・監査" class="headerlink" title="3. SQL プールの監視・監査"></a>3. SQL プールの監視・監査</h3><p>Azure Synapse SQL プールの監査 に関しては、まずは <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-introduction">Azure Synapse Analytics のセキュリティに関するホワイト ペーパー</a> の <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-threat-protection">脅威の検出</a> に関するドキュメント内、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/guidance/security-white-paper-threat-protection#auditing">監査</a> のセクションを確認してください。</p>
+<p>監査の詳細については <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/azure-sql/database/auditing-overview">こちら</a> で解説されています。<br>トピックは以下の通りです。</p>
+<blockquote>
+<ul>
+<li>概要</li>
+<li>サーバーの監査を設定する</li>
+<li>監査ログとレポートを分析する</li>
+<li>運用方法</li>
+<li>Manage Azure SQL Database の監査</li>
+<li>関連項目</li>
+</ul>
+</blockquote>
+<p>データにフォーカスした監査に関しては、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/azure-sql/database/data-discovery-and-classification-overview">こちら</a> で解説されています。<br>トピックは以下の通りです。</p>
+<blockquote>
+<ul>
+<li>データの検出と分類とは</li>
+<li>機密性の高い列の検出、分類、ラベル付け</li>
+<li>機密データへのアクセスを監査する</li>
+<li>アクセス許可</li>
+<li>分類の管理</li>
+<li>SQL ドライバーを使用して分類メタデータを取得する</li>
+<li>FAQ - 高度な分類機能</li>
+</ul>
+</blockquote>
+<p>SQL プールの監視の第一歩もまた <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/how-to-monitor-sql-requests">Synapse Studio</a> からになりますが、やはりより高度な監視を行うためには <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-concept-resource-utilization-query-activity">Azure Monitor を使用した監視</a> を導入することになります。</p>
+<p>また、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/sql/best-practices-dedicated-sql-pool">専用 SQL プールのベスト プラクティス</a> と <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/sql/best-practices-serverless-sql-pool">サーバーレス SQL プールのベスト プラクティス</a> も紹介しておきます。<br>特に 専用 SQL プールに関しては、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/sql/best-practices-dedicated-sql-pool#use-dmvs-to-monitor-and-optimize-your-queries">DMV (動的管理ビュー) を使用したワークロード監視</a> について紹介されていますので、より詳細な監視を行いたい場合は参考にしてください。</p>
+<h3 id="4-Data-Explorer-プールの監視・監査"><a href="#4-Data-Explorer-プールの監視・監査" class="headerlink" title="4. Data Explorer プールの監視・監査"></a>4. Data Explorer プールの監視・監査</h3><p>Azure Synapse Analytics への <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-explorer/data-explorer-overview">Azure Data Explorer</a> ネイティブ統合 は <a target="_blank" rel="noopener" href="https://techcommunity.microsoft.com/t5/azure-data-explorer-blog/what-s-new-in-azure-synapse-data-explorer-ignite-2022/ba-p/3649457">Ignite 2022</a> のタイミングで実現しました。<br>両者の違いについては <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/data-explorer/data-explorer-compare">こちら</a> から確認してください。</p>
+<p>現時点では、Synapse Studio を使用した監視についてのみ解説があります。<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/data-explorer/data-explorer-monitor-pools">こちらのクイックスタート</a> を確認してください。</p>
+<h3 id="5-Apache-Spark-プール-x2F-アプリケーションの監視・監査"><a href="#5-Apache-Spark-プール-x2F-アプリケーションの監視・監査" class="headerlink" title="5. Apache Spark プール &#x2F; アプリケーションの監視・監査"></a>5. Apache Spark プール &#x2F; アプリケーションの監視・監査</h3><p>Apache Spark プールの監視については、 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/how-to-monitor-spark-pools">Synapse Studio を使用する方法</a> が案内されています。</p>
+<p>ノートブック、ジョブ、その他のアプリケーションの監視については、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/apache-spark-applications">Synapse Studio を使用する方法</a> と <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/spark/apache-spark-azure-log-analytics">Azure Monitor を使用する方法</a> が案内されています。</p>
+<p>また、応用として、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/spark/use-prometheus-grafana-to-monitor-apache-spark-application-level-metrics">Apache Spark アプリケーション メトリック ソリューションを Azure Kubernetes Service (AKS) クラスターにデプロイする方法と、Grafana ダッシュボードを統合する方法</a> にも触れておきます。これにより、よりリアルタイムでカスタマイズ性の高い監視が実現できます。こちらはベストプラクティスという観点ではオプションになると考えられます。</p>
+<h3 id="6-パイプラインの監視・監査"><a href="#6-パイプラインの監視・監査" class="headerlink" title="6. パイプラインの監視・監査"></a>6. パイプラインの監視・監査</h3><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/concepts-pipelines-activities?tabs=synapse-analytics#creating-a-pipeline-with-ui">パイプライン</a> の監視については、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/monitoring/how-to-monitor-pipeline-runs">Synapse Studio を使用する方法</a> が案内されています。<br>併せて、監視の一環としての <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/how-to-send-email">メールの送信</a> や <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/how-to-send-notifications-to-teams">Teams 通知</a> に関するガイドもあります。</p>
+<p>パイプラインの使用において、よくあるのは <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/copy-activity-overview">コピー アクティビティ</a> です。<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/copy-activity-monitoring">このガイド</a> をベースに、他の <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/concepts-pipelines-activities">アクティビティ</a> の監視に応用することが可能です。</p>
+<p>パイプライン内でアクティビティとして実行する <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/concepts-data-flow-overview">データ フロー</a> も監視の対象となりえます。こちらもパイプライン同様 Synapse Studio からの監視になりますが、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/concepts-data-flow-monitoring">こちらの解説</a> を参考にしてください。</p>
+<h3 id="7-Synapse-Link-の監視・監査"><a href="#7-Synapse-Link-の監視・監査" class="headerlink" title="7. Synapse Link の監視・監査"></a>7. Synapse Link の監視・監査</h3><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/synapse-link/sql-database-synapse-link">Azure Synapse Link for SQL</a> の監視については <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/synapse-analytics/synapse-link/sql-database-synapse-link#monitoring">こちらのドキュメント</a> を参照してください。<br>リンク接続だけでなく、テーブルの状態やイベントなども監視することが<br>できます。</p>
+<h3 id="8-セルフホステッド統合ランタイムの監視・監査"><a href="#8-セルフホステッド統合ランタイムの監視・監査" class="headerlink" title="8. セルフホステッド統合ランタイムの監視・監査"></a>8. セルフホステッド統合ランタイムの監視・監査</h3><p>Azure Monitor を使って <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/concepts-integration-runtime#self-hosted-integration-runtime">セルフホステッド統合ランタイム</a> のイベントを監視したり、Azure Monitor の Log Analytics ワークスペースを利用してログの分析をすることができます。詳細については <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/data-factory/monitor-shir-in-azure">こちら</a> をご確認ください。</p>
+<hr>
+<h2 id="Microsoft-Sentinel"><a href="#Microsoft-Sentinel" class="headerlink" title="Microsoft Sentinel"></a>Microsoft Sentinel</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/sentinel/overview">Microsoft Sentinel</a> はクラウドネイティブのセキュリティ情報管理製品です。<br>Microsoft Sentinel は WAF の <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/security/monitor#checklist">セキュリティ監視のチェックリスト</a> において「中央のセキュリティ ログ管理」の 1つとしても挙げられていました。</p>
+<p>Microsoft Sentinel は様々なサービスと接続してセキュリティ情報を管理することができますが、当然 Azure のサービスとも接続できます。詳しくは <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/sentinel/connect-azure-windows-microsoft-services">こちらのドキュメント</a> で解説されています。</p>
+<p>WAF 以降で登場した <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/sentinel/connect-defender-for-cloud">Microsoft Defender for Cloud も、Microsoft Sentinel に接続することができます</a>。</p>
+<p>いずれにしても、Azure Monitor やその Log Analytics ワークスペースで、セキュリティログの監査をすることができます。</p>
+<p>なお、Microsoft Defender for Cloud と Microsoft Sentinel の違いについての解説が必要な場合は <a target="_blank" rel="noopener" href="https://techcommunity.microsoft.com/t5/itops-talk-blog/what-s-the-difference-between-azure-security-center-azure/ba-p/2155188">こちら</a> を参照してください。</p>
+<hr>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Azure Synapse Analytics の監視または監査のベストプラクティスについて、ドキュメントから模索を行いました。その結果、以下のことが言えると考えております。</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/cloud-adoption-framework/overview">CAF</a> のプラクティスからはじめる</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/security/fundamentals/">Azure のセキュリティの基礎</a> を学ぶ</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/framework/">WAF</a> のプラクティスに沿って高度化する</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/">Azure アーキテクチャ センター</a> における <a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/architecture/best-practices/monitoring">監視と診断のガイダンス</a> を参考にする</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/security/benchmark/azure/">MCSB</a> にある <a target="_blank" rel="noopener" href="https://learn.microsoft.com/security/benchmark/azure/baselines/synapse-analytics-workspace-security-baseline">Azure Synapse Analytics に関するセキュリティ ベースライン</a> に沿って Azure Synapse Analytics のセキュリティ機能を有効にする</li>
+<li>Azure Synapse Analytics の各機能固有の監視・監査設定を行う</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/azure/sentinel/overview">Microsoft Sentinel</a> でセキュリティログ監査を行う</li>
+</ol>
+<p>基本的に、Microsoft のドキュメントにベスト <strong>でない</strong> プラクティスは無い、つまりすべてのドキュメントおよびその推奨事項はベストプラクティスであると考えています。</p>
+<p>ただ、それらの「つまみ食い」になると、必ず抜け漏れが出てきます。セキュリティや監視・監査で抜け漏れがあっては意味がありません。<br>CAF のレベルから初めて WAF や MSCB までを網羅的にこなすことで、監視・監査のための強固な土台が出来上がります。その上で Azure Synapse Analytics の監視・監査設定を行うこと、これがベストプラクティス中のベストプラクティスではないでしょうか。</p>
+<p>※本記事は執筆時点の情報に基づいています。今後、サービスや情報ソースのアップデート等は発生しえますので、その辺はご承知おきください。</p>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Synapse-Analytics/">Azure Synapse Analytics</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Monitoring/">Monitoring</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Auditing/">Auditing</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Best-Practices/">Best Practices</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2023 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
