@@ -1,0 +1,529 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>How to setup Azure SQL Database Cross-subscription geo-replication - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2023-02-17T07:22:33.000Z">2023-02-17 16:22:33</time><h1 class="post__title"><a href="/2023/02/17/How-to-setup-Azure-SQL-Database-Cross-subscription-geo-replication/">How to setup Azure SQL Database Cross-subscription geo-replication</a></h1><div class="post__main echo"><p>Azure SQL Database から Azure SQL Database へデータをコピーする方法は複数あります。</p>
+<ol>
+<li>Azure Data Factory の Copy Activity によるコピー + スケジュールトリガー</li>
+<li>Azure Data Factory の 変更データキャプチャ (プレビュー)</li>
+<li>Azure SQL Database で <code>別のデータベースに同期</code></li>
+<li>Azure SQL Database で <code>geo レプリカの作成</code></li>
+</ol>
+<p>これらの方式をメリット・デメリットで比較すると、以下の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>方式</th>
+<th>メリット</th>
+<th>デメリット</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>ADF の Copy Activity</td>
+<td>簡単<br />比較的低コスト</td>
+<td>データセットはテーブル単位で指定する必要がある。<br />コピー先にデータベースだけでなくスキーマまで作成されている必要がある。<br />スキーマ変更に人手で追従する必要がある。</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ADF の変更データキャプチャ</td>
+<td>簡単</td>
+<td>CDC 対象の列に dbo. を指定できず、変更管理用のテーブルを見つけて適切な列を選択する必要がある。<br />SQL Server 系の知識が無いと使いこなすのは難しい。<br />プレビューのためドキュメント・サポートともに不足かつ SLA 無し。<br />Spark クラスターが処理をするため、高コスト。</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Azrue SQL DB で 別の DB に同期</td>
+<td>簡単<br />低コスト</td>
+<td>同期対象をテーブル単位で指定する必要がある (「すべて選択」することは可能)。<br />スキーマ変更に人手で追従する必要がある。</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Azure SQL DB で geo レプリカ作成</td>
+<td>簡単<br />低コスト<br />データベース単位での同期</td>
+<td>バッチのような動作はできない。<br /><strong>サブスクリプション間での geo レプリカは別手順</strong>。</td>
+</tr>
+</tbody></table>
+<p>したがって、Azure SQL Database から Azure SQL Database へのデータのコピーにまず検討したいのは <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/active-geo-replication-overview?view=azuresql-db">geo レプリカ</a> ということになります。</p>
+<p>ただ、デメリットの中にも記した通り、 <strong>サブスクリプション間での geo レプリカは通常とは異なる手順</strong> となります。同一サブスクリプションでの geo レプリカとの違いは以下の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>同一サブスクリプション</th>
+<th>サブスクリプション間</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Azure Portal からの設定</td>
+<td>可</td>
+<td>不可</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SQL の使用</td>
+<td>無し</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>3</td>
+<td>必要なツール</td>
+<td>Web ブラウザ</td>
+<td>SSMS &#x2F; ADS &#x2F; VS Code</td>
+</tr>
+<tr>
+<td>4</td>
+<td>DB 上での管理者権限</td>
+<td>不要</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ファイアウォールの設定</td>
+<td>不要</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>6</td>
+<td>プライベートエンドポイントの考慮</td>
+<td>不要</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>7</td>
+<td>master データベースの変更</td>
+<td>明示的な変更は無し</td>
+<td>あり</td>
+</tr>
+</tbody></table>
+<p>作業者のスキル、ツールのインストール、データベース管理者との調整、ネットワークへの考慮といった観点でハードルが高いのが、サブスクリプション間 geo レプリケーションということになります。</p>
+<p>本記事では、サブスクリプション間 geo レプリケーション の手順について、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/active-geo-replication-overview?view=azuresql-db#cross-subscription-geo-replication">公式ドキュメント</a> よりも少し平易に、そして少し詳しく解説します。</p>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/ja-jp/">Microsoft Azure</a> に利用可能なサブスクリプションを持っている</li>
+<li>SSMS (SQL Server Management Studio), ADS (Azure Data Studio), Visual Studio Code のいずれかがインストールされ、Azure SQL Database への接続が可能な環境がある</li>
+</ul>
+<h2 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h2><p>手順は以下の通りです。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">0. 必要な環境があることを確かめる</span><br><span class="line">1. ファイアウォールにおいて接続元クライアントコンピューターの IP アドレスを許可する</span><br><span class="line">2. プライマリ サーバーに geo レプリケーション セットアップ専用 ログインを作成する</span><br><span class="line">3. プライマリ サーバーにログイン用のユーザーを作成する</span><br><span class="line">4. プライマリ サーバーで作成したログイン用ユーザーの SID 値を取得する</span><br><span class="line">5. プライマリ データベース でログインユーザーを作成する</span><br><span class="line">6. プライマリ サーバーで作成したユーザーを `db_owner` ロールに追加する</span><br><span class="line">7. セカンダリ サーバーにプライマリ サーバーと同じログインを作成する</span><br><span class="line">8. セカンダリ サーバーにログイン用のユーザーを作成する</span><br><span class="line">9. プライマリ サーバーで セカンダリ サーバーをセカンダリとして設定する</span><br></pre></td></tr></table></figure>
+
+<h3 id="0-必要な環境があることを確かめる"><a href="#0-必要な環境があることを確かめる" class="headerlink" title="0. 必要な環境があることを確かめる"></a>0. 必要な環境があることを確かめる</h3><p>本記事では、以下の環境を想定して解説を行います。値は基本的にダミーですので、適宜読み替えを行ってください。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th></th>
+<th>プライマリサーバー</th>
+<th>セカンダリサーバー</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>サブスクリプション ID</td>
+<td>11111111-1111-1111-1111-111111111111</td>
+<td>22222222-2222-2222-2222-222222222222</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Azure SQL Database サーバー</td>
+<td>sql-my-primary-server.database.windows.net</td>
+<td>sql-my-secondary-server.database.windows.net</td>
+</tr>
+<tr>
+<td>3</td>
+<td>データベース</td>
+<td>sql-source-db</td>
+<td>無し</td>
+</tr>
+<tr>
+<td>4</td>
+<td>プライベートエンドポイントの使用有無</td>
+<td>無し</td>
+<td>無し</td>
+</tr>
+<tr>
+<td>5</td>
+<td>管理者ユーザーの利用権限</td>
+<td>あり</td>
+<td>あり</td>
+</tr>
+</tbody></table>
+<h3 id="1-ファイアウォールにおいて接続元クライアントコンピューターの-IP-アドレスを許可する"><a href="#1-ファイアウォールにおいて接続元クライアントコンピューターの-IP-アドレスを許可する" class="headerlink" title="1. ファイアウォールにおいて接続元クライアントコンピューターの IP アドレスを許可する"></a>1. ファイアウォールにおいて接続元クライアントコンピューターの IP アドレスを許可する</h3><p>両者のサーバーに関して、クライアントコンピューターからのネットワーク接続を許可します。</p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/active-geo-replication-overview?view=azuresql-db#cross-subscription-geo-replication">ドキュメント</a> には SQL による IP アドレスの確認手順が示されていますが、Azure Portal &gt; SQL Server &gt; セキュリティ &gt; ファイアウォール規則 から <code>クライアント IPv4 アドレス (xxx.xxx.xxx.xxx) の追加</code> をクリックして <code>保存</code> をクリックするだけで実現できます。</p>
+<h3 id="2-プライマリ-サーバーに-geo-レプリケーション-セットアップ専用-ログインを作成する"><a href="#2-プライマリ-サーバーに-geo-レプリケーション-セットアップ専用-ログインを作成する" class="headerlink" title="2. プライマリ サーバーに geo レプリケーション セットアップ専用 ログインを作成する"></a>2. プライマリ サーバーに geo レプリケーション セットアップ専用 ログインを作成する</h3><p>プライマリ サーバー で作業を開始します。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>値</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>作業サブスクリプション</td>
+<td>プライマリ</td>
+<td>11111111-1111-1111-1111-111111111111</td>
+</tr>
+<tr>
+<td>2</td>
+<td>作業サーバー</td>
+<td>プライマリ</td>
+<td>sql-my-primary-server.database.windows.net</td>
+</tr>
+<tr>
+<td>3</td>
+<td>作業データベース</td>
+<td><code>master</code></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>作業ユーザー</td>
+<td>SQLサーバー管理者</td>
+<td>sqladminuser</td>
+</tr>
+</tbody></table>
+<p>以下のクエリを実行します。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> login geodrsetup <span class="keyword">with</span> password <span class="operator">=</span> <span class="string">&#x27;ComplexPassword01&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ログイン名 <code>geodrsetup</code> を任意の名前に変更することは可能です。本記事では変更しないことを想定して解説を行います。</li>
+<li>パスワード <code>ComplexPassword01</code> は任意のパスワードに置き換えて実行します。</li>
+</ul>
+<p>クエリの実行結果は以下のようになります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Started executing query at Line 1</span><br><span class="line">Commands completed successfully.</span><br><span class="line">Total execution time: 00:00:00.050</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="3-プライマリ-サーバーにログイン用のユーザーを作成する"><a href="#3-プライマリ-サーバーにログイン用のユーザーを作成する" class="headerlink" title="3. プライマリ サーバーにログイン用のユーザーを作成する"></a>3. プライマリ サーバーにログイン用のユーザーを作成する</h3><p>環境は 手順 2 と同様です。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>値</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>作業サブスクリプション</td>
+<td>プライマリ</td>
+<td>11111111-1111-1111-1111-111111111111</td>
+</tr>
+<tr>
+<td>2</td>
+<td>作業サーバー</td>
+<td>プライマリ</td>
+<td>sql-my-primary-server.database.windows.net</td>
+</tr>
+<tr>
+<td>3</td>
+<td>作業データベース</td>
+<td><code>master</code></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>作業ユーザー</td>
+<td>SQLサーバー管理者</td>
+<td>sqladminuser</td>
+</tr>
+</tbody></table>
+<p>以下のクエリを実行します。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> geodrsetup <span class="keyword">for</span> login geodrsetup;</span><br><span class="line"><span class="keyword">alter</span> role dbmanager <span class="keyword">add</span> <span class="keyword">member</span> geodrsetup;</span><br></pre></td></tr></table></figure>
+
+<p>クエリの実行結果は以下のようになります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Started executing query at Line 1</span><br><span class="line">Commands completed successfully.</span><br><span class="line">Total execution time: 00:00:00.015</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-プライマリ-サーバー-で作成したログイン用ユーザーの-SID-値を取得する"><a href="#4-プライマリ-サーバー-で作成したログイン用ユーザーの-SID-値を取得する" class="headerlink" title="4. プライマリ サーバー で作成したログイン用ユーザーの SID 値を取得する"></a>4. プライマリ サーバー で作成したログイン用ユーザーの SID 値を取得する</h3><p>環境は手順 2,3 と同じです。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>値</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>作業サブスクリプション</td>
+<td>プライマリ</td>
+<td>11111111-1111-1111-1111-111111111111</td>
+</tr>
+<tr>
+<td>2</td>
+<td>作業サーバー</td>
+<td>プライマリ</td>
+<td>sql-my-primary-server.database.windows.net</td>
+</tr>
+<tr>
+<td>3</td>
+<td>作業データベース</td>
+<td><code>master</code></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>作業ユーザー</td>
+<td>SQLサーバー管理者</td>
+<td>sqladminuser</td>
+</tr>
+</tbody></table>
+<p>以下のクエリを実行します。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> sid <span class="keyword">from</span> sys.sql_logins <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;geodrsetup&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>クエリの実行結果は以下のようになります。以下に示す sid はダミーです。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Started executing query at Line 1</span><br><span class="line">(1 row affected)</span><br><span class="line">Total execution time: 00:00:00.148</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th>sid</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF</td>
+</tr>
+</tbody></table>
+<p>sid の値をコピーしてテキストエディタ等で一時的に保管してください。</p>
+<h3 id="5-プライマリ-データベース-でログインユーザーを作成する"><a href="#5-プライマリ-データベース-でログインユーザーを作成する" class="headerlink" title="5. プライマリ データベース でログインユーザーを作成する"></a>5. プライマリ データベース でログインユーザーを作成する</h3><p>作業データベースのみ変更します。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>値</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>作業サブスクリプション</td>
+<td>プライマリ</td>
+<td>11111111-1111-1111-1111-111111111111</td>
+</tr>
+<tr>
+<td>2</td>
+<td>作業サーバー</td>
+<td>プライマリ</td>
+<td>sql-my-primary-server.database.windows.net</td>
+</tr>
+<tr>
+<td>3</td>
+<td>作業データベース</td>
+<td>プライマリ</td>
+<td><strong>sql-source-db</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td>作業ユーザー</td>
+<td>SQLサーバー管理者</td>
+<td>sqladminuser</td>
+</tr>
+</tbody></table>
+<p>以下のクエリを実行します。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> geodrsetup <span class="keyword">for</span> login geodrsetup;</span><br></pre></td></tr></table></figure>
+
+<p>クエリの実行結果は以下のようになります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Started executing query at Line 1</span><br><span class="line">Commands completed successfully.</span><br><span class="line">Total execution time: 00:00:00.127</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="6-プライマリ-サーバーで作成したユーザーを-db-owner-ロールに追加する"><a href="#6-プライマリ-サーバーで作成したユーザーを-db-owner-ロールに追加する" class="headerlink" title="6. プライマリ サーバーで作成したユーザーを db_owner ロールに追加する"></a>6. プライマリ サーバーで作成したユーザーを <code>db_owner</code> ロールに追加する</h3><p>手順 5 と同じ環境です。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>値</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>作業サブスクリプション</td>
+<td>プライマリ</td>
+<td>11111111-1111-1111-1111-111111111111</td>
+</tr>
+<tr>
+<td>2</td>
+<td>作業サーバー</td>
+<td>プライマリ</td>
+<td>sql-my-primary-server.database.windows.net</td>
+</tr>
+<tr>
+<td>3</td>
+<td>作業データベース</td>
+<td>プライマリ</td>
+<td>sql-source-db</td>
+</tr>
+<tr>
+<td>4</td>
+<td>作業ユーザー</td>
+<td>SQLサーバー管理者</td>
+<td>sqladminuser</td>
+</tr>
+</tbody></table>
+<p>以下のクエリを実行します。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> role db_owner <span class="keyword">add</span> <span class="keyword">member</span> geodrsetup;</span><br></pre></td></tr></table></figure>
+
+<p>クエリの実行結果は以下のようになります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Started executing query at Line 1</span><br><span class="line">Commands completed successfully.</span><br><span class="line">Total execution time: 00:00:00.011</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="7-セカンダリ-サーバーにプライマリ-サーバーと同じログインを作成する"><a href="#7-セカンダリ-サーバーにプライマリ-サーバーと同じログインを作成する" class="headerlink" title="7. セカンダリ サーバーにプライマリ サーバーと同じログインを作成する"></a>7. セカンダリ サーバーにプライマリ サーバーと同じログインを作成する</h3><p>セカンダリサーバーでの作業に移ります。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>値</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>作業サブスクリプション</td>
+<td><strong>セカンダリ</strong></td>
+<td><strong>22222222-2222-2222-2222-222222222222</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>作業サーバー</td>
+<td><strong>セカンダリ</strong></td>
+<td><strong>sql-my-secondary-server.database.windows.net</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>作業データベース</td>
+<td><code>master</code></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>作業ユーザー</td>
+<td>SQLサーバー管理者</td>
+<td>sqladminuser</td>
+</tr>
+</tbody></table>
+<p>以下のクエリを実行します。<br>パスワード <code>ComplexPassword01</code> は任意の文字列で置き換えます。<br>sid は 手順4 で取得したものを貼り付けます。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> login geodrsetup <span class="keyword">with</span> password <span class="operator">=</span> <span class="string">&#x27;ComplexPassword01&#x27;</span>, sid<span class="operator">=</span><span class="number">0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF</span>;</span><br></pre></td></tr></table></figure>
+
+<p>クエリの実行結果は以下のようになります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Started executing query at Line 1</span><br><span class="line">Commands completed successfully.</span><br><span class="line">Total execution time: 00:00:00.042</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="8-セカンダリ-サーバーにログイン用のユーザーを作成する"><a href="#8-セカンダリ-サーバーにログイン用のユーザーを作成する" class="headerlink" title="8. セカンダリ サーバーにログイン用のユーザーを作成する"></a>8. セカンダリ サーバーにログイン用のユーザーを作成する</h3><p>作業 7 と同じ環境です。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>値</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>作業サブスクリプション</td>
+<td>セカンダリ</td>
+<td>22222222-2222-2222-2222-222222222222</td>
+</tr>
+<tr>
+<td>2</td>
+<td>作業サーバー</td>
+<td>セカンダリ</td>
+<td>sql-my-secondary-server.database.windows.net</td>
+</tr>
+<tr>
+<td>3</td>
+<td>作業データベース</td>
+<td><code>master</code></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>作業ユーザー</td>
+<td>SQLサーバー管理者</td>
+<td>sqladminuser</td>
+</tr>
+</tbody></table>
+<p>以下のクエリを実行します。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> geodrsetup <span class="keyword">for</span> login geodrsetup;</span><br><span class="line"><span class="keyword">alter</span> role dbmanager <span class="keyword">add</span> <span class="keyword">member</span> geodrsetup;</span><br></pre></td></tr></table></figure>
+
+<p>クエリの実行結果は以下のようになります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Started executing query at Line 1</span><br><span class="line">Commands completed successfully.</span><br><span class="line">Total execution time: 00:00:00.021</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="9-プライマリ-サーバーで-セカンダリ-サーバーをセカンダリとして設定する"><a href="#9-プライマリ-サーバーで-セカンダリ-サーバーをセカンダリとして設定する" class="headerlink" title="9. プライマリ サーバーで セカンダリ サーバーをセカンダリとして設定する"></a>9. プライマリ サーバーで セカンダリ サーバーをセカンダリとして設定する</h3><p>再び プライマリ サーバー に移ります。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>値</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>作業サブスクリプション</td>
+<td><strong>プライマリ</strong></td>
+<td><strong>11111111-1111-1111-1111-111111111111</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>作業サーバー</td>
+<td><strong>プライマリ</strong></td>
+<td><strong>sql-my-primary-server.database.windows.net</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>作業データベース</td>
+<td><code>master</code></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>作業ユーザー</td>
+<td>geo レプリカ設定ユーザー</td>
+<td><strong>geodrsetup</strong></td>
+</tr>
+</tbody></table>
+<p>このとき、手順 3 で作成したユーザー <code>geodrsetup</code> で プライマリ サーバー に接続します。これまで <code>sqladminuser</code> で作業していた接続は使用しません。新規の接続を使います。<br>接続の際には SQL Login を使用します。他の認証方式、例えば Azure Active Directory 等ではこの手順に失敗するため、注意してください。</p>
+<p>以下のクエリを実行します。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> database [<span class="keyword">sql</span><span class="operator">-</span>source<span class="operator">-</span>db] <span class="keyword">add</span> secondary <span class="keyword">on</span> server [<span class="keyword">sql</span><span class="operator">-</span>my<span class="operator">-</span>secondary<span class="operator">-</span>server.database.windows.net];</span><br></pre></td></tr></table></figure>
+
+<p>クエリの実行結果は以下のようになります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Started executing query at Line 1</span><br><span class="line">Commands completed successfully.</span><br><span class="line">Total execution time: 00:00:02.173</span><br></pre></td></tr></table></figure>
+
+<p>これで、サブスクリプション間 geo レプリケーション の設定が完了しました。Azure Portal 上からは、通常の geo レプリケーションと同じように表示されているはずです。</p>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>サブスクリプション間 geo レプリケーション の手順について、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/active-geo-replication-overview?view=azuresql-db#cross-subscription-geo-replication">公式ドキュメント</a> よりも少し詳しい解説を行いました。</p>
+<p>重要なのは、正しい環境で正しい手順を踏むことです。特に ADS や SSMS から接続するユーザー名や認証方式に気をつけてください。<br>これを間違えると</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Started executing query at Line 1</span><br><span class="line">Msg 40647, Level 16, State 1, Line 1</span><br><span class="line">Subscription &#x27;11111111-1111-1111-1111-111111111111&#x27; does not have the server &#x27;sql-my-secondary-server.database.windows.net&#x27;.</span><br><span class="line">Total execution time: 00:00:00.308</span><br></pre></td></tr></table></figure>
+
+<p>といったエラーとなり、エラーの内容からは原因の特定が難しくなります。</p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/active-geo-replication-overview?view=azuresql-db#cross-subscription-geo-replication">サブスクリプション間 geo レプリケーション</a> を設定して、さらなるデータの利活用に役立ててください。</p>
+<h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/azure-data-studio/quickstart-sql-database?view=azuresqldb-current">クイック スタート:Azure Data Studio を使用して、Azure SQL Database に接続してクエリを実行する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/connect-query-ssms?view=azuresql-db">クイック スタート:SSMS を使用して Azure SQL Database または Azure SQL Managed Instance に接続してクエリを実行する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/connect-query-vscode?view=azuresql-db">クイック スタート:Visual Studio Code を使って接続し、クエリを実行する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/connect-query-portal?view=azuresql#query-editor-limitations">クエリ エディターの制限事項</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/MicrosoftDocs/azure-docs/issues/68612">Cross Subscription GeoReplication using T-SQL errors on subscription · Issue #68612 · MicrosoftDocs&#x2F;azure-docs</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-SQL-Database/">Azure SQL Database</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2023 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
