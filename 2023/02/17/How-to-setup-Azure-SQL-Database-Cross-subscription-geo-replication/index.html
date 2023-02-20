@@ -501,7 +501,7 @@
 </tr>
 </tbody></table>
 <p>このとき、手順 3 で作成したユーザー <code>geodrsetup</code> で プライマリ サーバー に接続します。これまで <code>sqladminuser</code> で作業していた接続は使用しません。新規の接続を使います。<br>接続の際には SQL Login を使用します。他の認証方式、例えば Azure Active Directory 等ではこの手順に失敗するため、注意してください。</p>
-<p>また、プライマリ サーバーがエラスティック プールである場合、セカンダリ サーバーにも <strong>同名の</strong> エラスティック プールが予め作成されている必要があります。<br>セカンダリ サーバー上に用意するのはエラスティック プールのみです。セカンダリ サーバー上に予めデータベースを作らないのは、シングル サーバーの場合もエラスティック プールの場合も同じです。<br>geo レプリケーションはエラスティック プール単位で行われます。(例えば、プライマリ サーバーのエラスティック プールにデータベースが N個ある場合、セカンダリ サーバーの同名のエラスティック プールにも N個のデータベースがそれぞれ同名で生成されます。)</p>
+<p>また、プライマリ サーバーにおける geo レプリケーション対象のデータベースがエラスティック プール上に存在する場合、セカンダリ サーバーにも <strong>同名の</strong> エラスティック プールが予め作成されている必要があります。<br>セカンダリ サーバー上に用意するのはエラスティック プールのみです。セカンダリ サーバー上に予めデータベースを作らないのは、シングル サーバーの場合もエラスティック プールの場合も同じです。<br>geo レプリケーションはエラスティック プール単位で行われます。(例えば、プライマリ サーバーのエラスティック プールにデータベースが N個ある場合、セカンダリ サーバーの同名のエラスティック プールにも N個のデータベースがそれぞれ同名で生成されます。)</p>
 <p>以下のクエリを実行します。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> database [<span class="keyword">sql</span><span class="operator">-</span>source<span class="operator">-</span>db] <span class="keyword">add</span> secondary <span class="keyword">on</span> server [<span class="keyword">sql</span><span class="operator">-</span>my<span class="operator">-</span>secondary<span class="operator">-</span>server.database.windows.net];</span><br></pre></td></tr></table></figure>
 
