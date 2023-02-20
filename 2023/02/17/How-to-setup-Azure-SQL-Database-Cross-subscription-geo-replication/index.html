@@ -152,6 +152,7 @@
 <td>あり</td>
 </tr>
 </tbody></table>
+<p>なお、本記事ではプライマリ サーバーおよびセカンダリ サーバーのいずれもシングル データベースを使用することを想定しています。プライマリ サーバーがエラスティック プールである場合については、適宜注釈を入れることで解説いたします。(この場合に注意するのは　手順9 のみです。)</p>
 <h3 id="1-ファイアウォールにおいて接続元クライアントコンピューターの-IP-アドレスを許可する"><a href="#1-ファイアウォールにおいて接続元クライアントコンピューターの-IP-アドレスを許可する" class="headerlink" title="1. ファイアウォールにおいて接続元クライアントコンピューターの IP アドレスを許可する"></a>1. ファイアウォールにおいて接続元クライアントコンピューターの IP アドレスを許可する</h3><p>両者のサーバーに関して、クライアントコンピューターからのネットワーク接続を許可します。</p>
 <p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/active-geo-replication-overview?view=azuresql-db#cross-subscription-geo-replication">ドキュメント</a> には SQL による IP アドレスの確認手順が示されていますが、Azure Portal &gt; SQL Server &gt; セキュリティ &gt; ファイアウォール規則 から <code>クライアント IPv4 アドレス (xxx.xxx.xxx.xxx) の追加</code> をクリックして <code>保存</code> をクリックするだけで実現できます。</p>
 <h3 id="2-プライマリ-サーバーに-geo-レプリケーション-セットアップ専用-ログインを作成する"><a href="#2-プライマリ-サーバーに-geo-レプリケーション-セットアップ専用-ログインを作成する" class="headerlink" title="2. プライマリ サーバーに geo レプリケーション セットアップ専用 ログインを作成する"></a>2. プライマリ サーバーに geo レプリケーション セットアップ専用 ログインを作成する</h3><p>プライマリ サーバー で作業を開始します。</p>
@@ -500,6 +501,7 @@
 </tr>
 </tbody></table>
 <p>このとき、手順 3 で作成したユーザー <code>geodrsetup</code> で プライマリ サーバー に接続します。これまで <code>sqladminuser</code> で作業していた接続は使用しません。新規の接続を使います。<br>接続の際には SQL Login を使用します。他の認証方式、例えば Azure Active Directory 等ではこの手順に失敗するため、注意してください。</p>
+<p>また、プライマリ サーバーがエラスティック プールである場合、セカンダリ サーバーにも <strong>同名の</strong> エラスティック プールが予め作成されている必要があります。<br>用意するのはエラスティック プールのみです。プライマリ サーバー上に予めデータベースを作らないのは、シングル サーバーの場合もエラスティック プールの場合も同じです。<br>geo レプリケーションはエラスティック プール単位で行われます。(例えば、プライマリ サーバーのエラスティック プールにデータベースが N個ある場合、プライマリ サーバーの同名のエラスティック プールにも N個のデータベースがそれぞれ同名で生成されます。)</p>
 <p>以下のクエリを実行します。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> database [<span class="keyword">sql</span><span class="operator">-</span>source<span class="operator">-</span>db] <span class="keyword">add</span> secondary <span class="keyword">on</span> server [<span class="keyword">sql</span><span class="operator">-</span>my<span class="operator">-</span>secondary<span class="operator">-</span>server.database.windows.net];</span><br></pre></td></tr></table></figure>
 
@@ -519,6 +521,8 @@
 <li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/connect-query-vscode?view=azuresql-db">クイック スタート:Visual Studio Code を使って接続し、クエリを実行する</a></li>
 <li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/azure-sql/database/connect-query-portal?view=azuresql#query-editor-limitations">クエリ エディターの制限事項</a></li>
 <li><a target="_blank" rel="noopener" href="https://github.com/MicrosoftDocs/azure-docs/issues/68612">Cross Subscription GeoReplication using T-SQL errors on subscription · Issue #68612 · MicrosoftDocs&#x2F;azure-docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@jackydevops/a-quick-way-to-replicate-azure-sql-databases-from-one-region-to-another-region-d976696b7918">A quick way to replicate Azure SQL Databases from one region to another region | by Jacky Wong | Medium</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/44191966/handling-external-data-source-on-azure-sql-and-geo-replication">Handling external data source on Azure SQL and geo-replication - Stack Overflow</a></li>
 </ul>
 </div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-SQL-Database/">Azure SQL Database</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2023 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
 ga('create','G-9XBBR7M7V2');
