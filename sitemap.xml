@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://k14i.github.io/2023/04/12/Test-code-generation-from-Swagger-and-PlantUML-with-Azure-OpenAI-Service-using-PromptGenerator-method/</loc>
+    
+    <lastmod>2023-04-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2023/04/10/Learning-aggregate-function-performance-tuning-on-Azure-Synapse-Analytics-Dedicated-SQL-Pool-from-GPT-4/</loc>
     
     <lastmod>2023-04-10</lastmod>
@@ -744,6 +753,27 @@
   
   <url>
     <loc>https://k14i.github.io/tags/GPT-4/</loc>
+    <lastmod>2023-04-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://k14i.github.io/tags/OpenAI/</loc>
+    <lastmod>2023-04-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://k14i.github.io/tags/Prompt-engineering/</loc>
+    <lastmod>2023-04-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://k14i.github.io/tags/GPT-3/</loc>
     <lastmod>2023-04-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
