@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>Learning aggregate function performance tuning on Azure Synapse Analytics Dedicated SQL Pool from GPT-4 - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2023-04-10T00:56:09.000Z">2023-04-10 09:56:09</time><h1 class="post__title"><a href="/2023/04/10/Learning-aggregate-function-performance-tuning-on-Azure-Synapse-Analytics-Dedicated-SQL-Pool-from-GPT-4/">Learning aggregate function performance tuning on Azure Synapse Analytics Dedicated SQL Pool from GPT-4</a></h1><div class="post__main echo"><h1 id="Azure-Synapse-Analytics-専用-SQL-プールにおける集計関数のパフォーマンスチューニングについて-GPT-4-から学ぶ"><a href="#Azure-Synapse-Analytics-専用-SQL-プールにおける集計関数のパフォーマンスチューニングについて-GPT-4-から学ぶ" class="headerlink" title="Azure Synapse Analytics 専用 SQL プールにおける集計関数のパフォーマンスチューニングについて GPT-4 から学ぶ"></a>Azure Synapse Analytics 専用 SQL プールにおける集計関数のパフォーマンスチューニングについて GPT-4 から学ぶ</h1><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/overview-what-is">Azure Synapse Analytics</a> <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-overview-what-is?context=/azure/synapse-analytics/context/context">専用 SQL プール</a>における<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/t-sql/functions/aggregate-functions-transact-sql?view=sql-server-ver16">集計関数</a>のパフォーマンスチューニングについて、 GPT-4 に質問をすることで学びを得る試みを行いました。以下はその記録です。</p>
+<h2 id="サービス"><a href="#サービス" class="headerlink" title="サービス"></a>サービス</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/openai/overview">Azure OpenAI Service</a><ul>
+<li>Chat playground (Preview) を使用</li>
+</ul>
+</li>
+</ul>
+<h2 id="モデル"><a href="#モデル" class="headerlink" title="モデル"></a>モデル</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/openai/concepts/models#gpt-4-models">gpt-4</a>, バージョン 0314</p>
+<h2 id="パラメータ"><a href="#パラメータ" class="headerlink" title="パラメータ"></a>パラメータ</h2><ul>
+<li>デフォルト<ul>
+<li>Max response: 800</li>
+<li>Temperature: 0.7</li>
+<li>Top P: 0.95</li>
+<li>Past messages included: 10</li>
+</ul>
+</li>
+</ul>
+<h2 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h2><ul>
+<li>チャット内容には後から適宜ハイパーリンクを付しています。</li>
+<li>URL 中の <code>en-us</code> は <code>ja-jp</code> に置換済みです。</li>
+<li>プロンプトと Microsoft Learn とで用語の名前が異なる場合があります。その場合は、都度対応表を用意しました。</li>
+</ul>
+<h2 id="プロンプトと出力"><a href="#プロンプトと出力" class="headerlink" title="プロンプトと出力"></a>プロンプトと出力</h2><h3 id="Azure-Synapse-Analytics-について質問をしていいですか？"><a href="#Azure-Synapse-Analytics-について質問をしていいですか？" class="headerlink" title="Azure Synapse Analytics について質問をしていいですか？"></a>Azure Synapse Analytics について質問をしていいですか？</h3><blockquote>
+<p>もちろんです！Azure Synapse Analyticsに関する質問があれば、どんどんお聞きください。私はできる限りお手伝いします。</p>
+</blockquote>
+<h3 id="ありがとうございます。現在、PostgreSQL-から-Azure-Synapse-Analytics-の専用SQLプールにデータを移行し、パフォーマンスを比較しています。そこで分かったことですが、集計関数を使った場合と使わなかった場合とで、クエリのパフォーマンスに大きな差があります。考えられる原因について分かりますか？"><a href="#ありがとうございます。現在、PostgreSQL-から-Azure-Synapse-Analytics-の専用SQLプールにデータを移行し、パフォーマンスを比較しています。そこで分かったことですが、集計関数を使った場合と使わなかった場合とで、クエリのパフォーマンスに大きな差があります。考えられる原因について分かりますか？" class="headerlink" title="ありがとうございます。現在、PostgreSQL から Azure Synapse Analytics の専用SQLプールにデータを移行し、パフォーマンスを比較しています。そこで分かったことですが、集計関数を使った場合と使わなかった場合とで、クエリのパフォーマンスに大きな差があります。考えられる原因について分かりますか？"></a>ありがとうございます。現在、PostgreSQL から Azure Synapse Analytics の専用SQLプールにデータを移行し、パフォーマンスを比較しています。そこで分かったことですが、集計関数を使った場合と使わなかった場合とで、クエリのパフォーマンスに大きな差があります。考えられる原因について分かりますか？</h3><blockquote>
+<p>Azure Synapse Analyticsの専用SQLプールは、大規模な並列処理とデータウェアハウス向けの機能を提供しているため、クエリのパフォーマンスはPostgreSQLとは異なる場合があります。集計関数を使用した場合と使用しなかった場合でパフォーマンスに大きな差がある原因は、以下の要素が考えられます。</p>
+<ol>
+<li>データ分散: 専用SQLプールでは、データが分散ストレージに格納されます。集計クエリは、データを分析ノード間で集約する必要があるため、データの分散方法によってはパフォーマンスに影響が出ることがあります。</li>
+<li>インデックスと統計: 専用SQLプールでは、インデックスと統計の設計がクエリパフォーマンスに大きな影響を与えます。集計関数を含むクエリのパフォーマンスを向上させるためには、適切なインデックスや統計を設定することが重要です。</li>
+<li>クエリ最適化: Azure Synapse Analyticsは、クエリ最適化のために並列処理やデータのパーティショニングを活用しています。集計関数を使用しないクエリと比較して、集計関数を使用したクエリは最適化の効果が異なることがあります。</li>
+<li>リソース制限: 専用SQLプールのリソース制限によっても、パフォーマンスに影響が出ることがあります。例えば、同時実行クエリの数やメモリ使用量などが制限されている場合、集計関数を使用したクエリのパフォーマンスが低下することがあります。</li>
+</ol>
+<p>パフォーマンスの問題を解決するためには、データ分散の戦略の見直し、インデックスと統計の最適化、クエリの最適化、およびリソース制限の調整などが検討されるべきです。Azure Synapse Analyticsのドキュメントやチュートリアルを参照して、最適な設定を行ってください。</p>
+</blockquote>
+<h3 id="データ分散について、集計クエリで高いパフォーマンスを得るための設計方法を教えていただきたいのですが、いかがでしょうか？"><a href="#データ分散について、集計クエリで高いパフォーマンスを得るための設計方法を教えていただきたいのですが、いかがでしょうか？" class="headerlink" title="データ分散について、集計クエリで高いパフォーマンスを得るための設計方法を教えていただきたいのですが、いかがでしょうか？"></a>データ分散について、集計クエリで高いパフォーマンスを得るための設計方法を教えていただきたいのですが、いかがでしょうか？</h3><blockquote>
+<p>データ分散の設計は、Azure Synapse Analyticsの専用SQLプールで集計クエリのパフォーマンスを向上させるために重要な要素です。以下に、高いパフォーマンスを得るためのデータ分散の設計方法をいくつかご紹介します。</p>
+<ol>
+<li>分散列の選択: 分散列は、データが分散ストレージにどのように格納されるかを決定します。適切な<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-distribute#choose-a-distribution-column">分散列を選択</a>することで、クエリ実行時のデータ移動を最小限に抑えることができます。集計クエリでよく使用される列や、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-distribute#choose-a-distribution-column-with-data-that-distributes-evenly">データの値が均等に分散される列</a>を分散列に選択することが望ましいです。</li>
+<li>分散タイプの選択: 専用SQLプールでは、データ分散には主に2つのタイプがあります。ハッシュ分散とラウンドロビン分散です。<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-distribute#hash-distributed">ハッシュ分散</a>は、分散列の値に基づいてデータを分散し、集計クエリのパフォーマンスを向上させることができます。一方、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-distribute#round-robin-distributed">ラウンドロビン分散</a>は、データを均等に分散するため、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-distribute#determine-if-the-table-has-data-skew">データのスキュー</a>を防ぐことができますが、集計クエリのパフォーマンスはハッシュ分散ほど向上しないことがあります。</li>
+<li>パーティショニング: データの<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-partition">パーティショニング</a>は、特定の列の値に基づいてデータを複数の部分に分割することです。適切なパーティションキーを設定することで、クエリの処理範囲を絞り込み、パフォーマンスを向上させることができます。よく使用されるフィルタ条件に基づいてパーティションキーを選択することが望ましいです。</li>
+<li>クラスタリング: <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/performance-tuning-ordered-cci#reduce-segment-overlapping">クラスタリング</a>は、データを特定の列の値で順序付けして格納することです。クラスタリングによって、データの読み取りや更新が効率化され、集計クエリのパフォーマンスが向上することがあります。集計クエリで頻繁に使用される列をクラスタリング列に選択することが望ましいです。</li>
+</ol>
+<p>これらの設計方法を適切に適用することで、Azure Synapse Analyticsの専用SQLプールで集計クエリのパフォーマンスを向上させること</p>
+</blockquote>
+<h4 id="補足-用語"><a href="#補足-用語" class="headerlink" title="補足: 用語"></a>補足: 用語</h4><table>
+<thead>
+<tr>
+<th>プロンプト</th>
+<th>Microsoft Learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>分散列</td>
+<td>ディストリビューション列</td>
+</tr>
+<tr>
+<td>パーティショニング</td>
+<td>パーティション分割</td>
+</tr>
+<tr>
+<td>クラスタリング</td>
+<td>クラスター化</td>
+</tr>
+</tbody></table>
+<h3 id="ありがとうございます。「インデックスと統計」について、集計関数を含むクエリのパフォーマンスを向上させるために設定するべき、適切なインデックスや統計の戦略について教えていただけますでしょうか？"><a href="#ありがとうございます。「インデックスと統計」について、集計関数を含むクエリのパフォーマンスを向上させるために設定するべき、適切なインデックスや統計の戦略について教えていただけますでしょうか？" class="headerlink" title="ありがとうございます。「インデックスと統計」について、集計関数を含むクエリのパフォーマンスを向上させるために設定するべき、適切なインデックスや統計の戦略について教えていただけますでしょうか？"></a>ありがとうございます。「インデックスと統計」について、集計関数を含むクエリのパフォーマンスを向上させるために設定するべき、適切なインデックスや統計の戦略について教えていただけますでしょうか？</h3><blockquote>
+<p>Azure Synapse Analyticsの専用SQLプールでは、インデックスと統計がクエリパフォーマンスに大きく影響します。<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/t-sql/functions/aggregate-functions-transact-sql?view=sql-server-ver16">集計関数</a>を含むクエリのパフォーマンスを向上させるためには、以下のインデックスや統計の戦略を検討してください。</p>
+<ol>
+<li>クラスタード カラムストア インデックス (CCI): 専用SQLプールでは、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-index#clustered-columnstore-indexes">クラスタード カラムストア インデックス</a>がデフォルトで使用されます。CCIは、列単位の圧縮とデータの効率的な読み取りを提供し、集計クエリのパフォーマンスを向上させます。CCIは、データウェアハウスのワークロードに適したインデックスであるため、通常はこのインデックスを使用することが推奨されます。</li>
+<li>非クラスタード インデックス: 集計関数を含むクエリで特定の列が頻繁にフィルタリングやソートに使用される場合、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-index#clustered-and-nonclustered-indexes">非クラスタード インデックス</a>を検討することができます。ただし、非クラスタード インデックスは、データの更新や追加にオーバーヘッドがかかることがあるため、使用する際は慎重に検討する必要があります。</li>
+<li>統計の作成と更新: <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-statistics">統計</a>は、クエリ オプティマイザが最適な実行計画を選択するために使用されるデータの分布情報です。集計関数を含むクエリのパフォーマンスを向上させるためには、適切な統計を作成し、定期的に更新することが重要です。統計は、CCIや非クラスタード インデックスが作成された列に自動的に作成されますが、手動で作成することも可能です。</li>
+<li>インデックスと統計のメンテナンス: データが変更されるたびに、インデックスと統計の効果が低下することがあります。インデックスの断片化や統計の古い情報がクエリパフォーマンスに影響を与えるため、定期的に<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/relational-databases/indexes/reorganize-and-rebuild-indexes?view=sql-server-ver16#rebuild-an-index">インデックスの再構築</a>や<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/relational-databases/statistics/update-statistics?view=sql-server-ver16">統計の更新</a>を行うことが重要です。</li>
+</ol>
+<p>これらの戦略を適切に適用することで、集計関数を含むクエリのパフォーマンスを向上させることができます。ただし、インデックスや統計の設定は、ワークロードやデータの特性に応じて最</p>
+</blockquote>
+<h4 id="補足-用語-1"><a href="#補足-用語-1" class="headerlink" title="補足: 用語"></a>補足: 用語</h4><table>
+<thead>
+<tr>
+<th>プロンプト</th>
+<th>Microsoft Learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>クラスタード カラムストア インデックス</td>
+<td>クラスター化 列ストア インデックス</td>
+</tr>
+<tr>
+<td>非クラスタード インデックス</td>
+<td>非クラスター化インデックス</td>
+</tr>
+</tbody></table>
+<h4 id="補足-クラスター化インデックスと非クラスター化インデックス"><a href="#補足-クラスター化インデックスと非クラスター化インデックス" class="headerlink" title="補足: クラスター化インデックスと非クラスター化インデックス"></a>補足: クラスター化インデックスと非クラスター化インデックス</h4><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/relational-databases/indexes/clustered-and-nonclustered-indexes-described?view=sql-server-ver16">クラスター化インデックスと非クラスター化インデックスの概念</a></p>
+<h5 id="クラスター化インデックス"><a href="#クラスター化インデックス" class="headerlink" title="クラスター化インデックス"></a>クラスター化インデックス</h5><blockquote>
+<ul>
+<li>クラスター化インデックスは、テーブルまたはビュー内のデータ行をそのキー値に基づいて並べ替え、格納します。 クラスター化インデックスは、インデックス定義に含まれる列です。 データ行自体は 1 つの順序でしか並べ替えられないので、1 つのテーブルに設定できるクラスター化インデックスは 1 つだけです。</li>
+<li>テーブル内のデータ行が並べ替えられた順に格納されるのは、テーブルにクラスター化インデックスが含まれているときだけです。 テーブルにクラスター化インデックスが含まれている場合、そのテーブルをクラスター化テーブルと呼びます。 クラスター化インデックスが含まれないテーブルのデータ行は、ヒープと呼ばれる順序付けられていない構造に格納されます。</li>
+</ul>
+</blockquote>
+<h5 id="非クラスター化インデックス"><a href="#非クラスター化インデックス" class="headerlink" title="非クラスター化インデックス"></a>非クラスター化インデックス</h5><blockquote>
+<ul>
+<li>非クラスター化インデックスは、データ行とは独立した構造になっています。 非クラスター化インデックスには、非クラスター化インデックスのキー値が含まれており、各キー値のエントリにはキー値が含まれているデータ行へのポインターが含まれています。</li>
+<li>非クラスター化インデックス内のインデックス行からデータ行を指すポインターを、行ロケーターと呼びます。 行ロケーターの構造は、データ ページがヒープまたはクラスター化テーブルのどちらに格納されているかによって異なります。 ヒープに格納されている場合、行ロケーターは行を指すポインターです。 クラスター化テーブルに格納されている場合、行ロケーターはクラスター化インデックス キーです。</li>
+<li>非キー列をリーフ レベルの非クラスター化インデックスに追加することで、既存のインデックス キーの制限を回避して、すべてを対象とするインデックスが設定されたクエリを実行できます。 詳細については、「<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/relational-databases/indexes/create-indexes-with-included-columns?view=sql-server-ver16">付加列インデックスの作成</a>」を参照してください。 インデックス キーの制限の詳細については、「<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/sql-server/maximum-capacity-specifications-for-sql-server?view=sql-server-ver16">SQL Server の最大容量仕様</a>」を参照してください。</li>
+</ul>
+</blockquote>
+<h3 id="ありがとうございます。「クエリ最適化」について、集計関数を使用したクエリの最適化のために-Azure-Synapse-Analytics-専用SQLプールに対して行うことができるチューニングがあれば教えていただきたいのですが、いかがでしょうか？"><a href="#ありがとうございます。「クエリ最適化」について、集計関数を使用したクエリの最適化のために-Azure-Synapse-Analytics-専用SQLプールに対して行うことができるチューニングがあれば教えていただきたいのですが、いかがでしょうか？" class="headerlink" title="ありがとうございます。「クエリ最適化」について、集計関数を使用したクエリの最適化のために Azure Synapse Analytics 専用SQLプールに対して行うことができるチューニングがあれば教えていただきたいのですが、いかがでしょうか？"></a>ありがとうございます。「クエリ最適化」について、集計関数を使用したクエリの最適化のために Azure Synapse Analytics 専用SQLプールに対して行うことができるチューニングがあれば教えていただきたいのですが、いかがでしょうか？</h3><blockquote>
+<p>Azure Synapse Analyticsの専用SQLプールで集計関数を使用したクエリの最適化を行うためには、以下のチューニング方法が考えられます。</p>
+<ol>
+<li>クエリの書き方を見直す: クエリの書き方や構造がパフォーマンスに影響を与えることがあります。例えば、必要な列だけを選択する、サブクエリの代わりに<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/t-sql/queries/with-common-table-expression-transact-sql?view=sql-server-2017">CTE（Common Table Expression）</a>や<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/t-sql/functions/analytic-functions-transact-sql?view=sql-server-ver16">ウィンドウ関数</a>を使用するなど、クエリを効率的に書き直すことで、パフォーマンスが向上することがあります。</li>
+<li>リソースクラスの調整: 専用SQLプールでは、ワークロード管理に<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/resource-classes-for-workload-management">リソースクラス</a>が使用されます。リソースクラスは、ユーザーに割り当てられるメモリや並列度を制御します。<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/t-sql/functions/aggregate-functions-transact-sql?view=sql-server-ver16">集計クエリ</a>のパフォーマンスが不十分な場合、リソースクラスを調整して、より多くのリソースを割り当てることを検討してください。</li>
+<li>インデックスと統計の最適化: 前述したように、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql/best-practices-dedicated-sql-pool#optimize-clustered-columnstore-tables">インデックス</a>や<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql/best-practices-dedicated-sql-pool#maintain-statistics">統計</a>の設定がクエリのパフォーマンスに影響を与えます。インデックスや統計を最適化して、クエリ オプティマイザが効率的な実行計画を選択できるようにすることが重要です。</li>
+<li>パーティション分割の活用: データの<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-partition?context=/azure/synapse-analytics/context/context">パーティション分割</a>を活用することで、クエリの処理範囲を絞り込み、パフォーマンスを向上させることができます。適切なパーティションキーを選択し、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql/best-practices-dedicated-sql-pool#do-not-over-partition">パーティション分割を最適化</a>してください。</li>
+<li>クエリの並列度を制御する: 専用SQLプールでは、クエリの並列度がパフォーマンスに大きな影響を与えます。クエリの並列度を制御するために、OPTION (<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/performance-tuning-ordered-cci#reduce-segment-overlapping">MAXDOP</a> n)句を使用して、クエリごとに最大並列度を設定することができます。ただし、適切な並列度を選択することが重要であり、過剰な並列度はパフォーマンスに悪影響を与えることがあります。</li>
+</ol>
+<p>これらのチューニング方法を適切に適用することで、集計関数を使用したクエリの最適化を行うことができます。ただし、最適な設定はワークロード</p>
+</blockquote>
+<h4 id="補足-用語-2"><a href="#補足-用語-2" class="headerlink" title="補足: 用語"></a>補足: 用語</h4><table>
+<thead>
+<tr>
+<th>プロンプト</th>
+<th>Microsoft Learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CTE（Common Table Expression）</td>
+<td>共通テーブル式 (CTE)</td>
+</tr>
+</tbody></table>
+<h3 id="ありがとうございます。「リソース制限」について、集計関数を使用したクエリのパフォーマンスを高めるために、同時実行クエリの数やメモリ使用量を制限しないことが有効だと理解しました。これらの制限を撤廃する際に、留意しておくべき事項はありますか？もしあれば教えてください。"><a href="#ありがとうございます。「リソース制限」について、集計関数を使用したクエリのパフォーマンスを高めるために、同時実行クエリの数やメモリ使用量を制限しないことが有効だと理解しました。これらの制限を撤廃する際に、留意しておくべき事項はありますか？もしあれば教えてください。" class="headerlink" title="ありがとうございます。「リソース制限」について、集計関数を使用したクエリのパフォーマンスを高めるために、同時実行クエリの数やメモリ使用量を制限しないことが有効だと理解しました。これらの制限を撤廃する際に、留意しておくべき事項はありますか？もしあれば教えてください。"></a>ありがとうございます。「リソース制限」について、集計関数を使用したクエリのパフォーマンスを高めるために、同時実行クエリの数やメモリ使用量を制限しないことが有効だと理解しました。これらの制限を撤廃する際に、留意しておくべき事項はありますか？もしあれば教えてください。</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/memory-concurrency-limits">リソース制限</a>を撤廃する際に留意すべき事項がいくつかあります。適切なリソース制限の設定が重要であり、無制限にリソースを利用できるようにすることは、他のクエリやワークロードに悪影響を与える可能性があります。</p>
+<ol>
+<li>リソース競合: 同時実行クエリの数やメモリ使用量の制限を撤廃すると、リソース競合が発生する可能性があります。特に、複数のユーザーやアプリケーションが同時にリソースを使用する場合、パフォーマンスが低下するリスクがあります。</li>
+<li>スロットリング: Azure Synapse Analyticsの専用SQLプールは、ワークロード管理のために<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/resource-classes-for-workload-management#what-are-resource-classes">リソースクラス</a>を使用しています。リソースクラスには、メモリや並列度の制限が設定されています。リソース制限を撤廃しすぎると、システムが<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/resource-classes-for-workload-management#concurrency-slots">スロットリング</a>を行い、クエリの実行速度が低下することがあります。</li>
+<li>クエリの最適化: リソース制限を撤廃する前に、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/relational-databases/performance/tune-performance-with-the-query-store?view=sql-server-ver16">クエリの最適化</a>を検討してください。クエリの書き方や構造を見直すことで、リソースの使用量を削減し、パフォーマンスを向上させることができます。</li>
+<li>モニタリングと監視: リソース制限を撤廃した場合でも、システムの<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/relational-databases/performance/best-practice-with-the-query-store?view=sql-server-ver16">モニタリングと監視</a>を継続して行ってください。パフォーマンスやリソース使用状況を定期的に確認し、問題が発生した場合は適切な対応を行ってください。</li>
+</ol>
+<p>リソース制限を撤廃する際には、これらの事項に注意し、適切なリソース管理を行ってください。リソース競合やスロットリングが発生しないように、リソース制限の調整を慎重に行うことが重要です。</p>
+</blockquote>
+<h3 id="ありがとうございます。以下のSQLを専用SQLプールで実行したところ、数時間経っても結果が返ってきませんでした。この問題の解決のためにできることはありますか？-SQL-select-from-item-measurement-where-gatesenttime-gt-x3D-CONVERT-DATE-CONVERT-VARCHAR-7-DATEADD-month-11-GETUTCDATE-120-‘-01’"><a href="#ありがとうございます。以下のSQLを専用SQLプールで実行したところ、数時間経っても結果が返ってきませんでした。この問題の解決のためにできることはありますか？-SQL-select-from-item-measurement-where-gatesenttime-gt-x3D-CONVERT-DATE-CONVERT-VARCHAR-7-DATEADD-month-11-GETUTCDATE-120-‘-01’" class="headerlink" title="ありがとうございます。以下のSQLを専用SQLプールで実行したところ、数時間経っても結果が返ってきませんでした。この問題の解決のためにできることはありますか？ SQL: select * from item.measurement where gatesenttime &gt;&#x3D; CONVERT(DATE, CONVERT(VARCHAR(7), DATEADD(month,-11,GETUTCDATE()), 120) + ‘-01’)"></a>ありがとうございます。以下のSQLを専用SQLプールで実行したところ、数時間経っても結果が返ってきませんでした。この問題の解決のためにできることはありますか？ SQL: select * from item.measurement where gatesenttime &gt;&#x3D; CONVERT(DATE, CONVERT(VARCHAR(7), DATEADD(month,-11,GETUTCDATE()), 120) + ‘-01’)</h3><blockquote>
+<p>クエリのパフォーマンスが低い場合、以下の方法で問題の解決を試みることができます。 </p>
+<ol>
+<li>クエリの最適化: SELECT * を使用すると、全ての列が選択されますが、実際に必要な列だけを明示的に指定することで、データの読み取り量を削減し、パフォーマンスを向上させることができます。<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column1, column2, ... </span><br><span class="line"><span class="keyword">FROM</span> item.measurement </span><br><span class="line"><span class="keyword">WHERE</span> gatesenttime <span class="operator">&gt;=</span> <span class="keyword">CONVERT</span>(<span class="type">DATE</span>, <span class="keyword">CONVERT</span>(<span class="type">VARCHAR</span>(<span class="number">7</span>), DATEADD(<span class="keyword">month</span>,<span class="number">-11</span>,GETUTCDATE()), <span class="number">120</span>) <span class="operator">+</span> <span class="string">&#x27;-01&#x27;</span>) </span><br></pre></td></tr></table></figure></li>
+<li>データ型の変換を最小限に抑える: クエリ内で複数のデータ型の変換が行われていますが、これを最小限に抑えることでパフォーマンスを向上させることができます。<code>gatesenttime</code> が <code>DATE</code> 型である場合、以下のように変換をシンプルにしてパフォーマンスを向上させることができます。<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column1, column2, ... </span><br><span class="line"><span class="keyword">FROM</span> item.measurement </span><br><span class="line"><span class="keyword">WHERE</span> gatesenttime <span class="operator">&gt;=</span> DATEADD(<span class="keyword">month</span>, <span class="number">-11</span>, DATEFROMPARTS(<span class="keyword">YEAR</span>(GETUTCDATE()), <span class="keyword">MONTH</span>(GETUTCDATE()), <span class="number">1</span>)) </span><br></pre></td></tr></table></figure></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-index">インデックス</a>と<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-statistics">統計</a>の確認: クエリで使用されている列に対して適切なインデックスと統計が設定されているか確認してください。特に、<code>gatesenttime</code> 列にインデックスが設定されているか確認し、必要であればインデックスを作成してください。</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/resource-classes-for-workload-management#what-are-resource-classes">リソースクラス</a>の調整: クエリが実行されているリソースクラスが適切かどうか確認し、必要に応じてリソースクラスを調整してください。リソースクラスによって割り当てられるメモリや並列度が異なるため、適切なリソースクラスを選択することでパフォーマンスが向上することがあります。</li>
+</ol>
+<p>これらの方法を試して、クエリのパフォーマンスが向上することが期待されます。ただし、最適な設定はワークロードやデータの特性に応じて異なるため、複数の方法を試して最適な解決策を見つけてください。</p>
+</blockquote>
+<h3 id="前述のSQLについて、item-measurement-テーブルには約1億行のレコードがあり、ラウンドロビン分散を適用しており、インデックスにはヒープを用いています。このSQLの結果が返ってこない問題を解決するためには、ハッシュ分散を適用し、インデックスには非クラスタードインデックスを用い、SELECT-するカラムを限定し、データ型の変換を最小限に抑えることで、解決できると理解しました。なお、インデックスの再構築、統計の更新は行っており、リソースクラスは適切であると考えています。この理解は合っていますか？"><a href="#前述のSQLについて、item-measurement-テーブルには約1億行のレコードがあり、ラウンドロビン分散を適用しており、インデックスにはヒープを用いています。このSQLの結果が返ってこない問題を解決するためには、ハッシュ分散を適用し、インデックスには非クラスタードインデックスを用い、SELECT-するカラムを限定し、データ型の変換を最小限に抑えることで、解決できると理解しました。なお、インデックスの再構築、統計の更新は行っており、リソースクラスは適切であると考えています。この理解は合っていますか？" class="headerlink" title="前述のSQLについて、item.measurement テーブルには約1億行のレコードがあり、ラウンドロビン分散を適用しており、インデックスにはヒープを用いています。このSQLの結果が返ってこない問題を解決するためには、ハッシュ分散を適用し、インデックスには非クラスタードインデックスを用い、SELECT するカラムを限定し、データ型の変換を最小限に抑えることで、解決できると理解しました。なお、インデックスの再構築、統計の更新は行っており、リソースクラスは適切であると考えています。この理解は合っていますか？"></a>前述のSQLについて、item.measurement テーブルには約1億行のレコードがあり、ラウンドロビン分散を適用しており、インデックスにはヒープを用いています。このSQLの結果が返ってこない問題を解決するためには、ハッシュ分散を適用し、インデックスには非クラスタードインデックスを用い、SELECT するカラムを限定し、データ型の変換を最小限に抑えることで、解決できると理解しました。なお、インデックスの再構築、統計の更新は行っており、リソースクラスは適切であると考えています。この理解は合っていますか？</h3><blockquote>
+<p>はい、おっしゃる通りです。前述のSQLについて、以下の手法を用いることでパフォーマンスの向上が期待できます。</p>
+<ol>
+<li>ハッシュ分散の適用: ラウンドロビン分散ではなく、適切な列をハッシュキーとしてハッシュ分散を適用することで、データの分散を最適化し、クエリのパフォーマンスが向上します。</li>
+<li>非クラスタードインデックスの使用: ヒープよりも非クラスタードインデックスを用いることで、特定の列に対する検索やソートが高速化され、クエリのパフォーマンスが向上します。</li>
+<li>SELECTするカラムの限定: 必要なカラムのみを明示的に指定することで、データの読み取り量が削減され、クエリのパフォーマンスが向上します。</li>
+<li>データ型の変換を最小限に抑える: 不要なデータ型の変換を省くことで、クエリの計算コストが削減され、パフォーマンスが向上します。</li>
+</ol>
+<p>また、インデックスの再構築、統計の更新、適切なリソースクラスの選択もパフォーマンス向上に貢献します。これらの手法を実践することで、1億行のレコードがあるitem.measurementテーブルに対するクエリのパフォーマンスが向上することが期待されます。</p>
+</blockquote>
+<h3 id="ありがとうございます。最後に、ここまでいただいたアドバイスについて、参照すべき-URL-のリストをいただきたいのですが、よろしいでしょうか？"><a href="#ありがとうございます。最後に、ここまでいただいたアドバイスについて、参照すべき-URL-のリストをいただきたいのですが、よろしいでしょうか？" class="headerlink" title="ありがとうございます。最後に、ここまでいただいたアドバイスについて、参照すべき URL のリストをいただきたいのですが、よろしいでしょうか？"></a>ありがとうございます。最後に、ここまでいただいたアドバイスについて、参照すべき URL のリストをいただきたいのですが、よろしいでしょうか？</h3><blockquote>
+<p>もちろんです。ここまでのアドバイスに関連するAzure Synapse AnalyticsのドキュメントやリソースのURLを以下にリストアップします。</p>
+<ol>
+<li>データ分散と設計方法<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-distribute">Distribute tables in Azure Synapse Analytics</a></li>
+</ul>
+</li>
+<li>インデックスと統計<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-best-practices#index-strategies">Index strategies for Azure Synapse Analytics</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-statistics">Statistics in Azure Synapse Analytics</a></li>
+</ul>
+</li>
+<li>クエリ最適化<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-best-practices#query-optimization">Query optimization best practices in Azure Synapse Analytics</a></li>
+</ul>
+</li>
+<li>リソース制限とリソースクラス<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-memory-optimizations-for-columnstore-compression">Resource classes in Azure Synapse Analytics</a></li>
+</ul>
+</li>
+<li>クエリパフォーマンスのトラブルシューティング<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-query-performance">Troubleshoot query performance with Azure Synapse Analytics</a></li>
+</ul>
+</li>
+</ol>
+<p>これらのリソースは、Azure Synapse Analyticsの専用SQLプールでのパフォーマンス最適化に役立つ情報が含まれています。ドキュメントを参照しながら、最適な設定やチューニング方法を実践してください。</p>
+</blockquote>
+<h3 id="「データ分散」のクラスタリングについて、参考となる-URL-を教えてください。"><a href="#「データ分散」のクラスタリングについて、参考となる-URL-を教えてください。" class="headerlink" title="「データ分散」のクラスタリングについて、参考となる URL を教えてください。"></a>「データ分散」のクラスタリングについて、参考となる URL を教えてください。</h3><blockquote>
+<p>データ分散のクラスタリングに関するAzure Synapse AnalyticsのドキュメントやリソースのURLを以下にリストアップします。</p>
+<ol>
+<li>クラスタリング列指定テーブル<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-index">Clustered columnstore index guide for Azure Synapse Analytics</a></li>
+</ul>
+</li>
+<li>クラスタリングキーを使用したテーブル分散<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-tables-distribute#hash-distributed-tables">Distributed tables with round-robin and hash distributed table types in Azure Synapse Analytics</a></li>
+</ul>
+</li>
+<li>クラスタリング最適化のベストプラクティス<ul>
+<li><a target="_blank" rel="noopener" href="https://techcommunity.microsoft.com/t5/azure-synapse-analytics/best-practices-for-azure-synapse-analytics-formerly-azure-sql/ba-p/860580">Best practices for Azure Synapse Analytics (formerly Azure SQL Data Warehouse)</a></li>
+</ul>
+</li>
+</ol>
+<p>これらのリソースは、Azure Synapse Analyticsの専用SQLプールでのデータ分散とクラスタリングに関する情報が含まれています。ドキュメントを参照しながら、最適なクラスタリング戦略を実践してください。</p>
+</blockquote>
+<h3 id="たいへん参考になります。ありがとうございました！"><a href="#たいへん参考になります。ありがとうございました！" class="headerlink" title="たいへん参考になります。ありがとうございました！"></a>たいへん参考になります。ありがとうございました！</h3><blockquote>
+<p>どういたしまして！お力になれてうれしいです。今後もAzure Synapse Analyticsや他のトピックに関する質問や情報が必要な場合は、いつでもお気軽にお問い合わせください。お手伝いできることがあれば喜んで対応いたします。良い一日をお過ごしください！</p>
+</blockquote>
+<h2 id="トークン数"><a href="#トークン数" class="headerlink" title="トークン数"></a>トークン数</h2><ul>
+<li>Token breakdown:<ul>
+<li>Message history: 3518</li>
+<li>User query: 0</li>
+<li>System Message: 19</li>
+<li>Few-shot examples: 1</li>
+<li>Max response: 800</li>
+<li>Estimated max tokens: 4338</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="上記ソリューションに対するフィードバック"><a href="#上記ソリューションに対するフィードバック" class="headerlink" title="上記ソリューションに対するフィードバック"></a>上記ソリューションに対するフィードバック</h2><ul>
+<li>クエリの最適化はある程度は効果があるかもしれないが、まず検討するのはインデックス。</li>
+<li>まずは<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/relational-databases/performance/display-an-actual-execution-plan?view=sql-server-ver16">実行プラン</a>を確認して、インデックス周りの動作をチェックすべき。</li>
+<li>集計処理は CCI の得意領域。検討しない手はない。</li>
+<li>CCI を利用する際には、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/relational-databases/statistics/statistics?view=sql-server-ver16#UpdateStatistics">列統計を明示的に取得</a>しておいたほうがいい。</li>
+<li>分散ポリシーをラウンドロビンからハッシュに替えたとしても、1000 DWU 以上にしないと <a target="_blank" rel="noopener" href="https://blog.engineer-memo.com/2020/09/22/synapse-%E3%81%AE-broadcastmove-shufflemove-%E3%81%AE%E5%8B%95%E4%BD%9C%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/">Shuffle Move</a> が発生せず、分散が効いてこない。</li>
+<li>使っているツールとクエリで取得される件数の情報も必要。<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16">SSMS</a> を使用する場合、クエリ結果は逐次表示されるが、件数が膨大だとメモリ上に大量のデータを保持することになってしまう。</li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-Synapse-Analytics/">Azure Synapse Analytics</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Performance/">Performance</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/GPT-4/">GPT-4</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2023 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
