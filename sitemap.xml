@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://k14i.github.io/2023/04/12/Test-code-generation-from-Swagger-and-PlantUML-with-Azure-OpenAI-Service-using-PromptGenerator-method-2/</loc>
+    
+    <lastmod>2023-04-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://k14i.github.io/2023/04/12/Test-code-generation-from-Swagger-and-PlantUML-with-Azure-OpenAI-Service-using-PromptGenerator-method/</loc>
     
     <lastmod>2023-04-12</lastmod>
