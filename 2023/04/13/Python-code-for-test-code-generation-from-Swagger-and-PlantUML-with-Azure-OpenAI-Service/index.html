@@ -17,8 +17,9 @@
 <p>また、前回 GPT-4 を利用することでテストダブルを正しく使えるようになる (確率が高まる) ことがわかりましたが、一方でテストケースが GPT-3 の場合に比べて減少してしまったという問題が発生しました。</p>
 <p>そこで、本記事では <a target="_blank" rel="noopener" href="https://github.com/openai/openai-python">OpenAI Python ライブラリ</a>を使ってテストコードを生成・追加する方法について解説します。</p>
 <h2 id="ゴール"><a href="#ゴール" class="headerlink" title="ゴール"></a>ゴール</h2><ul>
-<li>API を使ってテストコードを生成する。</li>
+<li>テストコードを生成する。</li>
 <li>チャットの特徴を利用して、テストケースを追加する。</li>
+<li>上記を OpenAI Python Library を使って実行する。</li>
 </ul>
 <h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
 <li>API 操作をするプログラミング言語には Python を用います。パッケージ管理には <code>pip</code> または <code>conda</code> がインストールされていることを想定します。</li>
@@ -256,7 +257,7 @@
 <hr>
 <h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Azure OpenAI Service について、 Python ライブラリを使ってテストコードを生成・追加する方法について解説しました。</p>
 <p>プログラマブルな点、すなわち <code>openai.ChatCompletion.create</code> で多彩なパラメータが指定できたり、<code>messages</code> のリストを操作することができる点、また、少なくともリクエストに関しては再現性を持たせられる点が、 Playground に対する大きなメリットです。</p>
-<p>この取り組みについて反復的な検証をする際にも、Jupyter Notebook を利用して効率的に行うことができます。</p>
+<p>また、この取り組みについて反復的な検証をする際に、Jupyter Notebook を利用して効率的に行うことができます。</p>
 <p>実装自体は上記の通り簡単にできますので、ぜひトライしてみてください。</p>
 </div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-OpenAI-Service/">Azure OpenAI Service</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/OpenAPI/">OpenAPI</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/PlantUML/">PlantUML</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/TDD/">TDD</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/GPT-4/">GPT-4</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/OpenAI/">OpenAI</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2023 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
 ga('create','G-9XBBR7M7V2');
