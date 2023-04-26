@@ -1,0 +1,292 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="alternative" href="/atom.xml" title="kt.log" type="application/atom+xml"><link rel="icon" href="/favicon.png"><title>How to limit the use of Azure OpenAI Service via VNet - kt.log</title>
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+<!--[if lt IE 9]><script>(function(a,b){a="abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video".split(" ");for(b=a.length-1;b>=0;b--)document.createElement(a[b])})()</script><![endif]-->
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+<script src="/js/fancybox/jquery.fancybox.min.js"></script>
+<meta name="generator" content="Hexo 6.2.0"></head><body style="opacity:0"><header class="head"><h1 class="head-title u-fl"><a href="/">kt.log</a></h1><nav class="head-nav u-fr"><ul class="head-nav__list"><li class="head-nav__item"><a class="head-nav__link" href="/archives">Articles</a></li><li class="head-nav__item"><a class="head-nav__link" href="/tags">Tags</a></li><li class="head-nav__item"><a class="head-nav__link" href="/links">Links</a></li></ul></nav></header><main class="main"><article class="post"><header class="post__head"><time class="post__time" datetime="2023-04-25T12:44:10.000Z">2023-04-25 21:44:10</time><h1 class="post__title"><a href="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/">How to limit the use of Azure OpenAI Service via VNet</a></h1><div class="post__main echo"><h1 id="Azure-OpenAI-Service-の利用を-VNet-経由に限定する方法"><a href="#Azure-OpenAI-Service-の利用を-VNet-経由に限定する方法" class="headerlink" title="Azure OpenAI Service の利用を VNet 経由に限定する方法"></a>Azure OpenAI Service の利用を VNet 経由に限定する方法</h1><p>本家 OpenAI ではなく <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai">Azure OpenAI Service を利用するメリット</a>はいくつかありますが、その一つに <strong>プライベートネットワーク内に閉じて利用することができる</strong> という特徴があります。<br>すなわち、インターネットを経由しない経路で OpenAI を利用することができるということで、これによってセキュリティポリシーの厳しい企業においても利用条件をクリアできる (少なくともネットワークに関して) ものと思われます。</p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/openai/overview">Azure OpenAI Service</a> は <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/what-are-cognitive-services">Azure Cognitive Service</a> の一員であり、その構築方法は他の Cognitive Service と同様です。</p>
+<p>とはいえ、Azure OpenAI Service 特有の観点もあるかと思いますので、構築方法を以下に紹介したいと思います。</p>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
+<li>Azure OpenAI Service をデプロイ済み<ul>
+<li>リージョンは <code>East US</code> とします。</li>
+<li>動作確認用に少なくとも 1つのモデルをデプロイしておきます。<ul>
+<li>本記事では <code>gpt-4-0314</code> という名前でデプロイしたモデルを使用します。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>API クライアントとして Linux <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/virtual-machines/overview">仮想マシン</a>を<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/virtual-network/virtual-networks-overview">仮想ネットワーク</a>内にデプロイ済み<ul>
+<li>リージョンは <code>Japan East</code> とします。</li>
+<li>仮想ネットワークにおける<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/virtual-network/network-overview#virtual-network-and-subnets">サブネット</a>の CIDR は <code>10.3.0.0/24</code> とします。</li>
+<li>予め <code>pip install openai</code> を実行しておきます。</li>
+</ul>
+</li>
+</ul>
+<h2 id="免責"><a href="#免責" class="headerlink" title="免責"></a>免責</h2><ul>
+<li>本記事では基本的に Azure Portal を使って操作します。CLI 等を使った操作の説明はありません。</li>
+<li>本記事の内容は執筆時点のものです。将来的に変更が発生して、本記事での説明が適用できなくなる可能性があります。</li>
+<li>本記事において、Azure OpenAI Service への API リクエストには <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/openai/reference">REST</a> ではなく <a target="_blank" rel="noopener" href="https://github.com/openai/openai-python">OpenAI Python Library</a> を用います。</li>
+</ul>
+<h2 id="構成"><a href="#構成" class="headerlink" title="構成"></a>構成</h2><h3 id="Before"><a href="#Before" class="headerlink" title="Before"></a>Before</h3><p>Azure OpenAI Service の利用を仮想ネットワーク経由に限定する前の構成です。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-before.drawio.png" class="slug">
+
+<p>IaaS である仮想マシンは仮想ネットワークと<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/virtual-network/network-security-groups-overview?toc=/azure/networking/fundamentals/toc.json">ネットワーク セキュリティ グループ</a>で保護することができる一方、PaaS である Azure OpenAI Service をネットワークのレベルで保護するサービスはありません。(簡易なファイアウォール機能はあります。)<br>さらに、Azure OpenAI Service の API 認証方式は現状 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/openai/reference#authentication">API キー認証</a> と <a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/openai/how-to/managed-identity">Azure Active Directory 認証</a>の 2種類ですが、使用しない認証方式を無効化することはできません。<br>当然 API キーも十分な複雑さを持ってはいるものの (解析されるまでの時間: 数世紀〜10000+世紀)、これではセキュリティとして不十分であると考えるユーザーもいるでしょうし、企業のセキュリティポリシーに適合しないケースもあるでしょう。</p>
+<h3 id="After"><a href="#After" class="headerlink" title="After"></a>After</h3><p>こちらが、Azure OpenAI Service の利用を仮想ネットワーク経由に限定した構成です。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-after.drawio.png" class="slug">
+
+<p>Azure OpenAI Service のネットワークアクセスを無効にした上で、任意の仮想ネットワークからのアクセスのみ受け付けられるよう、当該仮想ネットワーク向けに<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/private-link/private-endpoint-overview?toc=/azure/networking/fundamentals/toc.json">プライベート エンドポイント</a>を提供します。<br>また、Azure OpenAI Service の API に対するインターネットアクセスをする場合と同じエンドポイントの FQDN が使えるよう、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/dns/private-dns-privatednszone">プライベート DNS ゾーン</a>で名前解決を行います。<br>これであれば、セキュリティとして多くの企業が受け入れられるレベルなのではないでしょうか。</p>
+<p>そしてこの構成は、簡単に構築することができます。以下に手順を説明します。</p>
+<h2 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. Azure OpenAI Service のネットワークを無効にする</span><br><span class="line">2. プライベート エンドポイントを作成する</span><br><span class="line">3. 仮想ネットワーク内からプライベート エンドポイント経由で Azure OpenAI Service を使用する</span><br></pre></td></tr></table></figure>
+
+<p>※1, 2 は順不同ですが、構築にミスがあったときの切り分けのしやすさから、この順番を採用しています。</p>
+<h3 id="1-Azure-OpenAI-Service-のネットワークを無効にする"><a href="#1-Azure-OpenAI-Service-のネットワークを無効にする" class="headerlink" title="1. Azure OpenAI Service のネットワークを無効にする"></a>1. Azure OpenAI Service のネットワークを無効にする</h3><p>まず、デプロイ済みとなっている Azure OpenAI Service のリソースを Azure Portal で開きます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00001.png" class="slug">
+
+<p>画面左のメニューから <code>ネットワーク</code> を開きます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00002.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00003.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00004.png" class="slug">
+
+<p>特にネットワークの制限を設定していない場合、 <code>Firewalls and virtual networks</code> タブにおいて、許可するアクセス元としては <code>すべてのネットワーク</code> が選択されているはずです。</p>
+<p>この状態で、仮想マシンからインターネット経由で <code>ChatCompletion</code> API をコールします。</p>
+<p>コードは以下の通りです。<br><code>openai.api_base</code> と <code>openai.api_key</code> は環境変数から取得するようにしています。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openai</span><br><span class="line">openai.api_type = <span class="string">&quot;azure&quot;</span></span><br><span class="line">openai.api_base = os.getenv(<span class="string">&quot;OPENAI_API_BASE&quot;</span>)</span><br><span class="line">openai.api_version = <span class="string">&quot;2023-03-15-preview&quot;</span></span><br><span class="line">openai.api_key = os.getenv(<span class="string">&quot;OPENAI_API_KEY&quot;</span>)</span><br><span class="line"></span><br><span class="line">prompt = <span class="string">&quot;Hello world!&quot;</span></span><br><span class="line"></span><br><span class="line">messages = [</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>:<span class="string">&quot;system&quot;</span>,<span class="string">&quot;content&quot;</span>:<span class="string">&quot;You are an AI assistant that helps people find inform\</span></span><br><span class="line"><span class="string">ation.&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>:<span class="string">&quot;user&quot;</span>,<span class="string">&quot;content&quot;</span>:prompt&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">response = openai.ChatCompletion.create(</span><br><span class="line">  engine=<span class="string">&quot;gpt-4-0314&quot;</span>,</span><br><span class="line">  messages = messages,</span><br><span class="line">  temperature=<span class="number">0.7</span>,</span><br><span class="line">  max_tokens=<span class="number">1600</span>,</span><br><span class="line">  top_p=<span class="number">0.95</span>,</span><br><span class="line">  frequency_penalty=<span class="number">0</span>,</span><br><span class="line">  presence_penalty=<span class="number">0</span>,</span><br><span class="line">  stop=<span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(response.choices[<span class="number">0</span>].message.content)</span><br></pre></td></tr></table></figure>
+
+<p>実行結果は以下の通りです。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00005.png" class="slug">
+
+<p>正しく結果が返ってくることが確認できました。</p>
+<p>ここから、ネットワークを無効にしていきます。<br>許可するアクセス元 <code>無効</code> を選択し、 <code>Save</code> をクリックします。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00006.png" class="slug">
+
+<p>変更が適用されるまで、数分待ちます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00007.png" class="slug">
+
+<p>更新中……</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00008.png" class="slug">
+
+<p>変更が適用されました。</p>
+<p>先ほどコールした API を再びコールします。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00009.png" class="slug">
+
+<p><code>openai.error.PermissionError: Public access is disabled. Please configure private endpoint.</code> と返ってきました。これで、パブリックアクセスが無効となったことを確認できました。</p>
+<h3 id="2-プライベート-エンドポイントを作成する"><a href="#2-プライベート-エンドポイントを作成する" class="headerlink" title="2. プライベート エンドポイントを作成する"></a>2. プライベート エンドポイントを作成する</h3><p>仮想ネットワーク側から Azure OpenAI Service を利用できるように、プライベート エンドポイントを作成します。<br>プライベート エンドポイントの作成手順は一つではありません。ここで示す方法は一例である旨、ご了承ください。</p>
+<p>まず、Azure OpenAI Service のネットワーク (先の手順で使用した画面) を開き、 <code>プライベート エンドポイント接続</code> タブに切り替えます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00010.png" class="slug">
+
+<p>ここで <code>＋ プライベート エンドポイント</code> をクリックし、プライベート エンドポイント作成を開始します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00011.png" class="slug">
+
+<p>API クライアントとなる VM は <code>Japan East</code> リージョンの仮想ネットワークにデプロイされているため、リージョンの設定はそれに合わせて <code>Japan East</code> とします。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00012.png" class="slug">
+
+<p><code>リソース</code> に関して、特に変更はありません。先に進めます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00013.png" class="slug">
+
+<p><code>仮想ネットワーク</code> の設定を行います。<br>プライベート エンドポイントをデプロイする仮想ネットワークを選択します。<br>本記事では API クライアントとなる VM が接続している仮想ネットワークおよびサブネットを使用します。</p>
+<p><code>プライベート IP 構成</code> について、基本的に FQDN でアクセスするため、 <code>IP アドレスを動的に割り当てる</code> で良いでしょう。<br>もし独自の DNS を構築・設定して利用する場合や、当該仮想ネットワークの IP アドレス管理を厳密に行っている場合は、 <code>IP アドレスを静的に割り当てる</code> の方が都合が良いかもしれません。</p>
+<p><code>アプリケーション セキュリティ グループ</code> は本記事では設定しません。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00014.png" class="slug">
+
+<p><code>DNS</code> の設定は、デフォルト値のままで構いません。先に進めます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00015.png" class="slug">
+
+<p><code>タグ</code> は必要に応じて付与してください。先に進めます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00016.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00017.png" class="slug">
+
+<p><code>作成</code> をクリックして、プライベート エンドポイントのデプロイを開始します。</p>
+<p>参考までに、ここで API クライアントとなる Linux 仮想マシン側のリソースグループの状況を確認しておきましょう。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00018.png" class="slug">
+
+<p>デプロイを進めます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00019.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00020.png" class="slug">
+
+<p>ここで、再度 API クライアントとなる Linux 仮想マシン側のリソースグループの状況を確認します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00021.png" class="slug">
+
+<p><code>privatelink.openai.azure.com</code> というプライベート DNS ゾーンが作成されました。<br>既に当該 Azure OpenAI Service の FQDN への A レコードが作成されており、それがプライベート エンドポイントの IP アドレスに向けられています。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00021-2.png" class="slug">
+
+<p>したがって、API クライアントとなる Linux 仮想マシンが Azure OpenAI Service のエンドポイントをコールした場合、インターネットではなくプライベート エンドポイントに対してコールする形になります。</p>
+<p>Azure OpenAI Service 側のリソースグループも見てみましょう。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00022.png" class="slug">
+
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/virtual-network/network-overview?toc=/azure/virtual-machines/toc.json#network-interfaces">ネットワーク インターフェース</a>とプライベート エンドポイントが作成されました。<br>このネットワーク インターフェースはプライベート エンドポイントにアタッチされており、指定された仮想ネットワークおよびサブネットにデプロイされており、プライベート エンドポイントの IPv4 アドレスが振られています。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00022-2.png" class="slug">
+
+<p>また、プライベート エンドポイントの <code>DNS の構成</code> から、当該ネットワーク インターフェースに対して、元々 Azure OpenAI Service に付与されていた FQDN が割り振られていることが確認できます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00026.png" class="slug">
+
+<p>元々 Azure OpenAI Service に付与されていた FQDN について、Linux 仮想マシンで <code>nslookup</code> を実行してみましょう。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00028.png" class="slug">
+
+<p>プライベート エンドポイントにアタッチされているネットワーク インターフェースに付与されている IP アドレスとなっていることが確認できます。<br><code>canonical name</code> 、つまり <code>CNAME</code> が別で存在していて、先ほどの <code>DNS の構成</code> ではこちらも同じ IP アドレスを指していました。</p>
+<p>試しにこの <code>CNAME</code> に対しても <code>nslookup</code> を実行してみます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00027.png" class="slug">
+
+<p>同じ IP アドレス (プライベート エンドポイントにアタッチされているネットワーク インターフェースに振られている IPv4 アドレス) を指しています。</p>
+<p>後述しますが、API クライアントが API をコールする際に使用するのは元々の FQDN の方です。 <code>CNAME</code> の方は使いません。</p>
+<h3 id="3-仮想ネットワーク内からプライベート-エンドポイント経由で-Azure-OpenAI-Service-を使用する"><a href="#3-仮想ネットワーク内からプライベート-エンドポイント経由で-Azure-OpenAI-Service-を使用する" class="headerlink" title="3. 仮想ネットワーク内からプライベート エンドポイント経由で Azure OpenAI Service を使用する"></a>3. 仮想ネットワーク内からプライベート エンドポイント経由で Azure OpenAI Service を使用する</h3><p>API クライアントとなる Linux 仮想マシン上で作成した Python スクリプトを、一切書き換えることなく (<code>openai.api_base</code> も <code>openai.api_key</code> も変更せず)、再度実行します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00029.png" class="slug">
+
+<p>Azure OpenAI Service の <code>ChatCompletion</code> を、プライベート エンドポイント経由で実行することができました。</p>
+<h2 id="補足"><a href="#補足" class="headerlink" title="補足"></a>補足</h2><p>8 点補足を行います。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1. 仮想ネットワーク外から API をコールした場合</span><br><span class="line">2. プライベート エンドポイントの FQDN</span><br><span class="line">3. 独自 DNS サーバーを利用する場合</span><br><span class="line">4. 許可するアクセス元 は 無効 ではなく 選択したネットワークとプライベート エンドポイントでもよいのか</span><br><span class="line">5. インターネット経由での Azure OpenAI Studio の操作</span><br><span class="line">6. インターネット経由での API 操作</span><br><span class="line">7. API キー で細かな認可は可能か</span><br><span class="line">8. Azure RBAC で細かな認可は可能か</span><br></pre></td></tr></table></figure>
+
+<h3 id="仮想ネットワーク外から-API-をコールした場合"><a href="#仮想ネットワーク外から-API-をコールした場合" class="headerlink" title="仮想ネットワーク外から API をコールした場合"></a>仮想ネットワーク外から API をコールした場合</h3><p>この状態で、仮想ネットワーク外から API をコールした場合に、どのような挙動になるかを確認します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00031.png" class="slug">
+
+<p><code>ChatCompletion</code> はエラーとなりました。(<code>NewConnectionError</code>)<br>これで、Azure OpenAI Service のエンドポイントがネットワーク的に保護されていることが確認できました。</p>
+<h3 id="プライベート-エンドポイントの-FQDN"><a href="#プライベート-エンドポイントの-FQDN" class="headerlink" title="プライベート エンドポイントの FQDN"></a>プライベート エンドポイントの FQDN</h3><p>プライベート エンドポイントが正しく構成されていれば、元々 Azure OpenAI Service に付与されていた FQDN を使って API コールをすることができるのは、説明した通りです。</p>
+<p><code>CNAME</code> を使う必要はありません。もとい、<code>CNAME</code> を使うと Azure OpenAI Service にアクセスできません。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-00030.png" class="slug">
+
+<p><code>SSLError</code> となります。</p>
+<h3 id="独自-DNS-サーバーを利用する場合"><a href="#独自-DNS-サーバーを利用する場合" class="headerlink" title="独自 DNS サーバーを利用する場合"></a>独自 DNS サーバーを利用する場合</h3><p>オンプレミスのクライアントから ExpressRoute 等を経由して Azure OpenAI Service を使う場合などで、オンプレミスのクライアントが独自の DNS を使用するケースがあると思われます。<br>この場合、上記のプライベート DNS ゾーンを参考にして <code>CNAME</code> を設定し、かつ、DNS フォワーダーまたは Azure DNS Private Resolver を使用することになります。<br>詳しくは以下のリンクを参照してください。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/private-link/private-endpoint-dns#on-premises-workloads-using-a-dns-forwarder">DNS フォワーダーを使用しているオンプレミスのワークロード</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/dns/dns-private-resolver-overview">Azure DNS Private Resolver とは</a></li>
+</ul>
+<h3 id="許可するアクセス元-は-無効-ではなく-選択したネットワークとプライベート-エンドポイントでもよいのか"><a href="#許可するアクセス元-は-無効-ではなく-選択したネットワークとプライベート-エンドポイントでもよいのか" class="headerlink" title="許可するアクセス元 は 無効 ではなく 選択したネットワークとプライベート エンドポイントでもよいのか"></a>許可するアクセス元 は 無効 ではなく 選択したネットワークとプライベート エンドポイントでもよいのか</h3><p>良いです。<br>簡易なファイアウォールが利用できますので、プライベート エンドポイントを経由せずに API コールさせたい、あるいは Azure OpenAI Studio を使わせたい端末がある場合は、こちらを選択し、ソース IP アドレスや CIDR を許可してください。</p>
+<h3 id="インターネット経由での-Azure-OpenAI-Studio-の操作"><a href="#インターネット経由での-Azure-OpenAI-Studio-の操作" class="headerlink" title="インターネット経由での Azure OpenAI Studio の操作"></a>インターネット経由での Azure OpenAI Studio の操作</h3><p>別の懸念事項として、インターネット経由で万一 Azure OpenAI Studio を不正利用されてしまった場合に、何ができて何ができないのかということが挙げられると思います。<br>以下、検証結果を紹介します。</p>
+<h4 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h4><ul>
+<li>できないこと<ul>
+<li>微調整されたモデルの表示</li>
+<li>Playground でのプロンプト実行<ul>
+<li>Completions playground, Chat playground (Preview) ともに不可</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>できること<ul>
+<li>Azure OpenAI Studio を開く</li>
+<li>画面を遷移する</li>
+<li>モデル一覧の表示</li>
+<li>モデルのデプロイ</li>
+<li>通知の表示</li>
+<li>デプロイしたモデルの一覧表示</li>
+<li>デプロイしたモデルの詳細表示</li>
+<li>デプロイしたモデルの削除</li>
+<li>表示言語の切り替え</li>
+</ul>
+</li>
+<li>未確認<ul>
+<li>モデルの微調整<ul>
+<li>使用している Azure サブスクリプション ではモデルの微調整が有効化されていないため</li>
+</ul>
+</li>
+<li>Testing and training dataset (テストおよびトレーニングのデータセット)<ul>
+<li>モデルの微調整が利用できないため, また jsonl ファイルを用意していないため</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="検証"><a href="#検証" class="headerlink" title="検証"></a>検証</h4><img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10000.png" class="slug">
+
+<p>Azure OpenAI Studio を開きます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10001.png" class="slug">
+
+<p>画面左のメニューを展開します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10002.png" class="slug">
+
+<p>Models 画面へ遷移します。</p>
+<p>このとき、通知が来たので開きます。「微調整されたモデルを取得できなかった」とのことでした。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10003.png" class="slug">
+
+<p>モデルの一覧は表示できます。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10004.png" class="slug">
+
+<p>モデルをデプロイします。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10005.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10006.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10007.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10008.png" class="slug">
+
+<p>モデルのデプロイに成功しました。</p>
+<p>デプロイされたモデルを確認するため、 Deployments 画面へ移動します。<br>まず、デプロイされたモデルのリストが表示されました。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10009.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10010.png" class="slug">
+
+<p>デプロイされたモデルの詳細を確認することができました。</p>
+<p>デプロイされたモデルを削除します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10011.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10012.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10013.png" class="slug">
+
+<p>デプロイされたモデルの削除に成功しました。</p>
+<p>次に、デプロイ済みのモデルを実行してみたいと思います。</p>
+<p>Completions playground 画面に移動します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10014.png" class="slug">
+
+<p>Completion を実行します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10015.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10016.png" class="slug">
+
+<p><code>Completions call failed:AccessDenied</code> と表示され、実行することができませんでした。</p>
+<p>次に、Chat playground (Preview) に移動します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10017.png" class="slug">
+
+<p>ChatCompletion を実行します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10018.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10019.png" class="slug">
+
+<p><code>Public access is disabled. Please configure private endpoint.</code> とチャットで返ってきました。</p>
+<p>エラーハンドリングの実装が独特なものになりそうです。</p>
+<p>最後に、表示言語の設定変更を試します。</p>
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10020.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10021.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10022.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10023.png" class="slug">
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10024.png" class="slug">
+
+<p>表示言語の設定変更ができました。</p>
+<h3 id="インターネット経由での-API-操作"><a href="#インターネット経由での-API-操作" class="headerlink" title="インターネット経由での API 操作"></a>インターネット経由での API 操作</h3><p>プライベート エンドポイント経由にアクセスを限定した後も、Azure OpenAI Studio ではモデルの一覧表示を含むいくつかの操作を、インターネット経由で行うことができました。<br>ここで、インターネット経由で同様の API 操作が可能なのかを検証します。</p>
+<p>当該仮想ネットワークの外にある端末から、以下のコードを実行します。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openai</span><br><span class="line">openai.api_type = <span class="string">&quot;azure&quot;</span></span><br><span class="line">openai.api_base = os.getenv(<span class="string">&quot;OPENAI_API_BASE&quot;</span>)</span><br><span class="line">openai.api_version = <span class="string">&quot;2023-03-15-preview&quot;</span></span><br><span class="line">openai.api_key = os.getenv(<span class="string">&quot;OPENAI_API_KEY&quot;</span>)</span><br><span class="line"></span><br><span class="line">response = openai.Model.<span class="built_in">list</span>()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(response)</span><br></pre></td></tr></table></figure>
+
+<img src="/2023/04/25/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet/How-to-limit-the-use-of-Azure-OpenAI-Service-via-VNet-10025.png" class="slug">
+
+<p>少なくともモデルの一覧表示はできないことが分かりました。</p>
+<h3 id="API-キー-で細かな認可は可能か"><a href="#API-キー-で細かな認可は可能か" class="headerlink" title="API キー で細かな認可は可能か"></a>API キー で細かな認可は可能か</h3><p>できません。</p>
+<h3 id="Azure-RBAC-で細かな認可は可能か"><a href="#Azure-RBAC-で細かな認可は可能か" class="headerlink" title="Azure RBAC で細かな認可は可能か"></a>Azure RBAC で細かな認可は可能か</h3><p>できません。</p>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Azure OpenAI Service の利用を仮想ネットワーク経由に限定する方法について解説しました。<br>ユーザー企業のセキュリティポリシーに適合させるためにこのような構成にする必要があるケースもあるかと思いますが、簡単にできますので、必要に応じて構成し、Azure OpenAI Service を使い始めてみてください。</p>
+<h2 id="See-also"><a href="#See-also" class="headerlink" title="See also"></a>See also</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/cognitive-services-virtual-networks?context=/azure/cognitive-services/openai/context/context&tabs=portal">Azure Cognitive Services 仮想ネットワークを構成する</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/cognitive-services/openai/how-to/managed-identity">マネージド ID を使用して Azure OpenAI Service を構成する方法</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/role-based-access-control/built-in-roles">Azure 組み込みロール</a><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/role-based-access-control/built-in-roles#cognitive-services-contributor">Cognitive Services 共同作成者</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/role-based-access-control/built-in-roles#cognitive-services-user">Cognitive Services ユーザー</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/ja-jp/azure/role-based-access-control/resource-provider-operations#microsoftcognitiveservices">Microsoft.CognitiveServices | Azure リソース プロバイダーの操作</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/openai-python">OpenAI Python Library</a></li>
+</ul>
+</div></header><footer class="post__foot u-cf"><ul class="post__tag u-fl"><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure/">Azure</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Virtual-Network/">Virtual Network</a></li><li class="post__tag__item"><a class="post__tag__link" href="/tags/Azure-OpenAI-Service/">Azure OpenAI Service</a></li></ul></footer></article></main><footer class="foot"><div class="foot-copy">&copy; 2021 - 2023 kt.log<a class="icp-a" href="https://github.com/k14i" target="view_window">by kt (Keisuke Takahashi)</a></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+ga('create','G-9XBBR7M7V2');
+ga('send','pageview');</script>
+<script src="/js/scroller.js"></script>
+
+<script src="/js/main.js"></script>
+</body></html>
